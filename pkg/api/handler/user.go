@@ -1,24 +1,11 @@
 package handler
 
 import (
-	"net/http"
-	"strconv"
-
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-
-	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/copier"
 )
 
 type UserHandler struct {
 	userUseCase services.UserUseCase
-}
-
-type Response struct {
-	ID      uint   `copier:"must"`
-	Name    string `copier:"must"`
-	Surname string `copier:"must"`
 }
 
 func NewUserHandler(usecase services.UserUseCase) *UserHandler {
@@ -36,6 +23,15 @@ func NewUserHandler(usecase services.UserUseCase) *UserHandler {
 // @produce json
 // @Router /api/users [get]
 // @response 200 {object} []Response "OK"
+
+/*
+
+type Response struct {
+	ID      uint   `copier:"must"`
+	Name    string `copier:"must"`
+	Surname string `copier:"must"`
+}
+
 func (cr *UserHandler) FindAll(c *gin.Context) {
 	users, err := cr.userUseCase.FindAll(c.Request.Context())
 
@@ -121,3 +117,5 @@ func (cr *UserHandler) Delete(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "User is deleted successfully"})
 }
+
+*/
