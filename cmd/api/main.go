@@ -11,4 +11,6 @@ func main() {
 	if configErr != nil {
 		log.Fatal("cannot load config: ", configErr)
 	}
+
+	server, diErr := di.InitializeAPI(config)
 }
