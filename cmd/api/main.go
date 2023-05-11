@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/di"
 )
 
 func main() {
@@ -13,4 +14,9 @@ func main() {
 	}
 
 	server, diErr := di.InitializeAPI(config)
+	if diErr != nil {
+		log.Fatal("cannot start server: ", diErr)
+	} else {
+		server.Start()
+	}
 }

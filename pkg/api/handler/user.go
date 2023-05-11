@@ -5,21 +5,21 @@ import (
 	"strconv"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
 
-type userHandler struct {
-	userUseCase services.userUseCase
+type UserHandler struct {
+	userUseCase services.UserUseCase
 }
 
-/*
 type Response struct {
 	ID      uint   `copier:"must"`
 	Name    string `copier:"must"`
 	Surname string `copier:"must"`
 }
-*/
 
 func NewUserHandler(usecase services.UserUseCase) *UserHandler {
 	return &UserHandler{

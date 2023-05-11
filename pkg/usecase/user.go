@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
+	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 )
-
-
 
 type userUseCase struct {
 	userRepo interfaces.UserRepository

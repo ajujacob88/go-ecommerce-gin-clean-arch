@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handler"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
 )
@@ -9,7 +10,7 @@ type ServerHTTP struct {
 	engine *gin.Engine
 }
 
-func NewServerHTTP(userHandler *handler.userHandler) {
+func NewServerHTTP(userHandler *handler.UserHandler) *ServerHTTP {
 	engine := gin.New()
 
 	// Use logger from Gin
