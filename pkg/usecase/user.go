@@ -16,6 +16,22 @@ func NewUserUseCase(repo interfaces.UserRepository) services.UserUseCase {
 	return &userUseCase{
 		userRepo: repo,
 	}
+
+}
+
+func (c *userUseCase) Signup(ctx context.Context, user domain.Users) error {
+	checkUser, err := c.userRepo.FindUser(ctx, user)
+	if err != nil {
+		return err
+	}
+}
+
+/*
+
+func NewUserUseCase(repo interfaces.UserRepository) services.UserUseCase {
+	return &userUseCase{
+		userRepo: repo,
+	}
 }
 
 func (c *userUseCase) FindAll(ctx context.Context) ([]domain.Users, error) {
@@ -39,3 +55,5 @@ func (c *userUseCase) Delete(ctx context.Context, user domain.Users) error {
 
 	return err
 }
+
+*/
