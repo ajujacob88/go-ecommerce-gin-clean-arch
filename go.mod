@@ -7,8 +7,8 @@ require (
 	github.com/go-playground/validator/v10 v10.13.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/wire v0.5.0
-	github.com/jinzhu/copier v0.3.5
 	github.com/spf13/viper v1.15.0
+	golang.org/x/crypto v0.9.0
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/gorm v1.25.1
 )
@@ -44,7 +44,6 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.9 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect

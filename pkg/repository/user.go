@@ -20,7 +20,7 @@ func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
 
 func (c *userDatabase) CreateUser(ctx context.Context, user domain.Users) (userID uint, err error) {
 	//save the user details
-	query := `INSERT INTO users(first_name, last_name, email, phone_no, password)
+	query := `INSERT INTO users(first_name, last_name, email, phone, password)
 	VALUES ($1, $2, $3, $4, $5 ) RETURNING id`
 
 	err = c.DB.Raw(query, user.FirstName, user.LastName, user.Email, user.Phone, user.Password).Scan(&user).Error
@@ -33,7 +33,7 @@ func (c *userDatabase) CreateUser(ctx context.Context, user domain.Users) (userI
 
 func (c *userDatabase) FindUser(ctx context.Context, user domain.Users) (domain.Users, error) {
 	// check id or email or phone match in database
-	query := `SELECT * FROM users WHERE id = ? OR email = ? OR phone_no = ?`
+	query := `SELECT * FROM users WHERE id = ? OR Email = ? OR Phone = ?`
 	if err := c.DB.Raw(query, user.ID, user.Email, user.Phone).Scan(&user).Error; err != nil {
 		return user, errors.New("failed to get the user")
 	}
