@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -13,8 +15,32 @@ type userDatabase struct {
 }
 
 func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
-	return &userDatabase{DB}
+	return &userDatabase{DB: DB}
 }
+
+func (c *userDatabase) CreateUser(ctx context.Context, user domain.Users) (userID uint, err error) {
+	//save the user details
+	query := `INSERT INTO users(first_name, last_name, email, phone_no, password)
+	VALUES ($1, $2, $3, $4, $5 ) RETURNING id`
+
+	err = c.DB.Raw(query, user.FirstName, user.LastName, user.Email, user.Phone, user.Password).Scan(&user).Error
+
+	if err != nil {
+		return 0, fmt.Errorf("failed to create the user %s", user.FirstName)
+	}
+	return userID, nil
+}
+
+func (c *userDatabase) FindUser(ctx context.Context, user domain.Users) (domain.Users, error) {
+	// check id or email or phone match in database
+	query := `SELECT * FROM users WHERE id = ? OR email = ? OR phone_no = ?`
+	if err := c.DB.Raw(query, user.ID, user.Email, user.Phone).Scan(&user).Error; err != nil {
+		return user, errors.New("failed to get the user")
+	}
+	return user, nil
+}
+
+/*  default present in repo
 
 func (c *userDatabase) FindAll(ctx context.Context) ([]domain.Users, error) {
 	var users []domain.Users
@@ -41,3 +67,5 @@ func (c *userDatabase) Delete(ctx context.Context, user domain.Users) error {
 
 	return err
 }
+
+*/
