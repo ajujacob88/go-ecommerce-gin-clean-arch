@@ -71,9 +71,11 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": "Invalid Otp",
 		})
+		//fmt.Println("otp print 4")
 		return
 	}
-	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", user)
+	//fmt.Println("otp print 5")
+	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", nil)
 	c.JSON(200, response)
 }
 

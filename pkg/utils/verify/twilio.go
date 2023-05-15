@@ -1,6 +1,8 @@
 package verify
 
 import (
+	"errors"
+
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
 	"github.com/twilio/twilio-go"
 	twilioApi "github.com/twilio/twilio-go/rest/verify/v2"
@@ -46,11 +48,22 @@ func TwilioVerifyOTP(phoneNumber string, code string) error {
 	params.SetCode(code)
 
 	resp, err := client.VerifyV2.CreateVerificationCheck(seviceSid, params)
+	//fmt.Println("resp is", resp, "and err is", err, "for debufg aju")
 	if err != nil {
-		return err
+		//fmt.Println("otp not correct 1")
+		return errors.New("verification check failed")
 	} else if *resp.Status == "approved" {
+		//fmt.Println("otp correct1")
 		return nil
-	}
+	} else {
+		//fmt.Println("otp print 3")
 
-	return nil
+		// return nil
+		// if resp.Status != nil && *resp.Status == "approved" {
+		// 	// Verification check was approved
+		// 	return nil
+
+		// Verification check failed or has a different status
+		return errors.New("verification check failed")
+	}
 }
