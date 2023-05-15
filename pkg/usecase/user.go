@@ -44,6 +44,10 @@ func (c *userUseCase) Signup(ctx context.Context, user domain.Users) error {
 		return nil
 	}
 	return utils.CompareUsers(user, checkUser)
+	// if err := utils.CompareUsers(user, checkUser); err != nil {
+	// 	return err
+	// }
+
 }
 
 /*

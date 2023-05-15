@@ -5,7 +5,9 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/verify"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,8 +21,10 @@ func NewUserHandler(usecase services.UserUseCase) *UserHandler {
 	}
 }
 
+var user domain.Users
+
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
-	var user domain.Users
+	//var user domain.Users
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		response := res.ErrorResponse(400, "invalid input", err.Error(), user)
@@ -36,7 +40,40 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 		return
 	}
 
-	response := res.SuccessResponse(200, "Account Created Successfully", user)
+	//twilio otp check
+
+	_, err := verify.TwilioSendOtp("+91" + user.Phone)
+	if err != nil {
+		response := res.ErrorResponse(400, "failed to generate otp", err.Error(), user)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+
+	}
+	response := res.SuccessResponse(200, "Success: Enter the otp", user)
+	c.JSON(200, response)
+
+	// response := res.SuccessResponse(200, "Account Created Successfully", user)
+	// c.JSON(200, response)
+}
+
+// SIGN UP OTP VERIFICATION
+
+func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
+	var otp req.OTPVerify
+	if err := c.BindJSON(&otp); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Error binding json",
+		})
+		return
+	}
+	if err := verify.TwilioVerifyOTP("+91"+user.Phone, otp.OTP); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid Otp",
+		})
+		return
+	}
+	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", user)
 	c.JSON(200, response)
 }
 
