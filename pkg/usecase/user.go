@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -49,19 +48,6 @@ func (c *userUseCase) Signup(ctx context.Context, user domain.Users) error {
 	// 	return err
 	// }
 
-}
-
-func (uc *UserUseCase) UpdateUser(ctx context.Context, user domain.User) error {
-	// Perform any necessary validations or checks before updating the user
-
-	// Update the user in the database
-	err := uc.userRepository.UpdateUser(ctx, user)
-	if err != nil {
-		// Handle the error if the update operation fails
-		return fmt.Errorf("failed to update user: %w", err)
-	}
-
-	return nil
 }
 
 /*
