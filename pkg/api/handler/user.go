@@ -75,7 +75,16 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 		return
 	}
 	//fmt.Println("otp print 5")
-	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", nil)
+
+	user.VerifyStatus = true
+	// Save the updated user to the database
+	if err := cr.userUseCase.UpdateUser(c, user); err != nil {
+		response := res.ErrorResponse(500, "Failed to update user", err.Error(), user)
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", user)
 	c.JSON(200, response)
 }
 

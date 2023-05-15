@@ -56,14 +56,7 @@ func TwilioVerifyOTP(phoneNumber string, code string) error {
 		//fmt.Println("otp correct1")
 		return nil
 	} else {
-		//fmt.Println("otp print 3")
 
-		// return nil
-		// if resp.Status != nil && *resp.Status == "approved" {
-		// 	// Verification check was approved
-		// 	return nil
-
-		// Verification check failed or has a different status
 		return errors.New("verification check failed")
 	}
 }
