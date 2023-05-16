@@ -1,7 +1,6 @@
 package routes
 
-import "github.com/gin-gonic/gin"
-
+/*
 func AdminRoutes(
 	api *gin.RouterGroup,
 	adminHandler *handler.AdminHandler,
@@ -15,3 +14,5 @@ func AdminRoutes(
 		login.POST("/login", adminHandler.AdminLogin)
 	}
 }
+
+*/
