@@ -10,6 +10,8 @@ type UserRepository interface {
 	FindUser(ctx context.Context, user domain.Users) (domain.Users, error)
 
 	CreateUser(ctx context.Context, user domain.Users) (userID uint, err error)
+
+	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
 }
 
 /*

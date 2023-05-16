@@ -78,6 +78,15 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 
 	//user.VerifyStatus = true
 
+	// Call the OTPVerifyStatusManage method to update the verification status
+	//fmt.Println("user.id is", user.ID, "and user.Email is", user.Email)
+	err := cr.userUseCase.OTPVerifyStatusManage(c.Request.Context(), user.Email, true)
+	if err != nil {
+		response := res.ErrorResponse(500, "Failed to update verification status", err.Error(), user)
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
 	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", user)
 	c.JSON(200, response)
 }

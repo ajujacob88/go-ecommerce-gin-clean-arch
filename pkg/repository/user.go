@@ -23,11 +23,13 @@ func (c *userDatabase) CreateUser(ctx context.Context, user domain.Users) (userI
 	query := `INSERT INTO users(first_name, last_name, email, phone, password)
 	VALUES ($1, $2, $3, $4, $5 ) RETURNING id`
 
-	err = c.DB.Raw(query, user.FirstName, user.LastName, user.Email, user.Phone, user.Password).Scan(&user).Error
+	err = c.DB.Raw(query, user.FirstName, user.LastName, user.Email, user.Phone, user.Password).Scan(&userID).Error
 
 	if err != nil {
 		return 0, fmt.Errorf("failed to create the user %s", user.FirstName)
 	}
+
+	fmt.Println("the user.id is", user.ID, "and userid is", userID)
 	return userID, nil
 }
 
@@ -38,6 +40,16 @@ func (c *userDatabase) FindUser(ctx context.Context, user domain.Users) (domain.
 		return user, errors.New("failed to get the user")
 	}
 	return user, nil
+}
+
+// OTPVerifyStatusManage method to update the verification status
+func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error {
+	fmt.Println("access is ", access, "and id is ", userEmail)
+	result := c.DB.Model(&domain.Users{}).Where("email = ?", userEmail).Update("verify_status", access).Error
+	if result != nil {
+		return errors.New("failed to update OTP verification status")
+	}
+	return nil
 }
 
 /*  default present in repo

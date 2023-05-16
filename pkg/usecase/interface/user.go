@@ -8,6 +8,8 @@ import (
 
 type UserUseCase interface {
 	Signup(ctx context.Context, user domain.Users) error
+
+	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
 }
 
 /* no need already in the code arch
