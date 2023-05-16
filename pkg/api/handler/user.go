@@ -117,7 +117,7 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	}
 
 	// generate token using jwt in map
-	tokenString, err := auth.GenerateJWT(user.ID)
+	tokenString, err := auth.GenerateJWT(user.Email)
 	if err != nil {
 		response := res.ErrorResponse(500, "faild to login", err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, response)
@@ -135,16 +135,17 @@ func (cr *UserHandler) Homehandler(c *gin.Context) {
 	email, ok := c.Get(("user-email"))
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "Invalid user",
+			"error": "Invalid user error1",
 		})
 	}
 	user, err := cr.userUseCase.FindByEmail(c.Request.Context(), email.(string))
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "Invalid user",
+			"error": "Invalid user error2",
 		})
 		return
 	}
+	//fmt.Println("user is", user)
 	c.JSON(http.StatusOK, user)
 }
 

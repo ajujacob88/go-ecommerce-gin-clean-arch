@@ -53,15 +53,21 @@ func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, userEmail stri
 }
 
 // Finds whether a email is already in the database or not and also checks whether a user is blocked or not
-func (c *userDatabase) FindByEmail(ctx context.Context, Email string) (domain.Users, error) {
+func (c *userDatabase) FindByEmail(ctx context.Context, email string) (domain.Users, error) {
 	var user domain.Users
-	_ = c.DB.Where("Email=?", Email).Find(&user)
-	if user.ID == 0 {
-		return domain.Users{}, errors.New("invalid Email")
+	err := c.DB.Where("Email = ?", email).Find(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return domain.Users{}, errors.New("invalid email")
+		}
+		return domain.Users{}, err
 	}
+
 	if user.BlockStatus {
 		return user, errors.New("you are blocked")
 	}
+	//fmt.Println("user1 is", user)
+
 	return user, nil
 }
 
