@@ -12,5 +12,6 @@ func UserRoutes(
 	// user routes that don't require authentication
 	api.POST("/signup", userHandler.UserSignUp)
 	api.POST("/signup/otp/verify", userHandler.SignupOtpVerify)
+	api.POST("/login/email", userHandler.UserLoginByEmail)
 
 }

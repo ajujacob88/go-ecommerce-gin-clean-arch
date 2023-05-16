@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/auth"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
@@ -114,6 +115,19 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+	// generate token using jwt in map
+	tokenString, err := auth.GenerateJWT(user.ID)
+	if err != nil {
+		response := res.ErrorResponse(500, "faild to login", err.Error(), nil)
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	c.SetCookie("user-auth", tokenString["accessToken"], 60*60, "", "", false, true)
+
+	response := res.SuccessResponse(200, "successfully logged in", tokenString["accessToken"])
+	c.JSON(http.StatusOK, response)
 }
 
 /*

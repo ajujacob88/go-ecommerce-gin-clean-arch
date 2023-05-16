@@ -17,11 +17,15 @@ type Config struct {
 	AUTHTOKEN  string `mapstructure:"TWILIO_AUTH_TOKEN"`
 	ACCOUNTSID string `mapstructure:"TWILIO_ACCOUNT_SID"`
 	SERVICESID string `mapstructure:"TWILIO_SERVICE_SID"`
+
+	JWT string `mapstructure:"JWT_CODE"`
 }
 
 // to hold all names of env variables
 var envs = []string{
 	"DB_HOST", "DB_NAME", "DB_USER", "DB_PORT", "DB_PASSWORD", // database
+	"JWT_CODE",                                                      //JWT
+	"TWILIO_AUTH_TOKEN", "TWILIO_ACCOUNT_SID", "TWILIO_SERVICE_SID", //twilio details
 }
 
 var config Config
@@ -54,4 +58,9 @@ func LoadConfig() (Config, error) {
 
 func GetConfig() Config {
 	return config
+}
+
+// to get the secret code for jwt
+func GetJWTCofig() string {
+	return config.JWT
 }

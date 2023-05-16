@@ -11,7 +11,7 @@ type UserUseCase interface {
 
 	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
 
-	LoginWithEmail(ctx context.Context, user domain.User) (domain.User, error)
+	LoginWithEmail(ctx context.Context, user domain.Users) (domain.Users, error)
 }
 
 /* no need already in the code arch
