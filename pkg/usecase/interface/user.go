@@ -10,6 +10,8 @@ type UserUseCase interface {
 	Signup(ctx context.Context, user domain.Users) error
 
 	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
+
+	LoginWithEmail(ctx context.Context, user domain.User) (domain.User, error)
 }
 
 /* no need already in the code arch

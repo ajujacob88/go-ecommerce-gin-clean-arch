@@ -9,6 +9,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/verify"
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/copier"
 )
 
 type UserHandler struct {
@@ -89,6 +90,30 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 
 	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", user)
 	c.JSON(200, response)
+}
+
+func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
+	//receive data from request body
+	var body req.UserLoginEmail
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		response := res.ErrorResponse(400, "Input is invalid", err.Error(), nil)
+
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	//copy the body values to user
+	var user domain.Users
+	copier.Copy(&user, &body)
+
+	// get user from database and check password in usecase
+	user, err := cr.userUseCase.LoginWithEmail(c, user)
+	if err != nil {
+		response := res.ErrorResponse(400, "failed to login", err.Error(), nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 }
 
 /*

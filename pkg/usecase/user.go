@@ -61,6 +61,30 @@ func (uc *userUseCase) OTPVerifyStatusManage(ctx context.Context, userEmail stri
 	return nil
 }
 
+// user login
+func (c *userUseCase) LoginWithEmail(ctx context.Context, user domain.Users) (domain.Users, error) {
+	dbUser, dberr := c.userRepo.FindUser(ctx, user)
+
+	//check wether the user is found or not
+	if dberr != nil {
+		return user, dberr
+	} else if dbUser.ID == 0 {
+		return user, errors.New("user not exist with this details")
+	}
+
+	// check the user block_status to check wether user is blocked or not
+	if dbUser.BlockStatus {
+		return user, errors.New("user blocked by admin")
+	}
+
+	//check the user password with dbPassword
+	if bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)) != nil {
+		return user, errors.New("The entered password is wrong")
+	}
+
+	return dbUser, nil
+}
+
 /*
 
 func NewUserUseCase(repo interfaces.UserRepository) services.UserUseCase {
