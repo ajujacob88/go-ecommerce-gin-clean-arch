@@ -130,6 +130,24 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// HomeHandler
+func (cr *UserHandler) Homehandler(c *gin.Context) {
+	email, ok := c.Get(("user-email"))
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid user",
+		})
+	}
+	user, err := cr.userUseCase.FindByEmail(c.Request.Context(), email.(string))
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"error": "Invalid user",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
 /*
 
 type Response struct {

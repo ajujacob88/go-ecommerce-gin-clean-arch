@@ -1,38 +1,61 @@
 package middleware
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
-	"strings"
 	"time"
 
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 )
 
-func AuthorizationMiddleware(c *gin.Context) {
-	s := c.Request.Header.Get("Authorization")
+type Claims struct {
+	Email string
+	jwt.RegisteredClaims
+}
 
-	token := strings.TrimPrefix(s, "Bearer ")
-
-	if err := validateToken(token); err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
-		return
+// The middleware verifies the presence and validity of a token stored in a cookie and sets the user's email in the Gin context if the authorization is successful.
+func AuthorizationMiddleware(role string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString, err := c.Cookie(role + "-auth") //Inside the middleware, the function first tries to retrieve the JWT token from the cookie named role + "-token".
+		//fmt.Println("token string is", tokenString)
+		if err != nil || tokenString == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": "Needs to login",
+			})
+			return
+		}
+		claims, err1 := ValidateToken(tokenString)
+		if err1 != nil {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"error": err1,
+			})
+			return
+		}
+		c.Set(role+"-email", claims.Email)
+		c.Next()
 	}
 }
 
-func validateToken(token string) error {
-	_, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-		}
-
-		return []byte("secret"), nil
-	})
-
-	return err
+func ValidateToken(tokenString string) (Claims, error) {
+	claims := Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, &claims,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(config.GetJWTCofig()), nil
+		},
+	)
+	if err != nil || !token.Valid {
+		return claims, errors.New("not valid token")
+	}
+	//checking the expiry of the token
+	if time.Now().Unix() > claims.ExpiresAt.Unix() {
+		return claims, errors.New("token expired re-login")
+	}
+	return claims, nil
 }
 
+/*
 func LoginHandler(c *gin.Context) {
 	// implement login logic here
 	// user := c.PostForm("user")
@@ -67,3 +90,5 @@ func LoginHandler(c *gin.Context) {
 		"token": ss,
 	})
 }
+
+*/

@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handler"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,27 +12,36 @@ func UserRoutes(
 ) {
 
 	// User routes that don't require authentication
-	api.POST("/signup", userHandler.UserSignUp)
-	api.POST("/signup/otp/verify", userHandler.SignupOtpVerify)
-	api.POST("/login/email", userHandler.UserLoginByEmail)
+	//sets up a route group for the "/user" endpoint
+	signup := api.Group("/user")
+	{
+		signup.POST("/signup", userHandler.UserSignUp)
+		signup.POST("/signup/otp/verify", userHandler.SignupOtpVerify)
+	}
 
-	// User routes that require authentication
-	// api.Use(middleware.UserAuth)
+	login := api.Group("/user")
+	{
+		login.POST("/login/email", userHandler.UserLoginByEmail)
+	}
+
+	//User routes that require authentication
+
+	home := api.Group("/user")
+	{
+		//AuthorizationMiddleware as middleware to perform authorization checks for users accessing the "/user" endpoint.
+		home.Use(middleware.AuthorizationMiddleware("user"))
+		home.GET("/home", userHandler.Homehandler)
+		//home.POST("/logout", userHandler.LogoutHandler)
+	}
+
+	// api.POST("/signup", userHandler.UserSignUp)
+	// api.POST("/signup/otp/verify", userHandler.SignupOtpVerify)
+	// api.POST("/login/email", userHandler.UserLoginByEmail)
+
+	// api.Use(middleware.AuthorizationMiddleware("user"))
 	// {
-	// 	api.GET("/profile", userHandler.UserProfile)
+	// 	api.GET("/home", userHandler.UserProfile)
 	// 	api.GET("/logout", userHandler.UserLogout)
 
-	// }
-
-	//sets up a route group for the "/user" endpoint but i think no need to group the user
-	// signup := api.Group("/user")
-	// {
-	// 	signup.POST("/signup", userHandler.UserSignUp)
-	// 	signup.POST("/signup/otp/verify", userHandler.SignupOtpVerify)
-	// }
-
-	// login := api.Group("/user")
-	// {
-	// 	login.POST("/login/email", userHandler.UserLoginByEmail)
 	// }
 }

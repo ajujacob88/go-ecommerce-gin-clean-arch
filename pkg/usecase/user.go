@@ -85,6 +85,11 @@ func (c *userUseCase) LoginWithEmail(ctx context.Context, user domain.Users) (do
 	return dbUser, nil
 }
 
+func (c *userUseCase) FindByEmail(ctx context.Context, Email string) (domain.Users, error) {
+	users, err := c.userRepo.FindByEmail(ctx, Email)
+	return users, err
+}
+
 /*
 
 func NewUserUseCase(repo interfaces.UserRepository) services.UserUseCase {
