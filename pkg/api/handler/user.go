@@ -149,6 +149,19 @@ func (cr *UserHandler) Homehandler(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
+// USERLOGOUT
+func (cr *UserHandler) LogoutHandler(c *gin.Context) {
+	//c.SetCookie("user-token", "", -1, "/", "localhost", false, true)
+
+	c.Writer.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate") //indicates to the client that it should not cache any response data and should always revalidate it with the server
+	c.SetSameSite(http.SameSiteLaxMode)                                           //sets the SameSite cookie attribute to "Lax" for the response. This attribute restricts the scope of cookies and helps prevent cross-site request forgery attacks
+	c.SetCookie("UserAuth", "", -1, "", "", false, true)                          //Immediately by setting the maxAge to -1, and marks the cookie as secure and HTTP-only
+
+	c.JSON(http.StatusOK, gin.H{
+		"logout": "Success",
+	})
+}
+
 /*
 
 type Response struct {
