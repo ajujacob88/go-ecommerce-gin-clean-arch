@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -19,7 +20,7 @@ type Claims struct {
 func AuthorizationMiddleware(role string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie(role + "-auth") //Inside the middleware, the function first tries to retrieve the JWT token from the cookie named role + "-token".
-		//fmt.Println("token string is", tokenString)
+		fmt.Println("token string is", tokenString)
 		if err != nil || tokenString == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": "Needs to login",
@@ -27,6 +28,7 @@ func AuthorizationMiddleware(role string) gin.HandlerFunc {
 			return
 		}
 		claims, err1 := ValidateToken(tokenString)
+		fmt.Println("claims is", claims, "err is", err1)
 		if err1 != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"error": err1,
@@ -34,6 +36,7 @@ func AuthorizationMiddleware(role string) gin.HandlerFunc {
 			return
 		}
 		c.Set(role+"-email", claims.Email)
+
 		c.Next()
 	}
 }
@@ -45,6 +48,8 @@ func ValidateToken(tokenString string) (Claims, error) {
 			return []byte(config.GetJWTCofig()), nil
 		},
 	)
+	fmt.Println("after parsing, err is ", err, "token is", token)
+
 	if err != nil || !token.Valid {
 		return claims, errors.New("not valid token")
 	}
@@ -54,6 +59,30 @@ func ValidateToken(tokenString string) (Claims, error) {
 	}
 	return claims, nil
 }
+
+/*
+func ValidateToken(tokenString string) (jwt.StandardClaims, error) {
+	claims := CustomClaims{}
+	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte(config.GetJWTCofig()), nil
+		},
+	)
+	fmt.Println("after parsing, err is ", err, "token is", token)
+	if err != nil || !token.Valid {
+		return jwt.StandardClaims{}, errors.New("not valid token")
+	}
+
+	//checking the expiry of the token
+	if time.Now().Unix() > int64(claims.ExpiresAt) {
+		return claims, errors.New("token expired re-login")
+	}
+	return claims, nil
+}
+*/
 
 /*
 func LoginHandler(c *gin.Context) {
