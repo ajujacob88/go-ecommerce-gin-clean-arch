@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
@@ -37,9 +39,9 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 	}
 
-	//finding out the admin id of the admin who is trying to create the new user., if the admin in super admin, then only he can able to create a new admin.
+	//finding out the admin id of the admin who is trying to create the new user., if the admin is super admin, then only he can able to create a new admin.
 	adminID, err := handlerutil.GetAdminIdFromContext(c)
-
+	fmt.Println("Admin ID is(for superuser check)", adminID)
 }
 
 func (cr *AdminHandler) AdminLogin(c *gin.Context) {
