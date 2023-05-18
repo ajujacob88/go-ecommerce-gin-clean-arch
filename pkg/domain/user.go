@@ -13,7 +13,7 @@ type Users struct {
 	Phone        string `json:"phone_no" gorm:"unique" binding:"required,min=10,max=10"`
 	Password     string `json:"password" gorm:"not null" binding:"required"`
 	BlockStatus  bool   `json:"block_status" gorm:"not null;default:false"`
-	VerifyStatus bool   `json:"verify_status" gorm:"not null"`
+	VerifyStatus bool   `json:"verify_status" gorm:"not null;default:false"`
 	// CreatedAt   time.Time `json:"created_at" gorm:"not null"`
 	// UpdatedAt   time.Time `json:"updated_at"`
 }

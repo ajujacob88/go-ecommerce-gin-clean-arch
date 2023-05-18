@@ -8,7 +8,7 @@
     },
     "host": "localhost:3000",
     "paths": {
-        "/signup": {
+        "/user/signup": {
             "post": {
                 "description": "Create a new user with the specified details.",
                 "consumes": [
@@ -34,17 +34,20 @@
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Users"
+                            "$ref": "#/definitions/res.Response"
                         }
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
                     },
                     "422": {
-                        "description": "Unprocessable Entity"
+                        "description": "invalid input"
                     }
                 }
             }
@@ -53,6 +56,19 @@
     "definitions": {
         "domain.Users": {
             "type": "object"
+        },
+        "res.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "errors": {},
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
         }
     }
 }

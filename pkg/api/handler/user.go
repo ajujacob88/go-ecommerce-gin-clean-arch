@@ -53,10 +53,10 @@ var user domain.Users
 // @Accept json
 // @Produce json
 // @Param user_details body domain.Users true "User details"
-// @Success 201 {object} domain.Users
-// @Failure 400
-// @Failure 422
-// @Router /signup [post]
+// @Success 200 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Failure 422 "invalid input"
+// @Router /user/signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	//var user domain.Users
 

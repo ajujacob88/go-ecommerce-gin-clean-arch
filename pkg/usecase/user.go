@@ -25,6 +25,7 @@ func NewUserUseCase(repo interfaces.UserRepository) services.UserUseCase {
 func (c *userUseCase) Signup(ctx context.Context, user domain.Users) error {
 	checkUser, err := c.userRepo.FindUser(ctx, user)
 	if err != nil {
+		//fmt.Println("err in find user")
 		return err
 	}
 

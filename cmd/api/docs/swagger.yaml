@@ -1,6 +1,15 @@
 definitions:
   domain.Users:
     type: object
+  res.Response:
+    properties:
+      data: {}
+      errors: {}
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
 host: localhost:3000
 info:
   contact: {}
@@ -8,7 +17,7 @@ info:
   title: Ecommerce REST API
   version: "1.0"
 paths:
-  /signup:
+  /user/signup:
     post:
       consumes:
       - application/json
@@ -24,14 +33,16 @@ paths:
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: OK
           schema:
-            $ref: '#/definitions/domain.Users'
+            $ref: '#/definitions/res.Response'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
         "422":
-          description: Unprocessable Entity
+          description: invalid input
       summary: api for Signup a new user
       tags:
       - Users Signup

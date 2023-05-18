@@ -16,7 +16,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/signup": {
+        "/user/signup": {
             "post": {
                 "description": "Create a new user with the specified details.",
                 "consumes": [
@@ -42,17 +42,20 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "201": {
-                        "description": "Created",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Users"
+                            "$ref": "#/definitions/res.Response"
                         }
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
                     },
                     "422": {
-                        "description": "Unprocessable Entity"
+                        "description": "invalid input"
                     }
                 }
             }
@@ -61,6 +64,19 @@ const docTemplate = `{
     "definitions": {
         "domain.Users": {
             "type": "object"
+        },
+        "res.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "errors": {},
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
         }
     }
 }`
