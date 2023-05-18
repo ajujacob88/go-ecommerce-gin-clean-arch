@@ -25,6 +25,38 @@ func NewUserHandler(usecase services.UserUseCase) *UserHandler {
 
 var user domain.Users
 
+// @title Ecommerce REST API
+// @version 1.0
+// @description Ecommerce REST API built using Go, PSQL, REST API following Clean Architecture.
+
+// @contact
+// name: Aju Jacob
+// url: https://github.com/ajujacob88
+// email: ajujacob88@gmail.com
+
+// @license
+// name: MIT
+// url: https://opensource.org/licenses/MIT
+
+// @host localhost:3000
+
+// @Basepath /
+// @Accept json
+// @Produce json
+// @Router / [get]
+
+// UserSignup
+// @Summary api for Signup a new user
+// @ID Signup-user
+// @Description Create a new user with the specified details.
+// @Tags Users Signup
+// @Accept json
+// @Produce json
+// @Param user_details body domain.Users true "User details"
+// @Success 201 {object} domain.Users
+// @Failure 400
+// @Failure 422
+// @Router /signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	//var user domain.Users
 

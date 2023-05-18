@@ -1,0 +1,38 @@
+definitions:
+  domain.Users:
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: Ecommerce REST API built using Go, PSQL, REST API following Clean Architecture.
+  title: Ecommerce REST API
+  version: "1.0"
+paths:
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the specified details.
+      operationId: Signup-user
+      parameters:
+      - description: User details
+        in: body
+        name: user_details
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Users'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Users'
+        "400":
+          description: Bad Request
+        "422":
+          description: Unprocessable Entity
+      summary: api for Signup a new user
+      tags:
+      - Users Signup
+swagger: "2.0"

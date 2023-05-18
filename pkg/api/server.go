@@ -4,6 +4,8 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handler"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/routes"
 	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type ServerHTTP struct {
@@ -15,6 +17,9 @@ func NewServerHTTP(userHandler *handler.UserHandler) *ServerHTTP {
 
 	// Use logger from Gin
 	engine.Use(gin.Logger())
+
+	//add swagger - Swagger docs
+	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	//setup routes
 	routes.UserRoutes(engine.Group("/"), userHandler)
