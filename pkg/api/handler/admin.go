@@ -22,7 +22,7 @@ func NewAdminHandler(usecase services.AdminUseCase) *AdminHandler {
 
 }
 
-//Create Admin - SuperAdmin can create a new admin from admin panel
+// Create Admin - SuperAdmin can create a new admin from admin panel
 // @Summary Create a new admin from admin panel
 // @ID create-admin
 // @Description Super admin can create a new admin from admin panel
@@ -30,7 +30,10 @@ func NewAdminHandler(usecase services.AdminUseCase) *AdminHandler {
 // @Accept json
 // @Produce json
 // @Param admin_details body model.NewAdminInfo true "New Admin Details"
-
+// @Success 201 {object} res.SuccessResponse
+// @Failure 400 {object} res.ErrorResponse
+// @Failure 422 {object} res.ErrorResponse
+// @Router /admin/admins [post]
 func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	var newAdminInfo model.NewAdminInfo
 	if err := c.Bind(&newAdminInfo); err != nil {

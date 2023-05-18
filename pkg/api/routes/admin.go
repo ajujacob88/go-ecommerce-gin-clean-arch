@@ -9,12 +9,17 @@ func AdminRoutes(
 	api *gin.RouterGroup,
 	adminHandler *handler.AdminHandler,
 ) {
-	signUp := api.Group("/admin")
+	adminManagement := api.Group("/admins")
 	{
-		signUp.POST("/signup", adminHandler.CreateAdmin)
-	}
-	login := api.Group("/admin")
-	{
-		login.POST("/login", adminHandler.AdminLogin)
+		adminManagement.POST("/", adminHandler.CreateAdmin)
 	}
 }
+
+// signUp := api.Group("/admin")
+// 	{
+// 		signUp.POST("/signup", adminHandler.CreateAdmin)
+// 	}
+// 	login := api.Group("/admin")
+// 	{
+// 		login.POST("/login", adminHandler.AdminLogin)
+// 	}
