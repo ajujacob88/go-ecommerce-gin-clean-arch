@@ -1,12 +1,15 @@
 package domain
 
-import "gorm.io/gorm"
+import "time"
 
 type Admin struct {
-	gorm.Model
-	FirstName string `json:"first_name" gorm:"not null"`
-	LastName  string `json:"last_name" gorm:"not null"`
-	Email     string `json:"email" gorm:"uniqueIndex;not null"`
-	Phone     string `json:"phone_no" gorm:"uniqueIndex;not null"`
-	Password  string `json:"password" gorm:"not null"`
+	ID           uint   `json:"id" gorm:"primaryKey,index"`
+	UserName     string `json:"user_name" gorm:"uniqueIndex"`
+	Email        string `json:"email" gorm:"uniqueIndex"`
+	Phone        string `json:"phone_no" gorm:"uniqueIndex"`
+	Password     string `json:"password" gorm:"not null"`
+	IsSuperAdmin bool   `json:"is_super_admin"`
+	IsBlocked    bool   `josn:"is_blocked"`
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }

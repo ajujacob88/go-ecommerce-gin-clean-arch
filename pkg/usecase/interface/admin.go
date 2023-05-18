@@ -1,6 +1,4 @@
 package interfaces
 
-/*
-type AdminUseCase interface{
-
-}*/
+type AdminUseCase interface {
+}
