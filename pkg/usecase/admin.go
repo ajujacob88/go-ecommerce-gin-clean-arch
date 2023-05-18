@@ -8,6 +8,7 @@ import (
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type adminUseCase struct {
@@ -28,4 +29,14 @@ func (c *adminUseCase) CreateAdmin(ctx context.Context, newAdmin model.NewAdminI
 	if !isSuperAdmin {
 		return domain.Admin{}, fmt.Errorf("Only superadmin can create the new admins")
 	}
+
+	//hashing the admin password
+	hash, err := bcrypt.GenerateFromPassword([]byte(newAdmin.Password), 10)
+	if err != nil {
+		return domain.Admin{}, err
+	}
+	newAdmin.Password = string(hash)
+	newAdminOutput, err := c.adminRepo.CreateAdmin(ctx, newAdmin)
+	return newAdminOutput, err
+
 }

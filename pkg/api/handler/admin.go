@@ -42,6 +42,21 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	//finding out the admin id of the admin who is trying to create the new user., if the admin is super admin, then only he can able to create a new admin.
 	adminID, err := handlerutil.GetAdminIdFromContext(c)
 	fmt.Println("Admin ID is(for superuser check)", adminID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to fetch the admin ID", err.Error(), nil))
+		return
+	}
+	//Now call the create admin method from admin usecase. The admin data will be saved to domain.admin after the succesful execution of the function
+	newAdminOutput, err := cr.adminUseCase.CreateAdmin(c.Request.Context(), newAdminInfo, adminID)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to create the admin", err.Error(), nil))
+		return
+	}
+
+	//if no error, then  201 status as new admin is created succesfully
+	c.JSON(http.StatusCreated, res.SuccessResponse(201, "admin created successfully", newAdminOutput))
+
 }
 
 func (cr *AdminHandler) AdminLogin(c *gin.Context) {
