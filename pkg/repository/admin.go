@@ -34,3 +34,13 @@ func (c *adminDatabase) CreateAdmin(ctx context.Context, newAdminInfo model.NewA
 	newAdmin.Password = "" //By setting it to an empty string before returning, the function ensures that the password is not accessible outside of the function scope.
 	return newAdmin, err
 }
+
+func (c *adminDatabase) FindAdmin(ctx context.Context, email string) (domain.Admin, error) {
+	var adminData domain.Admin
+	findAdminQuery := `	SELECT *
+						FROM admins
+						WHERE email = $1;`
+
+	err := c.DB.Raw(findAdminQuery, email).Scan(&adminData).Error
+	return adminData, err
+}
