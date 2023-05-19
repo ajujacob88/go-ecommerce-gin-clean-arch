@@ -62,8 +62,20 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 
 }
 
-/*
 func (cr *AdminHandler) AdminLogin(c *gin.Context) {
-
+	//receive the data from request body
+	var body model.AdminLoginInfo
+	if err := c.Bind(&body); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.Response{StatusCode: 422, Message: "unable to process the request", Errors: err.Error(), Data: nil})
+		return
+	}
+	//call the adminlogin method of the adminusecase to login as an admin
+	tokenString, adminDataInModel, err := cr.adminUseCase.AdminLogin(c.Request.Context(), body)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to login", err.Error(), nil))
+		return
+	}
+	c.SetSameSite(http.SameSiteLaxMode) //sets the SameSite attribute of the cookie to "Lax" mode. It is a security measure that helps protect against certain types of cross-site request forgery (CSRF) attacks.
+	c.SetCookie("AdminAuth", tokenString, 3600*24*30, "", "", false, true)
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Loggen in", adminDataInModel, nil))
 }
-*/
