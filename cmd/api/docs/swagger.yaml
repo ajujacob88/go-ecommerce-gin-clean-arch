@@ -1,6 +1,22 @@
 definitions:
   domain.Users:
     type: object
+  model.NewAdminInfo:
+    properties:
+      email:
+        type: string
+      enail:
+        type: string
+      password:
+        type: string
+      user_name:
+        type: string
+    required:
+    - email
+    - enail
+    - password
+    - user_name
+    type: object
   res.Response:
     properties:
       data: {}
@@ -17,6 +33,37 @@ info:
   title: Ecommerce REST API
   version: "1.0"
 paths:
+  /admin/admins:
+    post:
+      consumes:
+      - application/json
+      description: Super admin can create a new admin from admin panel
+      operationId: create-admin
+      parameters:
+      - description: New Admin Details
+        in: body
+        name: admin_details
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewAdminInfo'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Create a new admin from admin panel
+      tags:
+      - Admin
   /user/signup:
     post:
       consumes:

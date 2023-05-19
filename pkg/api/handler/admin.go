@@ -30,9 +30,9 @@ func NewAdminHandler(usecase services.AdminUseCase) *AdminHandler {
 // @Accept json
 // @Produce json
 // @Param admin_details body model.NewAdminInfo true "New Admin Details"
-// @Success 201 {object} res.SuccessResponse
-// @Failure 400 {object} res.ErrorResponse
-// @Failure 422 {object} res.ErrorResponse
+// @Success 201 {object} res.Response{}
+// @Failure 400 {object} res.Response
+// @Failure 422 {object} res.Response
 // @Router /admin/admins [post]
 func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	var newAdminInfo model.NewAdminInfo
@@ -62,6 +62,8 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 
 }
 
+/*
 func (cr *AdminHandler) AdminLogin(c *gin.Context) {
 
 }
+*/

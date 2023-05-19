@@ -16,6 +16,53 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/admin/admins": {
+            "post": {
+                "description": "Super admin can create a new admin from admin panel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Create a new admin from admin panel",
+                "operationId": "create-admin",
+                "parameters": [
+                    {
+                        "description": "New Admin Details",
+                        "name": "admin_details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.NewAdminInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/signup": {
             "post": {
                 "description": "Create a new user with the specified details.",
@@ -64,6 +111,29 @@ const docTemplate = `{
     "definitions": {
         "domain.Users": {
             "type": "object"
+        },
+        "model.NewAdminInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "enail",
+                "password",
+                "user_name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "enail": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
         },
         "res.Response": {
             "type": "object",

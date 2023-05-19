@@ -5,7 +5,7 @@ package di
 
 import (
 	http "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handler"
+	handler "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handler"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/db"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository"
@@ -16,20 +16,20 @@ import (
 func InitializeAPI(cfg config.Config) (*http.ServerHTTP, error) {
 	wire.Build(
 		//database connection
-		db.ConnectDatabase, 
+		db.ConnectDatabase,
 
 		//handlers
-		handler.NewUserHandler, 
-		handler.NewAdminHandler
-		
+		handler.NewUserHandler,
+		handler.NewAdminHandler,
+
 		//database queries
-		repository.NewUserRepository, 
-		repository.NewAdminRepository
+		repository.NewUserRepository,
+		repository.NewAdminRepository,
 
 		//usecase
-		usecase.NewUserUseCase, 
-		usecase.NewAdminUseCase
-		
+		usecase.NewUserUseCase,
+		usecase.NewAdminUseCase,
+
 		//server connection
 		http.NewServerHTTP)
 
