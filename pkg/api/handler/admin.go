@@ -30,7 +30,7 @@ func NewAdminHandler(usecase services.AdminUseCase) *AdminHandler {
 // @Accept json
 // @Produce json
 // @Param admin_details body model.NewAdminInfo true "New Admin Details"
-// @Success 201 {object} res.Response{}
+// @Success 201 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Router /admin/admins [post]
@@ -69,9 +69,9 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Param admin_credentials body AdminLoginInfo true "Admin Login Credentials"
-// @Success 200 {object} res.Response{} "successfully logged in"
-// @Failure 400 {object} res.Response{} "Failed to login"
+// @Param admin_credentials body model.AdminLoginInfo true "Admin Login Credentials"
+// @Success 200 {object} res.Response
+// @Failure 422 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Router /admin/login [post]
 func (cr *AdminHandler) AdminLogin(c *gin.Context) {
@@ -89,5 +89,5 @@ func (cr *AdminHandler) AdminLogin(c *gin.Context) {
 	}
 	c.SetSameSite(http.SameSiteLaxMode) //sets the SameSite attribute of the cookie to "Lax" mode. It is a security measure that helps protect against certain types of cross-site request forgery (CSRF) attacks.
 	c.SetCookie("AdminAuth", tokenString, 3600*24*30, "", "", false, true)
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Loggen in", adminDataInModel, nil))
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Logged in", adminDataInModel))
 }

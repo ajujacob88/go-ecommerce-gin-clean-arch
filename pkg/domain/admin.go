@@ -5,7 +5,7 @@ import "time"
 type Admin struct {
 	ID           uint   `json:"id" gorm:"primaryKey,index"`
 	UserName     string `json:"user_name" gorm:"uniqueIndex"`
-	Email        string `json:"email" gorm:"uniqueIndex"`
+	Email        string `json:"email" gorm:"uniqueIndex" validate:"required,email"`
 	Phone        string `json:"phone_no" gorm:"uniqueIndex"`
 	Password     string `json:"password" gorm:"not null"`
 	IsSuperAdmin bool   `json:"is_super_admin"`

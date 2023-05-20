@@ -1,20 +1,30 @@
 definitions:
   domain.Users:
     type: object
+  model.AdminLoginInfo:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
   model.NewAdminInfo:
     properties:
       email:
         type: string
-      enail:
-        type: string
       password:
+        type: string
+      phone:
         type: string
       user_name:
         type: string
     required:
     - email
-    - enail
     - password
+    - phone
     - user_name
     type: object
   res.Response:
@@ -62,6 +72,37 @@ paths:
           schema:
             $ref: '#/definitions/res.Response'
       summary: Create a new admin from admin panel
+      tags:
+      - Admin
+  /admin/login:
+    post:
+      consumes:
+      - application/json
+      description: Admin Login
+      operationId: admin-login
+      parameters:
+      - description: Admin Login Credentials
+        in: body
+        name: admin_credentials
+        required: true
+        schema:
+          $ref: '#/definitions/model.AdminLoginInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin Login
       tags:
       - Admin
   /user/signup:

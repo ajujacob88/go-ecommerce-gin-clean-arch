@@ -55,6 +55,53 @@
                 }
             }
         },
+        "/admin/login": {
+            "post": {
+                "description": "Admin Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Admin Login",
+                "operationId": "admin-login",
+                "parameters": [
+                    {
+                        "description": "Admin Login Credentials",
+                        "name": "admin_credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.AdminLoginInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/signup": {
             "post": {
                 "description": "Create a new user with the specified details.",
@@ -104,22 +151,37 @@
         "domain.Users": {
             "type": "object"
         },
+        "model.AdminLoginInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
         "model.NewAdminInfo": {
             "type": "object",
             "required": [
                 "email",
-                "enail",
                 "password",
+                "phone",
                 "user_name"
             ],
             "properties": {
                 "email": {
                     "type": "string"
                 },
-                "enail": {
+                "password": {
                     "type": "string"
                 },
-                "password": {
+                "phone": {
                     "type": "string"
                 },
                 "user_name": {
