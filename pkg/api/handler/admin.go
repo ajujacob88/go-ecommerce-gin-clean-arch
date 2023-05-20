@@ -40,6 +40,7 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 		//The 422 status code is often used in API scenarios where clients submit data that fails validation, such as missing required fields, invalid data formats, or conflicting information.
 		response := res.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
+		return
 	}
 
 	//finding out the admin id of the admin who is trying to create the new user., if the admin is super admin, then only he can able to create a new admin.
