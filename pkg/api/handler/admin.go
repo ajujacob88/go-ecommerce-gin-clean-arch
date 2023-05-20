@@ -62,6 +62,18 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 
 }
 
+// AdminLogin
+// @Summary Admin Login
+// @ID admin-login
+// @Description Admin Login
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param admin_credentials body AdminLoginInfo true "Admin Login Credentials"
+// @Success 200 {object} res.Response{} "successfully logged in"
+// @Failure 400 {object} res.Response{} "Failed to login"
+// @Failure 400 {object} res.Response
+// @Router /admin/login [post]
 func (cr *AdminHandler) AdminLogin(c *gin.Context) {
 	//receive the data from request body
 	var body model.AdminLoginInfo

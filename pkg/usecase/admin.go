@@ -74,7 +74,7 @@ func (c *adminUseCase) AdminLogin(ctx context.Context, input model.AdminLoginInf
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	tokenString, err := token.SignedString([]byte(config.GetJWTCofig()))
+	tokenString, err := token.SignedString([]byte(config.GetJWTConfig()))
 
 	//send back the created token
 

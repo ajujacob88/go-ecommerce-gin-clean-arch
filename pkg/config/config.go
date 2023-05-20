@@ -61,6 +61,6 @@ func GetConfig() Config {
 }
 
 // to get the secret code for jwt
-func GetJWTCofig() string {
+func GetJWTConfig() string {
 	return config.JWT
 }

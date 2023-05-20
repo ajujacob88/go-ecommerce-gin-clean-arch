@@ -45,7 +45,7 @@ func ValidateToken(tokenString string) (Claims, error) {
 	claims := Claims{}
 	token, err := jwt.ParseWithClaims(tokenString, &claims,
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(config.GetJWTCofig()), nil
+			return []byte(config.GetJWTConfig()), nil
 		},
 	)
 	fmt.Println("after parsing, err is ", err, "token is", token)
@@ -60,64 +60,36 @@ func ValidateToken(tokenString string) (Claims, error) {
 	return claims, nil
 }
 
-/*
-func ValidateToken(tokenString string) (jwt.StandardClaims, error) {
-	claims := CustomClaims{}
-	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{},
-		func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-			}
-			return []byte(config.GetJWTCofig()), nil
-		},
-	)
-	fmt.Println("after parsing, err is ", err, "token is", token)
-	if err != nil || !token.Valid {
-		return jwt.StandardClaims{}, errors.New("not valid token")
-	}
-
-	//checking the expiry of the token
-	if time.Now().Unix() > int64(claims.ExpiresAt) {
-		return claims, errors.New("token expired re-login")
-	}
-	return claims, nil
-}
-*/
-
-/*
-func LoginHandler(c *gin.Context) {
-	// implement login logic here
-	// user := c.PostForm("user")
-	// pass := c.PostForm("pass")
-
-	// // Throws Unauthorized error
-	// if user != "john" || pass != "lark" {
-	// 	return c.AbortWithStatus(http.StatusUnauthorized)
-	// }
-
-	// Create the Claims
-	// claims := jwt.MapClaims{
-	// 	"name":  "John Lark",
-	// 	"admin": true,
-	// 	"exp":   time.Now().Add(time.Hour * 72).Unix(),
-	// }
-
-	// Create token
-	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+// validate token for admin,, please merge this with the previous ValidateToken(for user) lateron
+func ValidateToken2(tokenString string) (int, error) {
+	//parses, validates, verifies the signature and returns the parsed token
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		//retrieve the secret key which is stored in the env signing the string
+		return []byte(config.GetJWTConfig()), nil
 	})
-
-	ss, err := token.SignedString([]byte("secret"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
-		})
+		return 0, err
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"token": ss,
-	})
-}
+	//extract the id claim from the token
+	var parsedID interface{}
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		parsedID = claims["id"]
+		if float64(time.Now().Unix()) > claims["exp"].(float64) {
+			return 0, fmt.Errorf("token expired, re-login")
+		}
+	}
+	//type assertion - It attempts to assert that the value stored in the parsedID variable is of type float64.
+	value, ok := parsedID.(float64)
+	if !ok {
+		return 0, fmt.Errorf("expected a float value, but got %T, parsing id failed", parsedID)
 
-*/
+	}
+
+	id := int(value)
+	return id, nil
+
+}

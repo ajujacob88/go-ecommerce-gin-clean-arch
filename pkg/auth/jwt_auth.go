@@ -20,7 +20,7 @@ func GenerateJWT(mail string) (map[string]string, error) {
 
 	// Sign and get the complete encoded token as a string using the secret
 	//This signs the token using the specified secret key and returns a string representation of the complete, signed token.
-	tokenString, err := token.SignedString([]byte(config.GetJWTCofig()))
+	tokenString, err := token.SignedString([]byte(config.GetJWTConfig()))
 	if err != nil {
 		return nil, err
 	}

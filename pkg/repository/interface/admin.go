@@ -10,4 +10,5 @@ import (
 type AdminRepository interface {
 	IsSuperAdmin(ctx context.Context, adminID int) (bool, error)
 	CreateAdmin(ctx context.Context, newAdminInfo model.NewAdminInfo) (domain.Admin, error)
+	FindAdmin(ctx context.Context, email string) (domain.Admin, error)
 }
