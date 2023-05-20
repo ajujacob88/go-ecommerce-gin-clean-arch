@@ -115,13 +115,45 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 
 }
 
-//ListAllUsers
-
-func (cr *UserHandler) ListAllUsers(c *gin.Context) {
+// ListAllUsers
+// @Summary Admin can list out all the registered users
+// @ID list-all-users
+// @Description The admin can list out all the registered users.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number for pagination"
+// @Param limit query int false "Number of items to retrieve per page"
+// @Param query query string false "Search query string"
+// @Param filter query string false "filter criteria for showing the users"
+// @Param sort_by query string false "sorting criteria for showing the users"
+// @Param sort_desc query bool false "sorting in descending order"
+// @Success 200 {object} res.Response
+// @Success 204 {object} res.Response
+// @Success 500 {object} res.Response
+// @Router /admin/users/{id} [get]
+func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
 	var viewUserInfo model.QueryParams
 
 	viewUserInfo.Page, _ = strconv.Atoi(c.Query("page"))
 	viewUserInfo.Limit, _ = strconv.Atoi(c.Query("limit"))
-	viewUserInfo.Query, _ = c.Query("query")
+	viewUserInfo.Query = c.Query("query")
+	viewUserInfo.Filter = c.Query("filter")
+	viewUserInfo.SortBy = c.Query("sort_by")
+	viewUserInfo.SortDesc, _ = strconv.ParseBool(c.Query("sort_desc"))
+
+	users, isNoUsers, err := cr.adminUseCase.ListAllUsers(c.Request.Context(), viewUserInfo)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to fetch users", err.Error(), nil))
+		return
+	}
+	//if isNoUsers == true, then return status no content bacause user table is empty
+	if isNoUsers {
+		c.JSON(http.StatusNoContent, res.ErrorResponse(204, "No user found", err.Error(), users))
+		return
+	}
+
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched all users", users))
 
 }
