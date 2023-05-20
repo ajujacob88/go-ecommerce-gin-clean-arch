@@ -130,7 +130,7 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 // @Param sort_desc query bool false "sorting in descending order"
 // @Success 200 {object} res.Response
 // @Success 204 {object} res.Response
-// @Success 500 {object} res.Response
+// @Failure 500 {object} res.Response
 // @Router /admin/users [get]
 func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
 	var viewUserInfo model.QueryParams
@@ -142,15 +142,16 @@ func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
 	viewUserInfo.SortBy = c.Query("sort_by")
 	viewUserInfo.SortDesc, _ = strconv.ParseBool(c.Query("sort_desc"))
 
-	users, isNoUsers, err := cr.adminUseCase.ListAllUsers(c.Request.Context(), viewUserInfo)
+	users, isAnyUsers, err := cr.adminUseCase.ListAllUsers(c.Request.Context(), viewUserInfo)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to fetch users", err.Error(), nil))
 		return
 	}
-	//if isNoUsers == true, then return status no content bacause user table is empty
-	if isNoUsers {
-		c.JSON(http.StatusNoContent, res.ErrorResponse(204, "No user found", err.Error(), users))
+	//if isAnyUsers == false, then return status no content bacause user table is empty
+
+	if !isAnyUsers {
+		c.JSON(http.StatusNoContent, res.SuccessResponse(204, "No user found", users))
 		return
 	}
 

@@ -61,9 +61,12 @@ func (c *adminDatabase) ListAllUsers(ctx context.Context, queryParams model.Quer
 	findQuery := "SELECT * FROM users"
 	params := []interface{}{}
 
+	fmt.Println("queryparams is", queryParams)
+
 	if queryParams.Query != "" && queryParams.Filter != "" {
 		findQuery = fmt.Sprintf("%s WHERE LOWER(%s) LIKE $%d", findQuery, queryParams.Filter, len(params)+1)
 		params = append(params, "%"+strings.ToLower(queryParams.Query)+"%")
+		fmt.Println("params is ", params)
 	}
 	if queryParams.SortBy != "" {
 		findQuery = fmt.Sprintf("%s ORDER BY %s %s", findQuery, queryParams.SortBy, orderByDirection(queryParams.SortDesc))
