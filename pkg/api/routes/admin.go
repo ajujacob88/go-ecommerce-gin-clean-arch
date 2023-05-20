@@ -17,6 +17,12 @@ func AdminRoutes(
 	{
 		api.GET("/logout", adminHandler.AdminLogout)
 
+		//user management
+		userManagement := api.Group("/users")
+		{
+			userManagement.GET("/", adminHandler.ListAllUsers)
+		}
+
 		adminManagement := api.Group("/admins")
 		{
 			adminManagement.POST("/", adminHandler.CreateAdmin)

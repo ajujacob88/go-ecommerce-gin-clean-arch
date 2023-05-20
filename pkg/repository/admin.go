@@ -57,7 +57,7 @@ func (c *adminDatabase) ListAllUsers(ctx context.Context, queryParams model.Quer
 }
 */
 
-func (c *userDatabase) ListAllUsers(ctx context.Context, queryParams model.QueryParams) ([]domain.Users, bool, error) {
+func (c *adminDatabase) ListAllUsers(ctx context.Context, queryParams model.QueryParams) ([]domain.Users, bool, error) {
 	findQuery := "SELECT * FROM users"
 	params := []interface{}{}
 

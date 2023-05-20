@@ -132,6 +132,55 @@ paths:
       summary: Admin_Logout
       tags:
       - Admin
+  /admin/users:
+    get:
+      consumes:
+      - application/json
+      description: The admin can list out all the registered users.
+      operationId: list-all-users
+      parameters:
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Number of items to retrieve per page
+        in: query
+        name: limit
+        type: integer
+      - description: Search query string
+        in: query
+        name: query
+        type: string
+      - description: filter criteria for showing the users
+        in: query
+        name: filter
+        type: string
+      - description: sorting criteria for showing the users
+        in: query
+        name: sort_by
+        type: string
+      - description: sorting in descending order
+        in: query
+        name: sort_desc
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin can list out all the registered users
+      tags:
+      - Admin
   /user/signup:
     post:
       consumes:

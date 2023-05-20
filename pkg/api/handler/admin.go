@@ -131,7 +131,7 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 // @Success 200 {object} res.Response
 // @Success 204 {object} res.Response
 // @Success 500 {object} res.Response
-// @Router /admin/users/{id} [get]
+// @Router /admin/users [get]
 func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
 	var viewUserInfo model.QueryParams
 

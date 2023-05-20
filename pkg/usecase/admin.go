@@ -84,7 +84,7 @@ func (c *adminUseCase) AdminLogin(ctx context.Context, input model.AdminLoginInf
 	return tokenString, adminDataInModel, err
 }
 
-func (c *adminUseCase) ListAllUsers(ctx context.Context, viewUserInfo model.QueryParams) ([]domain.Users, error) {
-	users, err := c.adminRepo.ListAllUsers(ctx, viewUserInfo)
-	return users, err
+func (c *adminUseCase) ListAllUsers(ctx context.Context, viewUserInfo model.QueryParams) ([]domain.Users, bool, error) {
+	users, isNoUsers, err := c.adminRepo.ListAllUsers(ctx, viewUserInfo)
+	return users, isNoUsers, err
 }
