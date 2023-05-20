@@ -83,3 +83,8 @@ func (c *adminUseCase) AdminLogin(ctx context.Context, input model.AdminLoginInf
 	copier.Copy(&adminDataInModel, &adminInfo) //Instead of using the above line for copying, we can use copier..  This method provides a more automated and flexible way of copying fields, especially when dealing with structs with a large number of fields or complex nested structures. The library handles field mapping based on struct tags, such as json, reducing the manual effort required.
 	return tokenString, adminDataInModel, err
 }
+
+func (c *adminUseCase) ListAllUsers(ctx context.Context, viewUserInfo model.QueryParams) ([]domain.Users, error) {
+	users, err := c.adminRepo.ListAllUsers(ctx, viewUserInfo)
+	return users, err
+}

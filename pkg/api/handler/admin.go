@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
@@ -111,5 +112,16 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 	c.SetCookie("AdminAuth", "", -1, "", "", false, true)
 	//c.Status(http.StatusOK)
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Logged-Out"))
+
+}
+
+//ListAllUsers
+
+func (cr *UserHandler) ListAllUsers(c *gin.Context) {
+	var viewUserInfo model.QueryParams
+
+	viewUserInfo.Page, _ = strconv.Atoi(c.Query("page"))
+	viewUserInfo.Limit, _ = strconv.Atoi(c.Query("limit"))
+	viewUserInfo.Query, _ = c.Query("query")
 
 }
