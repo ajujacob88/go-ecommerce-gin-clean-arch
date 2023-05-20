@@ -110,6 +110,42 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/logout": {
+            "get": {
+                "description": "logout an logged-in admin from the site",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Admin_Logout",
+                "operationId": "admin-logout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/signup": {
             "post": {
                 "description": "Create a new user with the specified details.",
@@ -184,13 +220,16 @@ const docTemplate = `{
             ],
             "properties": {
                 "email": {
+                    "description": "Email    string ` + "`" + `json:\"email\" validate:\"required,email\"` + "`" + `",
                     "type": "string"
                 },
                 "password": {
                     "type": "string"
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 10
                 },
                 "user_name": {
                     "type": "string"
