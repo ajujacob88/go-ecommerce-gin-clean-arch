@@ -123,3 +123,14 @@ func (c *adminDatabase) FindUserByID(ctx context.Context, userID int) (domain.Us
 	}
 	return user, err
 }
+
+func (c *adminDatabase) BlockUser(ctx context.Context, blockInfo model.BlockUser, adminID int) (domain.UserInfo, error) {
+	var userInfo domain.UserInfo
+	blockQuery := `UPDATE user_infos SET is_blocked = 'true', blocked_at = NOW(), blocked_by = $1, reason_for_blocking = $2 WHERE users_id = $3 RETURNING *;`
+	err := c.DB.Raw(blockQuery, adminID, blockInfo.Reason, blockInfo.UserID).Scan(&userInfo).Error
+
+	if userInfo.UsersID == 0 {
+		return domain.UserInfo{}, fmt.Errorf("User not found")
+	}
+	return userInfo, err
+}

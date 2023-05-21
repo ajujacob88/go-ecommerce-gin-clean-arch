@@ -93,3 +93,8 @@ func (c *adminUseCase) FindUserByID(ctx context.Context, userID int) (domain.Use
 	user, err := c.adminRepo.FindUserByID(ctx, userID)
 	return user, err
 }
+
+func (c *adminUseCase) BlockUser(ctx context.Context, blockInfo model.BlockUser, adminID int) (domain.UserInfo, error) {
+	blockedUser, err := c.adminRepo.BlockUser(ctx, blockInfo, adminID)
+	return blockedUser, err
+}

@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -18,20 +20,20 @@ type Users struct {
 	// UpdatedAt   time.Time `json:"updated_at"`
 }
 
-/*
-
 type UserInfo struct {
 	ID                uint `gorm:"primaryKey"`
-	VerifyStatus        bool `json:"verify_status"`
+	IsVerified        bool `json:"is_verified"`
 	VerifiedAt        time.Time
-	BlockStatus         bool `json:"block_status"`
+	IsBlocked         bool `json:"is_blocked"`
 	BlockedAt         time.Time
 	BlockedBy         uint   `json:"blocked_by"`
-	//Admin             Admin  `gorm:"foreignKey:BlockedBy" json:"-"`
+	Admin             Admin  `gorm:"foreignKey:BlockedBy" json:"-"`
 	ReasonForBlocking string `json:"reason_for_blocking"`
 	UsersID           uint   `json:"users_id" json:"-"`
 	Users             Users  `gorm:"foreignKey:UsersID" json:"-"`
 }
+
+/*
 
 type Address struct {
 	ID        uint   `json:"id"`

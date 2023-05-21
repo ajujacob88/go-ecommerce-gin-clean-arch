@@ -187,3 +187,37 @@ func (cr *AdminHandler) FindUserByID(c *gin.Context) {
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched the user details", user))
 
 }
+
+// BlockUser
+// @Summary Admin can block a registered user
+// @ID block-user
+// @Description Admin can block a user
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param user_id body model.BlockUser true "ID of the user to be blocked"
+// @Success 200 {object} res.Response
+// @Failure 401 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 500 {object} res.Response
+// @Router /admin/users/:id/block [put]
+func (cr *AdminHandler) BlockUser(c *gin.Context) {
+	var blockUser model.BlockUser
+	if err := c.Bind(&blockUser); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to read the request body", err.Error(), nil))
+		return
+	}
+
+	adminID, err := handlerutil.GetAdminIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch admin id from context", err.Error(), nil))
+		return
+	}
+	blockedUser, err := cr.adminUseCase.BlockUser(c.Request.Context(), blockUser, adminID)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to block the user", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully blocked the user", blockedUser))
+}

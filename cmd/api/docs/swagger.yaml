@@ -11,6 +11,13 @@ definitions:
     - email
     - password
     type: object
+  model.BlockUser:
+    properties:
+      reason:
+        type: string
+      user_id:
+        type: integer
+    type: object
   model.NewAdminInfo:
     properties:
       email:
@@ -179,6 +186,41 @@ paths:
           schema:
             $ref: '#/definitions/res.Response'
       summary: Admin can list out all the registered users
+      tags:
+      - Admin
+  /admin/users/:id/block:
+    put:
+      consumes:
+      - application/json
+      description: Admin can block a user
+      operationId: block-user
+      parameters:
+      - description: ID of the user to be blocked
+        in: body
+        name: user_id
+        required: true
+        schema:
+          $ref: '#/definitions/model.BlockUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin can block a registered user
       tags:
       - Admin
   /admin/users/{user_id}:
