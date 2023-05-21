@@ -158,3 +158,32 @@ func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched all users", users))
 
 }
+
+// Find User By ID
+// @Summary Admin Fetch a specific user details by user id
+// @ID find-user-by-id
+// @Description Admin Fetch a specific user details by user id
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param user_id path string true "provide the ID of the user to be fetched"
+// @Success 200 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 500 {object} res.Response
+// @Router /admin/users/{user_id} [get]
+func (cr *AdminHandler) FindUserByID(c *gin.Context) {
+	paramsID := c.Param("id")
+	userID, err := strconv.Atoi(paramsID)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the user id", err.Error(), nil))
+		return
+	}
+	user, err := cr.adminUseCase.FindUserByID(c.Request.Context(), userID)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to fetch the user", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched the user details", user))
+
+}

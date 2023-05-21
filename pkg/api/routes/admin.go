@@ -21,6 +21,7 @@ func AdminRoutes(
 		userManagement := api.Group("/users")
 		{
 			userManagement.GET("/", adminHandler.ListAllUsers)
+			userManagement.GET("/:id", adminHandler.FindUserByID)
 		}
 
 		adminManagement := api.Group("/admins")

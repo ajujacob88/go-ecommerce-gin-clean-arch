@@ -13,4 +13,5 @@ type AdminRepository interface {
 	FindAdmin(ctx context.Context, email string) (domain.Admin, error)
 
 	ListAllUsers(ctx context.Context, queryParams model.QueryParams) ([]domain.Users, bool, error)
+	FindUserByID(ctx context.Context, userID int) (domain.Users, error)
 }

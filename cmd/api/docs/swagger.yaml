@@ -181,6 +181,36 @@ paths:
       summary: Admin can list out all the registered users
       tags:
       - Admin
+  /admin/users/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: Admin Fetch a specific user details by user id
+      operationId: find-user-by-id
+      parameters:
+      - description: provide the ID of the user to be fetched
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin Fetch a specific user details by user id
+      tags:
+      - Admin
   /user/signup:
     post:
       consumes:

@@ -88,3 +88,8 @@ func (c *adminUseCase) ListAllUsers(ctx context.Context, viewUserInfo model.Quer
 	users, isNoUsers, err := c.adminRepo.ListAllUsers(ctx, viewUserInfo)
 	return users, isNoUsers, err
 }
+
+func (c *adminUseCase) FindUserByID(ctx context.Context, userID int) (domain.Users, error) {
+	user, err := c.adminRepo.FindUserByID(ctx, userID)
+	return user, err
+}

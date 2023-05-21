@@ -12,4 +12,5 @@ type AdminUseCase interface {
 	AdminLogin(ctx context.Context, input model.AdminLoginInfo) (string, model.AdminDataOutput, error)
 
 	ListAllUsers(ctx context.Context, viewUserInfo model.QueryParams) ([]domain.Users, bool, error)
+	FindUserByID(ctx context.Context, userID int) (domain.Users, error)
 }

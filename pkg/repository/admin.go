@@ -47,16 +47,6 @@ func (c *adminDatabase) FindAdmin(ctx context.Context, email string) (domain.Adm
 	return adminData, err
 }
 
-/*
-func (c *adminDatabase) ListAllUsers(ctx context.Context, queryParams model.QueryParams)([]domain.Users, error)  {
-	// findQuery := "SELECT * FROM users"
-	// if queryParams.Query != "" && queryParams.Filter != "" {
-	// 	findQuery = fmt.Sprintf("%s ")
-	// }
-
-}
-*/
-
 func (c *adminDatabase) ListAllUsers(ctx context.Context, queryParams model.QueryParams) ([]domain.Users, bool, error) {
 	findQuery := "SELECT * FROM users"
 	params := []interface{}{}
@@ -123,3 +113,13 @@ func (c *userDatabase) ListAllUsers(ctx context.Context, queryParams model.Query
 }
 
 */
+
+func (c *adminDatabase) FindUserByID(ctx context.Context, userID int) (domain.Users, error) {
+	var user domain.Users
+	findUser := `SELECT * FROM users WHERE id = $1;`
+	err := c.DB.Raw(findUser, userID).Scan(&user).Error
+	if user.ID == 0 {
+		return domain.Users{}, fmt.Errorf("no user is found with that id")
+	}
+	return user, err
+}
