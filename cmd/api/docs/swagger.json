@@ -55,6 +55,53 @@
                 }
             }
         },
+        "/admin/categories": {
+            "post": {
+                "description": "Admins can create new categories from the admin panel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product category"
+                ],
+                "summary": "Create new product category",
+                "operationId": "create-category",
+                "parameters": [
+                    {
+                        "description": "New category name",
+                        "name": "category_name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.NewCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/login": {
             "post": {
                 "description": "Admin Login",
@@ -621,6 +668,14 @@
                     "minLength": 10
                 },
                 "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.NewCategory": {
+            "type": "object",
+            "properties": {
+                "category_name": {
                     "type": "string"
                 }
             }

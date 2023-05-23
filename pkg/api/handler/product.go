@@ -45,6 +45,6 @@ func (cr *ProductHandler) CreateCategory(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(400, "failed to create new category", err.Error(), nil))
 		return
 	}
-	c.JSON(http.StatusUnprocessableEntity, res.SuccessResponse(201, "Category Created Succesfully", err.Error(), createdCategory))
+	c.JSON(http.StatusUnprocessableEntity, res.SuccessResponse(201, "Category Created Succesfully", createdCategory))
 
 }

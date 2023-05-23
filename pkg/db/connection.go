@@ -23,6 +23,9 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 
 		//admin tables
 		&domain.Admin{}, //By default, GORM automatically pluralizes the table name based on the struct name. That's why the Admin struct becomes the "admins" table.
+
+		//product tables
+		&domain.ProductCategory{},
 	)
 
 	if err != nil {

@@ -28,6 +28,7 @@ func AdminRoutes(
 			userManagement.PUT("/unblock/:id", adminHandler.UnblockUser)
 		}
 
+		//admin management
 		adminManagement := api.Group("/admins")
 		{
 			adminManagement.POST("/", adminHandler.CreateAdmin)

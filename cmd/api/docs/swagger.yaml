@@ -37,6 +37,11 @@ definitions:
     - phone
     - user_name
     type: object
+  model.NewCategory:
+    properties:
+      category_name:
+        type: string
+    type: object
   req.UserLoginEmail:
     properties:
       email:
@@ -94,6 +99,37 @@ paths:
       summary: Create a new admin from admin panel
       tags:
       - Admin
+  /admin/categories:
+    post:
+      consumes:
+      - application/json
+      description: Admins can create new categories from the admin panel
+      operationId: create-category
+      parameters:
+      - description: New category name
+        in: body
+        name: category_name
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewCategory'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Create new product category
+      tags:
+      - product category
   /admin/login:
     post:
       consumes:
