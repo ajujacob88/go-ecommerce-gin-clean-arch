@@ -37,6 +37,16 @@ definitions:
     - phone
     - user_name
     type: object
+  req.UserLoginEmail:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
   res.Response:
     properties:
       data: {}
@@ -283,6 +293,85 @@ paths:
       summary: Admin can unlock a blocked user
       tags:
       - Admin
+  /user/home:
+    get:
+      consumes:
+      - application/json
+      description: user home
+      operationId: user-home
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: User Home
+      tags:
+      - user
+  /user/login/email:
+    post:
+      consumes:
+      - application/json
+      description: user Login
+      operationId: user-login
+      parameters:
+      - description: user Login Credentials
+        in: body
+        name: user_credentials
+        required: true
+        schema:
+          $ref: '#/definitions/req.UserLoginEmail'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: User Login
+      tags:
+      - user
+  /user/logout:
+    get:
+      consumes:
+      - application/json
+      description: logout an logged-in user from the site
+      operationId: user-logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: User_Logout
+      tags:
+      - user
   /user/signup:
     post:
       consumes:
@@ -308,8 +397,41 @@ paths:
           schema:
             $ref: '#/definitions/res.Response'
         "422":
-          description: invalid input
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
       summary: api for Signup a new user
       tags:
       - Users Signup
+  /user/signup/otp/verify:
+    post:
+      consumes:
+      - application/json
+      description: verify the otp of a user.
+      operationId: Signup-otpverify-user
+      parameters:
+      - description: User details
+        in: body
+        name: otp
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Users'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: signup otp verification
+      tags:
+      - Users otp verify
 swagger: "2.0"

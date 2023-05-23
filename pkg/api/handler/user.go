@@ -55,7 +55,7 @@ var user domain.Users
 // @Param user_details body domain.Users true "User details"
 // @Success 200 {object} res.Response
 // @Failure 400 {object} res.Response
-// @Failure 422 "invalid input"
+// @Failure 422 {object} res.Response
 // @Router /user/signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	//var user domain.Users
@@ -84,7 +84,7 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 		return
 
 	}
-	response := res.SuccessResponse(200, "Success: Enter the otp", user)
+	response := res.SuccessResponse(200, "Success: Enter the otp", nil)
 	c.JSON(200, response)
 
 	// response := res.SuccessResponse(200, "Account Created Successfully", user)
@@ -92,8 +92,20 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 }
 
 // SIGN UP OTP VERIFICATION
-
+// SignupOtpVerify
+// @Summary signup otp verification
+// @ID Signup-otpverify-user
+// @Description verify the otp of a user.
+// @Tags Users otp verify
+// @Accept json
+// @Produce json
+// @Param otp body domain.Users true "User details"
+// @Success 200 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Router /user/signup/otp/verify [post]
 func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
+	//var user domain.Users
 	var otp req.OTPVerify
 	if err := c.BindJSON(&otp); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
@@ -121,10 +133,22 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 		return
 	}
 
-	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", user)
+	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", nil)
 	c.JSON(200, response)
 }
 
+// UserLogin
+// @Summary User Login
+// @ID user-login
+// @Description user Login
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_credentials body req.UserLoginEmail true "user Login Credentials"
+// @Success 200 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Router /user/login/email [post]
 func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	//receive data from request body
 	var body req.UserLoginEmail
@@ -158,11 +182,22 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 
 	c.SetCookie("user-auth", tokenString["accessToken"], 60*60, "", "", false, true)
 
-	response := res.SuccessResponse(200, "successfully logged in", tokenString["accessToken"])
+	//response := res.SuccessResponse(200, "successfully logged in", tokenString["accessToken"])
+	response := res.SuccessResponse(200, "successfully logged in", nil)
 	c.JSON(http.StatusOK, response)
 }
 
-// HomeHandler
+// Userhome
+// @Summary User Home
+// @ID user-home
+// @Description user home
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Router /user/home [get]
 func (cr *UserHandler) Homehandler(c *gin.Context) {
 	email, ok := c.Get(("user-email"))
 	if !ok {
@@ -178,18 +213,26 @@ func (cr *UserHandler) Homehandler(c *gin.Context) {
 		return
 	}
 	//fmt.Println("user is", user)
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "user  home", user))
 }
 
-// USERLOGOUT
+// UserLogout
+// @Summary User_Logout
+// @ID user-logout
+// @Description logout an logged-in user from the site
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Failure 500 {object} res.Response
+// @Router /user/logout [get]
 func (cr *UserHandler) LogoutHandler(c *gin.Context) {
 	//c.SetCookie("user-token", "", -1, "/", "localhost", false, true)
 
 	c.Writer.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate") //indicates to the client that it should not cache any response data and should always revalidate it with the server
 	c.SetSameSite(http.SameSiteLaxMode)                                           //sets the SameSite cookie attribute to "Lax" for the response. This attribute restricts the scope of cookies and helps prevent cross-site request forgery attacks
 	c.SetCookie("UserAuth", "", -1, "", "", false, true)                          //Immediately by setting the maxAge to -1, and marks the cookie as secure and HTTP-only
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Logged-Out"))
 
-	c.JSON(http.StatusOK, gin.H{
-		"logout": "Success",
-	})
 }
