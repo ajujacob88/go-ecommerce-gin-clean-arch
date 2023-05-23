@@ -498,7 +498,7 @@ const docTemplate = `{
                 "operationId": "Signup-user",
                 "parameters": [
                     {
-                        "description": "User details",
+                        "description": "New user Details",
                         "name": "user_details",
                         "in": "body",
                         "required": true,

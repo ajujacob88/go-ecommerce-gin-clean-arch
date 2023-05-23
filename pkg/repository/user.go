@@ -62,21 +62,28 @@ func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, userEmail stri
 
 // Finds whether a email is already in the database or not and also checks whether a user is blocked or not
 func (c *userDatabase) FindByEmail(ctx context.Context, email string) (domain.Users, error) {
-	var user domain.Users
-	err := c.DB.Where("Email = ?", email).Find(&user).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return domain.Users{}, errors.New("invalid email")
-		}
-		return domain.Users{}, err
-	}
+	//var user domain.Users
+	// err := c.DB.Where("Email = ?", email).Find(&user).Error
+	// if err != nil {
+	// 	if errors.Is(err, gorm.ErrRecordNotFound) {
+	// 		return domain.Users{}, errors.New("invalid email")
+	// 	}
+	// 	return domain.Users{}, err
+	// }
+	var userData domain.Users
+	fmt.Println("email is", email, " and users.email is")
+	findUserQuery := `	SELECT users.id, users.first_name, users.last_name, users.email, users.phone, users.password, users.block_status, users.verify_status 
+						FROM users 
+						WHERE users.email = $1;`
 
-	if user.BlockStatus {
-		return user, errors.New("you are blocked")
+	err := c.DB.Raw(findUserQuery, email).Scan(&userData).Error
+	fmt.Println("error is", err)
+	if userData.BlockStatus {
+		return userData, errors.New("you are blocked")
 	}
-	//fmt.Println("user1 is", user)
+	fmt.Println("userdata is", userData)
 
-	return user, nil
+	return userData, err
 }
 
 /*  default present in repo

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/auth"
@@ -52,7 +53,7 @@ var user domain.Users
 // @Tags Users Signup
 // @Accept json
 // @Produce json
-// @Param user_details body domain.Users true "User details"
+// @Param user_details body domain.Users true "New user Details"
 // @Success 200 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
@@ -200,6 +201,7 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 // @Router /user/home [get]
 func (cr *UserHandler) Homehandler(c *gin.Context) {
 	email, ok := c.Get(("user-email"))
+	fmt.Println("email in homehandler is", email)
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"error": "Invalid user error1",
@@ -212,8 +214,9 @@ func (cr *UserHandler) Homehandler(c *gin.Context) {
 		})
 		return
 	}
-	//fmt.Println("user is", user)
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "user  home", user))
+	fmt.Println("user is", user)
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "user  home", nil))
+
 }
 
 // UserLogout

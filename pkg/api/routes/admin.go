@@ -9,6 +9,8 @@ import (
 func AdminRoutes(
 	api *gin.RouterGroup,
 	adminHandler *handler.AdminHandler,
+	productHandler *handler.ProductHandler,
+
 ) {
 
 	api.POST("/login", adminHandler.AdminLogin)
@@ -29,6 +31,12 @@ func AdminRoutes(
 		adminManagement := api.Group("/admins")
 		{
 			adminManagement.POST("/", adminHandler.CreateAdmin)
+		}
+
+		//category management routes
+		categoryRoutes := api.Group("/categories")
+		{
+			categoryRoutes.POST("/", productHandler.CreateCategory)
 		}
 
 	}

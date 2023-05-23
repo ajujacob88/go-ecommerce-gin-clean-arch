@@ -12,7 +12,7 @@ import (
 )
 
 type Claims struct {
-	Email string
+	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
 
@@ -35,8 +35,10 @@ func AuthorizationMiddleware(role string) gin.HandlerFunc {
 			})
 			return
 		}
+		fmt.Println("in middleware ", claims)
+		fmt.Println("in middleware email", claims.Email)
 		c.Set(role+"-email", claims.Email)
-
+		c.Set("user-email", claims.Email)
 		c.Next()
 	}
 }
@@ -53,6 +55,15 @@ func ValidateToken(tokenString string) (Claims, error) {
 	if err != nil || !token.Valid {
 		return claims, errors.New("not valid token")
 	}
+
+	// Extract the email claim from the token and assign it to the Email field in claims
+	if claimsMap, ok := token.Claims.(jwt.MapClaims); ok {
+		if email, ok := claimsMap["email"].(string); ok {
+			claims.Email = email
+		}
+	}
+	fmt.Println("in validate token, claims", claims.Email)
+
 	//checking the expiry of the token
 	if time.Now().Unix() > claims.ExpiresAt.Unix() {
 		return claims, errors.New("token expired re-login")

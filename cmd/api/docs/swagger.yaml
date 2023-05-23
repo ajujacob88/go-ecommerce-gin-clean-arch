@@ -379,7 +379,7 @@ paths:
       description: Create a new user with the specified details.
       operationId: Signup-user
       parameters:
-      - description: User details
+      - description: New user Details
         in: body
         name: user_details
         required: true
