@@ -40,6 +40,12 @@ func AdminRoutes(
 			categoryRoutes.POST("/", productHandler.CreateCategory)
 		}
 
+		//product management routes
+		productRoutes := api.Group("/products")
+		{
+			productRoutes.POST("/", productHandler.CreateProduct)
+		}
+
 	}
 
 }

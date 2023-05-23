@@ -193,6 +193,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/products/": {
+            "post": {
+                "description": "Admins can create new product listings",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Admin can create new product listings",
+                "operationId": "create-product",
+                "parameters": [
+                    {
+                        "description": "new product details",
+                        "name": "new_product_details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Product"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users": {
             "get": {
                 "description": "The admin can list out all the registered users.",
@@ -625,6 +672,28 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Product": {
+            "type": "object",
+            "required": [
+                "name",
+                "product_category_id"
+            ],
+            "properties": {
+                "description": {
+                    "description": "BrandID           uint            ` + "`" + `gorm:\"not null\" json:\"brand_id\" validate:\"required\"` + "`" + `",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "product_category_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "domain.Users": {
             "type": "object"
         },

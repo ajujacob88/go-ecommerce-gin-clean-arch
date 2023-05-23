@@ -8,4 +8,6 @@ import (
 
 type ProductUseCase interface {
 	CreateCategory(ctx context.Context, newCategory string) (domain.ProductCategory, error)
+
+	CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error)
 }

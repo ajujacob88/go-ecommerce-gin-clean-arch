@@ -1,4 +1,20 @@
 definitions:
+  domain.Product:
+    properties:
+      description:
+        description: BrandID           uint            `gorm:"not null" json:"brand_id"
+          validate:"required"`
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      product_category_id:
+        type: integer
+    required:
+    - name
+    - product_category_id
+    type: object
   domain.Users:
     type: object
   model.AdminLoginInfo:
@@ -185,6 +201,37 @@ paths:
       summary: Admin_Logout
       tags:
       - Admin
+  /admin/products/:
+    post:
+      consumes:
+      - application/json
+      description: Admins can create new product listings
+      operationId: create-product
+      parameters:
+      - description: new product details
+        in: body
+        name: new_product_details
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin can create new product listings
+      tags:
+      - Product
   /admin/users:
     get:
       consumes:

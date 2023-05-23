@@ -23,3 +23,10 @@ func (c *productUseCase) CreateCategory(ctx context.Context, newCategory string)
 	createdCategory, err := c.productRepo.CreateCategory(ctx, newCategory)
 	return createdCategory, err
 }
+
+//Product Management
+
+func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
+	createdProduct, err := c.productRepo.CreateProduct(ctx, newProduct)
+	return createdProduct, err
+}

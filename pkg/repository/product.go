@@ -25,3 +25,14 @@ func (c *productDatabase) CreateCategory(ctx context.Context, newCategory string
 	err := c.DB.Raw(createCategoryQuery, newCategory).Scan(&createdCategory).Error
 	return createdCategory, err
 }
+
+//product management
+
+func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
+	var createdProduct domain.Product
+	productCreateQuery := `INSERT INTO products(product_category_id, name, description)
+							VALUES($1,$2,$3)
+							RETURNING *`
+	err := c.DB.Raw(productCreateQuery, newProduct.ProductCategoryID, newProduct.Name, newProduct.Description).Scan(&createdProduct).Error
+	return createdProduct, err
+}
