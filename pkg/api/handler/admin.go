@@ -221,3 +221,33 @@ func (cr *AdminHandler) BlockUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully blocked the user", blockedUser))
 }
+
+// UnblockUser
+// @Summary Admin can unlock a blocked user
+// @ID unblock-user
+// @Description Admin can unblock a blocked user
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param user_id path string true "ID of the user to be unblocked"
+// @Success 200 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Failure 500 {object} res.Response
+// @Router /admin/users/unblock/{user_id} [put]
+func (cr *AdminHandler) UnblockUser(c *gin.Context) {
+	paramsID := c.Param("id")
+	fmt.Println("paramsid str is", paramsID)
+	id, err := strconv.Atoi(paramsID)
+	fmt.Println("paramsid is", id)
+
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse user id", err.Error(), nil))
+		return
+	}
+	unBlockedUser, err := cr.adminUseCase.UnblockUser(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to unblock user", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "successfully unblocked the user", unBlockedUser))
+}

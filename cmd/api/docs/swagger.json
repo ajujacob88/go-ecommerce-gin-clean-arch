@@ -265,6 +265,51 @@
                 }
             }
         },
+        "/admin/users/unblock/{user_id}": {
+            "put": {
+                "description": "Admin can unblock a blocked user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Admin can unlock a blocked user",
+                "operationId": "unblock-user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the user to be unblocked",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users/{user_id}": {
             "get": {
                 "description": "Admin Fetch a specific user details by user id",

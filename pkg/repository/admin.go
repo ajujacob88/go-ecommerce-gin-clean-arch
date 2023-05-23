@@ -134,3 +134,13 @@ func (c *adminDatabase) BlockUser(ctx context.Context, blockInfo model.BlockUser
 	}
 	return userInfo, err
 }
+
+func (c *adminDatabase) UnblockUser(ctx context.Context, userID int) (domain.UserInfo, error) {
+	var userInfo domain.UserInfo
+	unblockQuery := `UPDATE user_infos SET is_blocked = 'false', reason_for_blocking = '' WHERE users_id = $1 RETURNING *;`
+	err := c.DB.Raw(unblockQuery, userID).Scan(&userInfo).Error
+	if userInfo.UsersID == 0 {
+		return domain.UserInfo{}, fmt.Errorf("no user found")
+	}
+	return userInfo, err
+}

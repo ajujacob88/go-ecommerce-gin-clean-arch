@@ -29,6 +29,14 @@ func (c *userDatabase) CreateUser(ctx context.Context, user domain.Users) (userI
 		return 0, fmt.Errorf("failed to create the user %s", user.FirstName)
 	}
 
+	//insert the data into userinfo table
+	insertUserinfoQuery := `INSERT INTO user_infos (is_verified, is_blocked,users_id)
+							VALUES ('f','f',$1);`
+	err = c.DB.Exec(insertUserinfoQuery, userID).Error
+	if err != nil {
+		return 0, fmt.Errorf("failed to create the user(falied to copy to userinfo table) %s", user.FirstName)
+	}
+
 	fmt.Println("the user.id is", user.ID, "and userid is", userID)
 	return userID, nil
 }

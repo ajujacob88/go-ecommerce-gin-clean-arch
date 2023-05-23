@@ -253,6 +253,36 @@ paths:
       summary: Admin Fetch a specific user details by user id
       tags:
       - Admin
+  /admin/users/unblock/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: Admin can unblock a blocked user
+      operationId: unblock-user
+      parameters:
+      - description: ID of the user to be unblocked
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin can unlock a blocked user
+      tags:
+      - Admin
   /user/signup:
     post:
       consumes:

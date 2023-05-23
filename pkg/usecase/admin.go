@@ -98,3 +98,8 @@ func (c *adminUseCase) BlockUser(ctx context.Context, blockInfo model.BlockUser,
 	blockedUser, err := c.adminRepo.BlockUser(ctx, blockInfo, adminID)
 	return blockedUser, err
 }
+
+func (c *adminUseCase) UnblockUser(ctx context.Context, userID int) (domain.UserInfo, error) {
+	unblockedUser, err := c.adminRepo.UnblockUser(ctx, userID)
+	return unblockedUser, err
+}
