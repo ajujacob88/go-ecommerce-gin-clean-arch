@@ -7,6 +7,7 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"gorm.io/gorm"
 )
 
@@ -18,27 +19,28 @@ func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
 	return &userDatabase{DB: DB}
 }
 
-func (c *userDatabase) CreateUser(ctx context.Context, user domain.Users) (userID uint, err error) {
-	//save the user details
-	query := `INSERT INTO users(first_name, last_name, email, phone, password)
-	VALUES ($1, $2, $3, $4, $5 ) RETURNING id`
+func (c *userDatabase) UserSignUp(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error) {
+	var userData model.UserDataOutput
 
-	err = c.DB.Raw(query, user.FirstName, user.LastName, user.Email, user.Phone, user.Password).Scan(&userID).Error
+	//save the user details
+	UserSignUpQuery := `INSERT INTO users(first_name, last_name, email, phone, password, created_at)
+						VALUES ($1, $2, $3, $4, $5, NOW()) RETURNING id,first_name, last_name, email, phone`
+
+	err := c.DB.Raw(UserSignUpQuery, newUser.FirstName, newUser.LastName, newUser.Email, newUser.Phone, newUser.Password).Scan(&userData).Error
 
 	if err != nil {
-		return 0, fmt.Errorf("failed to create the user %s", user.FirstName)
+		return model.UserDataOutput{}, fmt.Errorf("failed to create the user %s", newUser.FirstName)
 	}
 
 	//insert the data into userinfo table
 	insertUserinfoQuery := `INSERT INTO user_infos (is_verified, is_blocked,users_id)
 							VALUES ('f','f',$1);`
-	err = c.DB.Exec(insertUserinfoQuery, userID).Error
+	err = c.DB.Exec(insertUserinfoQuery, userData.ID).Error
 	if err != nil {
-		return 0, fmt.Errorf("failed to create the user(falied to copy to userinfo table) %s", user.FirstName)
+		return model.UserDataOutput{}, fmt.Errorf("failed to create the user(falied to copy to userinfo table) %s", newUser.FirstName)
 	}
 
-	fmt.Println("the user.id is", user.ID, "and userid is", userID)
-	return userID, nil
+	return userData, err
 }
 
 func (c *userDatabase) FindUser(ctx context.Context, user domain.Users) (domain.Users, error) {

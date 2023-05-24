@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 )
 
 type UserRepository interface {
-	FindUser(ctx context.Context, user domain.Users) (domain.Users, error)
+	FindUser(ctx context.Context, user model.NewUserInfo) (domain.Users, error)
 
-	CreateUser(ctx context.Context, user domain.Users) (userID uint, err error)
+	UserSignUp(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error)
 
 	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
 

@@ -4,14 +4,15 @@ import (
 	"errors"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 )
 
-func CompareUsers(user, checkUser domain.Users) (err error) {
-	if checkUser.Email == user.Email {
+func CompareUsers(newUser model.NewUserInfo, checkUser domain.Users) (err error) {
+	if checkUser.Email == newUser.Email {
 		err = errors.Join(err, errors.New("user already eists with this email"))
 
 	}
-	if checkUser.Phone == user.Phone {
+	if checkUser.Phone == newUser.Phone {
 		err = errors.Join(err, errors.New("user already exists with this phone number"))
 	}
 	return err

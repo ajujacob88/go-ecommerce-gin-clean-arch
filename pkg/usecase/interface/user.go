@@ -4,10 +4,11 @@ import (
 	"context"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 )
 
 type UserUseCase interface {
-	Signup(ctx context.Context, user domain.Users) error
+	SignupUser(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error)
 
 	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
 

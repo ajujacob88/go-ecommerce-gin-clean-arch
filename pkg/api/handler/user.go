@@ -7,6 +7,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/auth"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/verify"
@@ -24,7 +25,7 @@ func NewUserHandler(usecase services.UserUseCase) *UserHandler {
 	}
 }
 
-var user domain.Users
+//var user domain.Users
 
 // @title Ecommerce REST API
 // @version 1.0
@@ -60,24 +61,27 @@ var user domain.Users
 // @Router /user/signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	//var user domain.Users
-
-	if err := c.ShouldBindJSON(&user); err != nil {
-		response := res.ErrorResponse(400, "invalid input", err.Error(), user)
-
+	var newUserInfo model.NewUserInfo
+	if err := c.ShouldBindJSON(&newUserInfo); err != nil {
+		response := res.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	if err := cr.userUseCase.Signup(c, user); err != nil {
-		response := res.ErrorResponse(400, "failed to signup", err.Error(), user)
-
-		c.JSON(http.StatusBadRequest, response)
-		return
+	userDetails, err := cr.userUseCase.UserSignUp(c.Request.Context(), newUserInfo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to create user", err.Error(), nil))
 	}
+	// if err := cr.userUseCase.Signup(c, user); err != nil {
+	// 	response := res.ErrorResponse(400, "failed to signup", err.Error(), user)
+
+	// 	c.JSON(http.StatusBadRequest, response)
+	// 	return
+	// }
 
 	//twilio otp check
 
-	_, err := verify.TwilioSendOtp("+91" + user.Phone)
+	_, err = verify.TwilioSendOtp("+91" + userDetails.Phone)
 	if err != nil {
 		response := res.ErrorResponse(400, "failed to generate otp", err.Error(), user)
 
@@ -85,11 +89,9 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 		return
 
 	}
-	response := res.SuccessResponse(200, "Success: Enter the otp", nil)
+	response := res.SuccessResponse(200, "Success: Enter the otp", userDetails)
 	c.JSON(200, response)
 
-	// response := res.SuccessResponse(200, "Account Created Successfully", user)
-	// c.JSON(200, response)
 }
 
 // SIGN UP OTP VERIFICATION
