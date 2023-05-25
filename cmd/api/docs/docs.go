@@ -597,7 +597,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Users"
+                            "$ref": "#/definitions/model.NewUserInfo"
                         }
                     }
                 ],
@@ -695,7 +695,52 @@ const docTemplate = `{
             }
         },
         "domain.Users": {
-            "type": "object"
+            "type": "object",
+            "required": [
+                "email",
+                "first_name",
+                "last_name",
+                "password",
+                "phone_no"
+            ],
+            "properties": {
+                "block_status": {
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 18,
+                    "minLength": 3
+                },
+                "id": {
+                    "description": "gorm.Model",
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 15
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone_no": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 10
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "verify_status": {
+                    "type": "boolean"
+                }
+            }
         },
         "model.AdminLoginInfo": {
             "type": "object",
@@ -754,6 +799,33 @@ const docTemplate = `{
             "properties": {
                 "category_name": {
                     "type": "string"
+                }
+            }
+        },
+        "model.NewUserInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "phone"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 10
                 }
             }
         },

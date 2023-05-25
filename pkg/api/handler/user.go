@@ -54,7 +54,7 @@ func NewUserHandler(usecase services.UserUseCase) *UserHandler {
 // @Tags Users Signup
 // @Accept json
 // @Produce json
-// @Param user_details body domain.Users true "New user Details"
+// @Param user_details body model.NewUserInfo true "New user Details"
 // @Success 200 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
@@ -62,7 +62,7 @@ func NewUserHandler(usecase services.UserUseCase) *UserHandler {
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	//var user domain.Users
 	var newUserInfo model.NewUserInfo
-	if err := c.ShouldBindJSON(&newUserInfo); err != nil {
+	if err := c.BindJSON(&newUserInfo); err != nil {
 		response := res.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
@@ -72,18 +72,12 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to create user", err.Error(), nil))
 	}
-	// if err := cr.userUseCase.Signup(c, user); err != nil {
-	// 	response := res.ErrorResponse(400, "failed to signup", err.Error(), user)
-
-	// 	c.JSON(http.StatusBadRequest, response)
-	// 	return
-	// }
 
 	//twilio otp check
 
 	_, err = verify.TwilioSendOtp("+91" + userDetails.Phone)
 	if err != nil {
-		response := res.ErrorResponse(400, "failed to generate otp", err.Error(), user)
+		response := res.ErrorResponse(400, "failed to generate otp", err.Error(), nil)
 
 		c.JSON(http.StatusBadRequest, response)
 		return
@@ -108,7 +102,7 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 // @Failure 422 {object} res.Response
 // @Router /user/signup/otp/verify [post]
 func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
-	//var user domain.Users
+	var user domain.Users
 	var otp req.OTPVerify
 	if err := c.BindJSON(&otp); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{

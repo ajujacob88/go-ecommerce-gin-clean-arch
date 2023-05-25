@@ -16,7 +16,7 @@ type userDatabase struct {
 }
 
 func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
-	return &userDatabase{DB: DB}
+	return &userDatabase{DB}
 }
 
 func (c *userDatabase) UserSignUp(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error) {
@@ -43,10 +43,11 @@ func (c *userDatabase) UserSignUp(ctx context.Context, newUser model.NewUserInfo
 	return userData, err
 }
 
-func (c *userDatabase) FindUser(ctx context.Context, user domain.Users) (domain.Users, error) {
-	// check id or email or phone match in database
-	query := `SELECT * FROM users WHERE id = ? OR Email = ? OR Phone = ?`
-	if err := c.DB.Raw(query, user.ID, user.Email, user.Phone).Scan(&user).Error; err != nil {
+func (c *userDatabase) FindUser(ctx context.Context, newUser model.NewUserInfo) (domain.Users, error) {
+	// check email or phone match in database
+	var user domain.Users
+	query := `SELECT * FROM users WHERE email = ? OR phone = ?;`
+	if err := c.DB.Raw(query, newUser.Email, newUser.Phone).Scan(&user).Error; err != nil {
 		return user, errors.New("failed to get the user")
 	}
 	return user, nil
@@ -87,33 +88,3 @@ func (c *userDatabase) FindByEmail(ctx context.Context, email string) (domain.Us
 
 	return userData, err
 }
-
-/*  default present in repo
-
-func (c *userDatabase) FindAll(ctx context.Context) ([]domain.Users, error) {
-	var users []domain.Users
-	err := c.DB.Find(&users).Error
-
-	return users, err
-}
-
-func (c *userDatabase) FindByID(ctx context.Context, id uint) (domain.Users, error) {
-	var user domain.Users
-	err := c.DB.First(&user, id).Error
-
-	return user, err
-}
-
-func (c *userDatabase) Save(ctx context.Context, user domain.Users) (domain.Users, error) {
-	err := c.DB.Save(&user).Error
-
-	return user, err
-}
-
-func (c *userDatabase) Delete(ctx context.Context, user domain.Users) error {
-	err := c.DB.Delete(&user).Error
-
-	return err
-}
-
-*/

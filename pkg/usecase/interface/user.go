@@ -8,7 +8,7 @@ import (
 )
 
 type UserUseCase interface {
-	SignupUser(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error)
+	UserSignUp(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error)
 
 	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
 

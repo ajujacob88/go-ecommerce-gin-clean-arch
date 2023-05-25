@@ -16,6 +16,39 @@ definitions:
     - product_category_id
     type: object
   domain.Users:
+    properties:
+      block_status:
+        type: boolean
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        maxLength: 18
+        minLength: 3
+        type: string
+      id:
+        description: gorm.Model
+        type: integer
+      last_name:
+        maxLength: 15
+        type: string
+      password:
+        type: string
+      phone_no:
+        maxLength: 10
+        minLength: 10
+        type: string
+      updated_at:
+        type: string
+      verify_status:
+        type: boolean
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    - phone_no
     type: object
   model.AdminLoginInfo:
     properties:
@@ -57,6 +90,25 @@ definitions:
     properties:
       category_name:
         type: string
+    type: object
+  model.NewUserInfo:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone:
+        maxLength: 10
+        minLength: 10
+        type: string
+    required:
+    - email
+    - password
+    - phone
     type: object
   req.UserLoginEmail:
     properties:
@@ -467,7 +519,7 @@ paths:
         name: user_details
         required: true
         schema:
-          $ref: '#/definitions/domain.Users'
+          $ref: '#/definitions/model.NewUserInfo'
       produces:
       - application/json
       responses:
