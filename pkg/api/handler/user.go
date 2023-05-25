@@ -73,9 +73,9 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to create user", err.Error(), nil))
 	}
 
-	//twilio otp check
+	//twilio otp send
 
-	_, err = verify.TwilioSendOtp("+91" + userDetails.Phone)
+	responseID, err := verify.TwilioSendOtp("+91" + userDetails.Phone)
 	if err != nil {
 		response := res.ErrorResponse(400, "failed to generate otp", err.Error(), nil)
 
@@ -83,7 +83,7 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 		return
 
 	}
-	response := res.SuccessResponse(200, "Success: Enter the otp", userDetails)
+	response := res.SuccessResponse(200, "Success: Enter the otp", responseID)
 	c.JSON(200, response)
 
 }
