@@ -21,6 +21,9 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 		&domain.Users{},
 		&domain.UserInfo{},
 
+		//otp table for temporary storage purpose
+		&domain.OTPSession{},
+
 		//admin tables
 		&domain.Admin{}, //By default, GORM automatically pluralizes the table name based on the struct name. That's why the Admin struct becomes the "admins" table.
 

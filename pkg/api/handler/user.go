@@ -17,11 +17,13 @@ import (
 
 type UserHandler struct {
 	userUseCase services.UserUseCase
+	otpUseCase  services.OTPUseCase
 }
 
-func NewUserHandler(usecase services.UserUseCase) *UserHandler {
+func NewUserHandler(usecase services.UserUseCase, otpusecase services.OTPUseCase) *UserHandler {
 	return &UserHandler{
 		userUseCase: usecase,
+		otpUseCase:  otpusecase,
 	}
 }
 
@@ -56,7 +58,7 @@ func NewUserHandler(usecase services.UserUseCase) *UserHandler {
 // @Produce json
 // @Param user_details body model.NewUserInfo true "New user Details"
 // @Success 200 {object} res.Response
-// @Failure 400 {object} res.Response
+// @Failure 500 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Router /user/signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
@@ -75,16 +77,16 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 
 	//twilio otp send
 
-	responseID, err := verify.TwilioSendOtp("+91" + userDetails.Phone)
+	responseID, err := cr.otpUseCase.TwilioSendOtp(c.Request.Context(), "+91"+userDetails.Phone)
 	if err != nil {
-		response := res.ErrorResponse(400, "failed to generate otp", err.Error(), nil)
+		response := res.ErrorResponse(500, "failed to generate otp", err.Error(), nil)
 
-		c.JSON(http.StatusBadRequest, response)
+		c.JSON(http.StatusInternalServerError, response)
 		return
 
 	}
-	response := res.SuccessResponse(200, "Success: Enter the otp", responseID)
-	c.JSON(200, response)
+	response := res.SuccessResponse(200, "Success: Enter the otp and the response id", responseID)
+	c.JSON(http.StatusOK, response)
 
 }
 

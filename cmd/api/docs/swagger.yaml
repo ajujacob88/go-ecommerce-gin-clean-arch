@@ -17,9 +17,10 @@ definitions:
     type: object
   domain.Users:
     properties:
-      block_status:
-        type: boolean
       created_at:
+        description: |-
+          BlockStatus  bool      `json:"block_status" gorm:"not null;default:false"`
+          VerifyStatus bool      `json:"verify_status" gorm:"not null;default:false"`
         type: string
       email:
         type: string
@@ -36,13 +37,12 @@ definitions:
       password:
         type: string
       phone_no:
+        description: Email    string `json:"email" gorm:"unique;not null"`
         maxLength: 10
         minLength: 10
         type: string
       updated_at:
         type: string
-      verify_status:
-        type: boolean
     required:
     - email
     - first_name
@@ -100,6 +100,9 @@ definitions:
       last_name:
         type: string
       password:
+        description: |-
+          Email    string `json:"email" `
+          Phone    string `json:"phone" `
         type: string
       phone:
         maxLength: 10
@@ -527,12 +530,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/res.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/res.Response'
         "422":
           description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/res.Response'
       summary: api for Signup a new user

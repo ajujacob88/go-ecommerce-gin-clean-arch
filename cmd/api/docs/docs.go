@@ -608,14 +608,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/res.Response"
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/res.Response"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/res.Response"
                         }
@@ -704,10 +704,8 @@ const docTemplate = `{
                 "phone_no"
             ],
             "properties": {
-                "block_status": {
-                    "type": "boolean"
-                },
                 "created_at": {
+                    "description": "BlockStatus  bool      ` + "`" + `json:\"block_status\" gorm:\"not null;default:false\"` + "`" + `\nVerifyStatus bool      ` + "`" + `json:\"verify_status\" gorm:\"not null;default:false\"` + "`" + `",
                     "type": "string"
                 },
                 "email": {
@@ -730,15 +728,13 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone_no": {
+                    "description": "Email    string ` + "`" + `json:\"email\" gorm:\"unique;not null\"` + "`" + `",
                     "type": "string",
                     "maxLength": 10,
                     "minLength": 10
                 },
                 "updated_at": {
                     "type": "string"
-                },
-                "verify_status": {
-                    "type": "boolean"
                 }
             }
         },
@@ -820,6 +816,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "description": "Email    string ` + "`" + `json:\"email\" ` + "`" + `\nPhone    string ` + "`" + `json:\"phone\" ` + "`" + `",
                     "type": "string"
                 },
                 "phone": {

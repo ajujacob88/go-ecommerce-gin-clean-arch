@@ -27,7 +27,7 @@ func TwilioSendOtp(phoneNumber string) (string, error) {
 
 	resp, err := client.VerifyV2.CreateVerification(seviceSid, params)
 	if err != nil {
-		return "", err
+		return *resp.Sid, err
 	}
 
 	return *resp.Sid, nil
