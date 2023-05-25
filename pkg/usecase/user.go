@@ -69,9 +69,9 @@ func (c *userUseCase) LoginWithEmail(ctx context.Context, user domain.Users) (do
 	}
 
 	// check the user block_status to check wether user is blocked or not
-	if dbUser.BlockStatus {
-		return user, errors.New("user blocked by admin")
-	}
+	// if dbUser.BlockStatus {
+	// 	return user, errors.New("user blocked by admin")
+	// }
 
 	//check the user password with dbPassword
 	if bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)) != nil {

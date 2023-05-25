@@ -81,9 +81,9 @@ func (c *userDatabase) FindByEmail(ctx context.Context, email string) (domain.Us
 
 	err := c.DB.Raw(findUserQuery, email).Scan(&userData).Error
 	fmt.Println("error is", err)
-	if userData.BlockStatus {
-		return userData, errors.New("you are blocked")
-	}
+	// if userData.BlockStatus {
+	// 	return userData, errors.New("you are blocked")
+	// }
 	fmt.Println("userdata is", userData)
 
 	return userData, err
