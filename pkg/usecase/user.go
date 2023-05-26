@@ -47,14 +47,9 @@ func (c *userUseCase) UserSignUp(ctx context.Context, newUser model.NewUserInfo)
 }
 
 // Manage the otp verify status of users
-func (uc *userUseCase) OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error {
-	err := uc.userRepo.OTPVerifyStatusManage(ctx, userEmail, access)
-	if err != nil {
-		// Handle any error
-		// You can log the error or perform any other necessary actions
-		return err
-	}
-	return nil
+func (uc *userUseCase) OTPVerifyStatusManage(ctx context.Context, otpsession domain.OTPSession) error {
+	err := uc.userRepo.OTPVerifyStatusManage(ctx, otpsession)
+	return err
 }
 
 // user login

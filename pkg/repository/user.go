@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -58,7 +57,19 @@ func (c *userDatabase) FindUser(ctx context.Context, newUser model.NewUserInfo) 
 func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, otpsession domain.OTPSession) error {
 
 	//err := c.DB.Model(&domain.UserInfo{}).Where("mobile_num = ?", otpsession.MobileNum).Update("is_verified", true).Error   //this can be used to update a single field
-	err := c.DB.Model(&domain.UserInfo{}).Where("mobile_num = ?", otpsession.MobileNum).Updates(map[string]interface{}{"is_verified": true, "verified_at": time.Now()}).Error
+	//err := c.DB.Model(&domain.UserInfo{}).Where("mobile_num = ?", otpsession.MobileNum).Updates(map[string]interface{}{"is_verified": true, "verified_at": time.Now()}).Error   //this is ok if the columns are in same table
+
+	//but here the mob_num is in users table and is verified is in userinfo table, so use join
+	//var users domain.Users
+
+	fmt.Println("otpsession is", otpsession.MobileNum, "and", otpsession.OtpId)
+	err := c.DB.Model(&domain.Users{}).
+		Joins("JOIN user_infos ON users.id = user_infos.users_id").
+		Where("users.phone = ?", otpsession.MobileNum).
+		Updates(map[string]interface{}{
+			"user_infos.is_verified": true,
+		}).Error
+
 	if err != nil {
 		return errors.New("failed to update OTP verification status")
 	}

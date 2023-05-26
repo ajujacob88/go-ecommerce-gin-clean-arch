@@ -12,7 +12,7 @@ type UserRepository interface {
 
 	UserSignUp(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error)
 
-	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
+	OTPVerifyStatusManage(ctx context.Context, otpsession domain.OTPSession) error
 
 	FindByEmail(ctx context.Context, Email string) (domain.Users, error)
 }

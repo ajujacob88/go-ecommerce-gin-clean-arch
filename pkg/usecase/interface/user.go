@@ -10,7 +10,7 @@ import (
 type UserUseCase interface {
 	UserSignUp(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error)
 
-	OTPVerifyStatusManage(ctx context.Context, userEmail string, access bool) error
+	OTPVerifyStatusManage(ctx context.Context, otpsession domain.OTPSession) error
 
 	LoginWithEmail(ctx context.Context, user domain.Users) (domain.Users, error)
 

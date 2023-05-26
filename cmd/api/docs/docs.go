@@ -639,12 +639,12 @@ const docTemplate = `{
                 "operationId": "Signup-otpverify-user",
                 "parameters": [
                     {
-                        "description": "User details",
-                        "name": "otp",
+                        "description": "OTP verification details",
+                        "name": "otpverify",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Users"
+                            "$ref": "#/definitions/model.OTPVerify"
                         }
                     }
                 ],
@@ -691,50 +691,6 @@ const docTemplate = `{
                 },
                 "product_category_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "domain.Users": {
-            "type": "object",
-            "required": [
-                "email",
-                "first_name",
-                "last_name",
-                "password",
-                "phone_no"
-            ],
-            "properties": {
-                "created_at": {
-                    "description": "BlockStatus  bool      ` + "`" + `json:\"block_status\" gorm:\"not null;default:false\"` + "`" + `\nVerifyStatus bool      ` + "`" + `json:\"verify_status\" gorm:\"not null;default:false\"` + "`" + `",
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string",
-                    "maxLength": 18,
-                    "minLength": 3
-                },
-                "id": {
-                    "description": "gorm.Model",
-                    "type": "integer"
-                },
-                "last_name": {
-                    "type": "string",
-                    "maxLength": 15
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone_no": {
-                    "description": "Email    string ` + "`" + `json:\"email\" gorm:\"unique;not null\"` + "`" + `",
-                    "type": "string",
-                    "maxLength": 10,
-                    "minLength": 10
-                },
-                "updated_at": {
-                    "type": "string"
                 }
             }
         },
@@ -823,6 +779,21 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 10,
                     "minLength": 10
+                }
+            }
+        },
+        "model.OTPVerify": {
+            "type": "object",
+            "required": [
+                "otp",
+                "otpid"
+            ],
+            "properties": {
+                "otp": {
+                    "type": "string"
+                },
+                "otpid": {
+                    "type": "string"
                 }
             }
         },

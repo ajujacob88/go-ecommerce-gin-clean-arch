@@ -15,41 +15,6 @@ definitions:
     - name
     - product_category_id
     type: object
-  domain.Users:
-    properties:
-      created_at:
-        description: |-
-          BlockStatus  bool      `json:"block_status" gorm:"not null;default:false"`
-          VerifyStatus bool      `json:"verify_status" gorm:"not null;default:false"`
-        type: string
-      email:
-        type: string
-      first_name:
-        maxLength: 18
-        minLength: 3
-        type: string
-      id:
-        description: gorm.Model
-        type: integer
-      last_name:
-        maxLength: 15
-        type: string
-      password:
-        type: string
-      phone_no:
-        description: Email    string `json:"email" gorm:"unique;not null"`
-        maxLength: 10
-        minLength: 10
-        type: string
-      updated_at:
-        type: string
-    required:
-    - email
-    - first_name
-    - last_name
-    - password
-    - phone_no
-    type: object
   model.AdminLoginInfo:
     properties:
       email:
@@ -112,6 +77,16 @@ definitions:
     - email
     - password
     - phone
+    type: object
+  model.OTPVerify:
+    properties:
+      otp:
+        type: string
+      otpid:
+        type: string
+    required:
+    - otp
+    - otpid
     type: object
   req.UserLoginEmail:
     properties:
@@ -548,12 +523,12 @@ paths:
       description: verify the otp of a user.
       operationId: Signup-otpverify-user
       parameters:
-      - description: User details
+      - description: OTP verification details
         in: body
-        name: otp
+        name: otpverify
         required: true
         schema:
-          $ref: '#/definitions/domain.Users'
+          $ref: '#/definitions/model.OTPVerify'
       produces:
       - application/json
       responses:
