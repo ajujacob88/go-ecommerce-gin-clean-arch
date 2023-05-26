@@ -104,6 +104,38 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 // @Failure 422 {object} res.Response
 // @Router /user/signup/otp/verify [post]
 func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
+	//var user domain.Users
+	var otpverify model.OTPVerify
+	if err := c.BindJSON(&otpverify); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
+		return
+	}
+	if err := verify.TwilioVerifyOTP("+91"+user.Phone, otp.OTP); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid Otp",
+		})
+		//fmt.Println("otp print 4")
+		return
+	}
+	//fmt.Println("otp print 5")
+
+	//user.VerifyStatus = true
+
+	// Call the OTPVerifyStatusManage method to update the verification status
+	//fmt.Println("user.id is", user.ID, "and user.Email is", user.Email)
+	err := cr.userUseCase.OTPVerifyStatusManage(c.Request.Context(), user.Email, true)
+	if err != nil {
+		response := res.ErrorResponse(500, "Failed to update verification status", err.Error(), user)
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", nil)
+	c.JSON(200, response)
+}
+
+/* old one signup otp verify delete this after modification complete
+func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 	var user domain.Users
 	var otp req.OTPVerify
 	if err := c.BindJSON(&otp); err != nil {
@@ -135,6 +167,7 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", nil)
 	c.JSON(200, response)
 }
+*/
 
 // UserLogin
 // @Summary User Login

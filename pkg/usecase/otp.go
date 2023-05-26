@@ -2,10 +2,13 @@ package usecase
 
 import (
 	"context"
+	"errors"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/twilio/twilio-go"
 	twilioApi "github.com/twilio/twilio-go/rest/verify/v2"
 )
@@ -45,4 +48,34 @@ func (c *otpUseCase) TwilioSendOtp(ctx context.Context, phoneNumber string) (str
 		return *resp.Sid, err
 	}
 	return *resp.Sid, nil
+}
+
+func (c *otpUseCase) TwilioVerifyOTP(ctx context.Context, otpverify model.OTPVerify) (domain.OTPSession, error) {
+	//create a twilio client with twilio details
+	password := config.GetConfig().AUTHTOKEN
+	userName := config.GetConfig().ACCOUNTSID
+	seviceSid := config.GetConfig().SERVICESID
+	client := twilio.NewRestClientWithParams(twilio.ClientParams{
+		Password: password,
+		Username: userName,
+	})
+
+	otpsession, err := c.otpRepo.RetrieveOtpSession(ctx, otpverify)
+	if err != nil {
+		return otpsession, err
+	}
+	params := &twilioApi.CreateVerificationCheckParams{}
+	params.SetTo(otpsession.MobileNum)
+	params.SetCode(otpverify.OTP)
+
+	resp, err := client.VerifyV2.CreateVerificationCheck(seviceSid, params)
+
+	if err != nil {
+		return otpsession, errors.New("verification check failed")
+	} else if *resp.Status == "approved" {
+		return otpsession, nil
+	} else {
+
+		return otpsession, errors.New("verification check failed")
+	}
 }
