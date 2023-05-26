@@ -10,7 +10,6 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/verify"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
@@ -98,7 +97,7 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 // @Tags Users otp verify
 // @Accept json
 // @Produce json
-// @Param otp body domain.Users true "User details"
+// @Param otpverify body model.OTPVerify true "OTP verification details"
 // @Success 200 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
@@ -110,27 +109,21 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
 		return
 	}
-	if err := verify.TwilioVerifyOTP("+91"+user.Phone, otp.OTP); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid Otp",
-		})
-		//fmt.Println("otp print 4")
+	otpsession, err := cr.otpUseCase.TwilioVerifyOTP(c.Request.Context(), otpverify)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "Invalid Otp", err.Error(), nil))
 		return
 	}
-	//fmt.Println("otp print 5")
-
-	//user.VerifyStatus = true
 
 	// Call the OTPVerifyStatusManage method to update the verification status
-	//fmt.Println("user.id is", user.ID, "and user.Email is", user.Email)
-	err := cr.userUseCase.OTPVerifyStatusManage(c.Request.Context(), user.Email, true)
+	err = cr.userUseCase.OTPVerifyStatusManage(c.Request.Context(), otpsession)
 	if err != nil {
-		response := res.ErrorResponse(500, "Failed to update verification status", err.Error(), user)
+		response := res.ErrorResponse(500, "Failed to update verification status", err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
-	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", nil)
+	response := res.SuccessResponse(200, "OTP validation Successfull..Account Created Successfully", nil)
 	c.JSON(200, response)
 }
 
