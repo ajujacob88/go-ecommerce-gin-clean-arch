@@ -18,20 +18,25 @@ func NewProductUseCase(productRepo interfaces.ProductRepository) services.Produc
 	}
 }
 
-// Category Management
+// ---------Category Management
 func (c *productUseCase) CreateCategory(ctx context.Context, newCategory string) (domain.ProductCategory, error) {
 	createdCategory, err := c.productRepo.CreateCategory(ctx, newCategory)
 	return createdCategory, err
 }
 
-//Product Management
+func (c *productUseCase) ListAllCategories(ctx context.Context) ([]domain.ProductCategory, error) {
+	allCategories, err := c.productRepo.ListAllCategories(ctx)
+	return allCategories, err
+}
+
+func (c *productUseCase) FindCategoryByID(ctx context.Context, categoryID int) (domain.ProductCategory, error) {
+	category, err := c.productRepo.FindCategoryByID(ctx, categoryID)
+	return category, err
+}
+
+//----------Product Management
 
 func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
 	createdProduct, err := c.productRepo.CreateProduct(ctx, newProduct)
 	return createdProduct, err
-}
-
-func (c *productUseCase) ListAllCategories(ctx context.Context) ([]domain.ProductCategory, error) {
-	allCategories, err := c.productRepo.ListAllCategories(ctx)
-	return allCategories, err
 }

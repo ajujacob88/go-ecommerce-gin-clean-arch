@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
@@ -68,6 +69,34 @@ func (cr *ProductHandler) ListAllCategories(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched all categories", categories))
+
+}
+
+// FindCategoryByID
+// @Summary List product category by id
+// @ID list-category-by-id
+// @Description Admins can fetch categories by id
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Param category_id path string true "provide the category id to be fetched"
+// @Success 200 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 500 {object} res.Response
+// @Router /admin/categories/{category_id} [get]
+func (cr *ProductHandler) FindCategoryByID(c *gin.Context) {
+	paramsID := c.Param("id")
+	categoryID, err := strconv.Atoi(paramsID)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the category id", err.Error(), nil))
+		return
+	}
+	category, err := cr.productUseCase.FindCategoryByID(c.Request.Context(), categoryID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to fetch the category", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched the category details", category))
 
 }
 

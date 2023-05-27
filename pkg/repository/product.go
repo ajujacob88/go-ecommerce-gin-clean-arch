@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -36,7 +37,19 @@ func (c *productDatabase) ListAllCategories(ctx context.Context) ([]domain.Produ
 	return allCategories, err
 }
 
-//product management
+func (c *productDatabase) FindCategoryByID(ctx context.Context, categoryID int) (domain.ProductCategory, error) {
+	var category domain.ProductCategory
+	findCatQuery := `SELECT * FROM product_categories WHERE id=$1`
+
+	err := c.DB.Raw(findCatQuery, categoryID).Scan(&category).Error
+
+	if category.ID == 0 {
+		return domain.ProductCategory{}, fmt.Errorf("no category is found with that id")
+	}
+	return category, err
+}
+
+//---------product management
 
 func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
 	var createdProduct domain.Product

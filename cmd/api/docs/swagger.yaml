@@ -195,6 +195,36 @@ paths:
       summary: Create new product category
       tags:
       - Product Category
+  /admin/categories/{category_id}:
+    get:
+      consumes:
+      - application/json
+      description: Admins can fetch categories by id
+      operationId: list-category-by-id
+      parameters:
+      - description: provide the category id to be fetched
+        in: path
+        name: category_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: List product category by id
+      tags:
+      - Product Category
   /admin/login:
     post:
       consumes:
