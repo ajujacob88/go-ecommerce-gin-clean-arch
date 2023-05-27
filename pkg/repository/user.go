@@ -62,13 +62,49 @@ func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, otpsession dom
 	//but here the mob_num is in users table and is verified is in userinfo table, so use join
 	//var users domain.Users
 
-	fmt.Println("otpsession is", otpsession.MobileNum, "and", otpsession.OtpId)
+	fmt.Println("otpsessionts is", otpsession.MobileNum, "and", otpsession.OtpId)
+
+	//var user domain.Users
+	//var userInfo domain.UserInfo
+	// err := c.DB.Model(&domain.Users{}).
+	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
+	// 	Where("users.phone = ?", otpsession.MobileNum).
+	// 	Updates(map[string]interface{}{
+	// 		"user_infos.is_verified": true,
+	// 	}).Error
+
+	// err := c.DB.Model(&domain.Users{}).
+	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
+	// 	Where("users.phone = ?", otpsession.MobileNum).
+	// 	Update("user_infos.is_verified", true).
+	// 	Error
+
+	// err := c.DB.Model(&domain.Users{}).
+	// 	Joins("JOIN users ON user_infos.users_id = users.id").
+	// 	Where("users.phone = ?", otpsession.MobileNum).
+	// 	Update("user_infos.is_verified", true).
+	// 	Error
+
+	// err := c.DB.Model(&domain.Users{}).
+	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
+	// 	Where("users.phone = ?", otpsession.MobileNum).
+	// 	Update("user_infos.is_verified", true).
+	// 	Error
+
+	// err := c.DB.Model(&domain.Users{}).
+	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
+	// 	Where("users.phone = ?", otpsession.MobileNum).
+	// 	Updates(map[string]interface{}{"user_infos.is_verified": true}).
+	// 	Error
+
+	// err := c.DB.Model(&domain.Users{}).
+	// 	Where("phone = ?", "7736832773").
+	// 	Update("first_name", "hello")
+
 	err := c.DB.Model(&domain.Users{}).
 		Joins("JOIN user_infos ON users.id = user_infos.users_id").
-		Where("users.phone = ?", otpsession.MobileNum).
-		Updates(map[string]interface{}{
-			"user_infos.is_verified": true,
-		}).Error
+		Where("phone = ?", "7736832773").
+		Update("check", "hello")
 
 	if err != nil {
 		return errors.New("failed to update OTP verification status")

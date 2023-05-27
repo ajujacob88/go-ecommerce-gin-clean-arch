@@ -17,6 +17,7 @@ type Users struct {
 	//VerifyStatus bool      `json:"verify_status" gorm:"not null;default:false"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+	//UserInfo  UserInfo  `json:"user_info" gorm:"foreignKey:UsersID"`
 }
 
 type UserInfo struct {
@@ -29,7 +30,10 @@ type UserInfo struct {
 	Admin             Admin  `gorm:"foreignKey:BlockedBy" json:"-"`
 	ReasonForBlocking string `json:"reason_for_blocking"`
 	UsersID           uint   `json:"users_id" json:"-"`
-	Users             Users  `gorm:"foreignKey:UsersID" json:"-"`
+	Users             Users  `json:"users" gorm:"foreignKey:UsersID"`
+	Check             string `json:"check"`
+	//Users             Users  `gorm:"foreignKey:UsersID" json:"-"`
+
 }
 
 /*
