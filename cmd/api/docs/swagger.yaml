@@ -146,6 +146,25 @@ paths:
       tags:
       - Admin
   /admin/categories:
+    get:
+      consumes:
+      - application/json
+      description: Admins can list all categories from the admin panel
+      operationId: list-all-categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: List All product category
+      tags:
+      - Product Category
     post:
       consumes:
       - application/json
@@ -175,7 +194,7 @@ paths:
             $ref: '#/definitions/res.Response'
       summary: Create new product category
       tags:
-      - product category
+      - Product Category
   /admin/login:
     post:
       consumes:

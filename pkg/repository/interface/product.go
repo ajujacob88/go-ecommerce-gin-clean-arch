@@ -8,6 +8,7 @@ import (
 
 type ProductRepository interface {
 	CreateCategory(ctx context.Context, newCategory string) (domain.ProductCategory, error)
+	ListAllCategories(ctx context.Context) ([]domain.ProductCategory, error)
 
 	CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error)
 }

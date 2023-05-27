@@ -20,13 +20,13 @@ func NewProductHandler(usecase services.ProductUseCase) *ProductHandler {
 	}
 }
 
-// Category Management
+// ----------Category Management
 
 // CreateCategory
 // @Summary Create new product category
 // @ID create-category
 // @Description Admins can create new categories from the admin panel
-// @Tags product category
+// @Tags Product Category
 // @Accept json
 // @Produce json
 // @Param category_name body model.NewCategory true "New category name"
@@ -49,6 +49,29 @@ func (cr *ProductHandler) CreateCategory(c *gin.Context) {
 	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Category Created Succesfully", createdCategory))
 
 }
+
+// ListAllCategory
+// @Summary List All product category
+// @ID list-all-categories
+// @Description Admins can list all categories from the admin panel
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Success 200 {object} res.Response
+// @Failure 500 {object} res.Response
+// @Router /admin/categories [get]
+func (cr *ProductHandler) ListAllCategories(c *gin.Context) {
+	categories, err := cr.productUseCase.ListAllCategories(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to fetch the categories", err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched all categories", categories))
+
+}
+
+//------Product Management -----------
 
 // product management
 // CreateProduct

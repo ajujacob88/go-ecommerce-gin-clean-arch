@@ -30,3 +30,8 @@ func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Pr
 	createdProduct, err := c.productRepo.CreateProduct(ctx, newProduct)
 	return createdProduct, err
 }
+
+func (c *productUseCase) ListAllCategories(ctx context.Context) ([]domain.ProductCategory, error) {
+	allCategories, err := c.productRepo.ListAllCategories(ctx)
+	return allCategories, err
+}

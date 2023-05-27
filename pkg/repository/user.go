@@ -101,10 +101,27 @@ func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, otpsession dom
 	// 	Where("phone = ?", "7736832773").
 	// 	Update("first_name", "hello")
 
-	err := c.DB.Model(&domain.Users{}).
-		Joins("JOIN user_infos ON users.id = user_infos.users_id").
-		Where("phone = ?", "7736832773").
-		Update("check", "hello")
+	// err := c.DB.Model(&domain.UserInfo{}).
+	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
+	// 	Where("users.phone = ?", "7736832773").
+	// 	Update("user_infos.check", "hello").Error
+
+	// err := c.DB.Model(&domain.UserInfo{}).
+	// 	Joins("JOIN users ON users.id = user_infos.users_id").
+	// 	Where("users.phone = ?", "7736832773").
+	// 	Update("user_infos.check", "hello").
+	// 	Error
+
+	// err := c.DB.Model(&domain.UserInfo{}).
+	// 	Joins("JOIN (SELECT id FROM users WHERE phone = ?) u ON u.id = user_infos.users_id", "7736832773").
+	// 	Update("user_infos.check", "hello").
+	// 	Error
+
+	err := c.DB.Model(&domain.UserInfo{}).
+		Joins("JOIN users ON users.id = user_infos.users_id").
+		Where("users.phone = ?", "7736832773").
+		Update("user_infos.check", "hello").
+		Error
 
 	if err != nil {
 		return errors.New("failed to update OTP verification status")

@@ -64,6 +64,34 @@ const docTemplate = `{
             }
         },
         "/admin/categories": {
+            "get": {
+                "description": "Admins can list all categories from the admin panel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Category"
+                ],
+                "summary": "List All product category",
+                "operationId": "list-all-categories",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Admins can create new categories from the admin panel",
                 "consumes": [
@@ -73,7 +101,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "product category"
+                    "Product Category"
                 ],
                 "summary": "Create new product category",
                 "operationId": "create-category",

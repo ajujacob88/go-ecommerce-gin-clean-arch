@@ -16,7 +16,8 @@ func NewProductRepository(DB *gorm.DB) interfaces.ProductRepository {
 	return &productDatabase{DB}
 }
 
-// product category management
+// ---------product category management---------
+
 func (c *productDatabase) CreateCategory(ctx context.Context, newCategory string) (domain.ProductCategory, error) {
 	var createdCategory domain.ProductCategory
 	createCategoryQuery := `INSERT INTO product_categories(category_name)
@@ -24,6 +25,15 @@ func (c *productDatabase) CreateCategory(ctx context.Context, newCategory string
 							RETURNING id, category_name` //By including the RETURNING clause, the INSERT statement will not only insert the new row into the table but also return the specified columns as a result. This can be useful when you need to retrieve the generated values or verify the inserted data.
 	err := c.DB.Raw(createCategoryQuery, newCategory).Scan(&createdCategory).Error
 	return createdCategory, err
+}
+
+func (c *productDatabase) ListAllCategories(ctx context.Context) ([]domain.ProductCategory, error) {
+	var allCategories []domain.ProductCategory
+	listallCatQuery := `SELECT * FROM product_categories;`
+
+	err := c.DB.Raw(listallCatQuery).Scan(&allCategories).Error
+
+	return allCategories, err
 }
 
 //product management

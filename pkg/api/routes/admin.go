@@ -38,6 +38,7 @@ func AdminRoutes(
 		categoryRoutes := api.Group("/categories")
 		{
 			categoryRoutes.POST("/", productHandler.CreateCategory)
+			categoryRoutes.GET("/", productHandler.ListAllCategories)
 		}
 
 		//product management routes
