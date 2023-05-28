@@ -15,6 +15,13 @@ definitions:
     - name
     - product_category_id
     type: object
+  domain.ProductCategory:
+    properties:
+      category_name:
+        type: string
+      id:
+        type: integer
+    type: object
   model.AdminLoginInfo:
     properties:
       email:
@@ -193,6 +200,37 @@ paths:
           schema:
             $ref: '#/definitions/res.Response'
       summary: Create new product category
+      tags:
+      - Product Category
+  /admin/categories/:
+    put:
+      consumes:
+      - application/json
+      description: Admins can update categories
+      operationId: update-category
+      parameters:
+      - description: provide the category info to be updated
+        in: body
+        name: category_details
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ProductCategory'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/res.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin  can update the product category details
       tags:
       - Product Category
   /admin/categories/{category_id}:

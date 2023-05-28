@@ -10,6 +10,7 @@ type ProductUseCase interface {
 	CreateCategory(ctx context.Context, newCategory string) (domain.ProductCategory, error)
 	ListAllCategories(ctx context.Context) ([]domain.ProductCategory, error)
 	FindCategoryByID(ctx context.Context, categoryID int) (domain.ProductCategory, error)
+	UpdateCategory(ctx context.Context, updateCatInfo domain.ProductCategory) (domain.ProductCategory, error)
 
 	CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error)
 }

@@ -34,6 +34,11 @@ func (c *productUseCase) FindCategoryByID(ctx context.Context, categoryID int) (
 	return category, err
 }
 
+func (c *productUseCase) UpdateCategory(ctx context.Context, updateCatInfo domain.ProductCategory) (domain.ProductCategory, error) {
+	updatedCategory, err := c.productRepo.UpdateCategory(ctx, updateCatInfo)
+	return updatedCategory, err
+}
+
 //----------Product Management
 
 func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {

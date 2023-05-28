@@ -100,6 +100,33 @@ func (cr *ProductHandler) FindCategoryByID(c *gin.Context) {
 
 }
 
+// Update Category
+// @Summary Admin  can update the product category details
+// @ID update-category
+// @Description Admins can update categories
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Param category_details body domain.ProductCategory true "provide the category info to be updated"
+// @Success 202 {object} res.Response
+// @Failure 401 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Router /admin/categories/ [put]
+func (cr *ProductHandler) UpdateCategory(c *gin.Context) {
+	var updateCatInfo domain.ProductCategory
+	if err := c.Bind(&updateCatInfo); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to read request body", err.Error(), nil))
+		return
+	}
+	updatedCategory, err := cr.productUseCase.UpdateCategory(c.Request.Context(), updateCatInfo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(401, "unable to update the category", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusAccepted, res.SuccessResponse(202, "Succesfully updated the category", updatedCategory))
+
+}
+
 //------Product Management -----------
 
 // product management

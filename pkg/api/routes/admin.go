@@ -40,6 +40,7 @@ func AdminRoutes(
 			categoryRoutes.POST("/", productHandler.CreateCategory)
 			categoryRoutes.GET("/", productHandler.ListAllCategories)
 			categoryRoutes.GET("/:id", productHandler.FindCategoryByID)
+			categoryRoutes.PUT("/", productHandler.UpdateCategory)
 		}
 
 		//product management routes

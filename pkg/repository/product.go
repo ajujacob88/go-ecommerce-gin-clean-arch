@@ -49,6 +49,38 @@ func (c *productDatabase) FindCategoryByID(ctx context.Context, categoryID int) 
 	return category, err
 }
 
+func (c *productDatabase) UpdateCategory(ctx context.Context, updateCatInfo domain.ProductCategory) (domain.ProductCategory, error) {
+	var updatedCategory domain.ProductCategory
+	updateCatQuery := `UPDATE product_categories
+						SET category_name = $1
+						WHERE id = $2
+						RETURNING id, category_name` //In order to use the Scan method to map the returned values to the updatedCategory struct, you need to include the corresponding columns in the RETURNING clause of the SQL query.
+
+	err := c.DB.Raw(updateCatQuery, updateCatInfo.CategoryName, updateCatInfo.ID).Scan(&updatedCategory).Error
+
+	return updatedCategory, err
+
+	/*
+		//below code also good, but in below code only execution(updation happens, but returning of the updated cat from database is not happening.In the above code, the cat is updated by .Raw function and the updated cat is saving to updatedcat using scan)
+		func (c *productDatabase) UpdateCategory(ctx context.Context, updateCatInfo domain.ProductCategory) (domain.ProductCategory, error) {
+			// Construct the update query.
+			updateCatQuery := `UPDATE product_categories
+							   SET category_name = $1
+							   WHERE id = $2`
+
+			// Execute the update query.
+			err := c.DB.Exec(updateCatQuery, updateCatInfo.CategoryName, updateCatInfo.ID).Error
+			if err != nil {
+				return domain.ProductCategory{}, err
+			}
+
+			// Return the updated category information.
+			return updateCatInfo, nil
+		}
+	*/
+
+}
+
 //---------product management
 
 func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {

@@ -138,6 +138,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/categories/": {
+            "put": {
+                "description": "Admins can update categories",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Category"
+                ],
+                "summary": "Admin  can update the product category details",
+                "operationId": "update-category",
+                "parameters": [
+                    {
+                        "description": "provide the category info to be updated",
+                        "name": "category_details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ProductCategory"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/categories/{category_id}": {
             "get": {
                 "description": "Admins can fetch categories by id",
@@ -763,6 +810,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "product_category_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "domain.ProductCategory": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "integer"
                 }
             }
