@@ -9,6 +9,7 @@ import (
 func UserRoutes(
 	api *gin.RouterGroup,
 	userHandler *handler.UserHandler,
+	productHandler *handler.ProductHandler,
 ) {
 
 	// User routes that don't require authentication
@@ -32,16 +33,18 @@ func UserRoutes(
 		home.Use(middleware.AuthorizationMiddleware("user"))
 		home.GET("/home", userHandler.Homehandler)
 		home.POST("/logout", userHandler.LogoutHandler)
+		home.GET("/products", productHandler.ListAllProducts)
 	}
 
-	// api.POST("/signup", userHandler.UserSignUp)
-	// api.POST("/signup/otp/verify", userHandler.SignupOtpVerify)
-	// api.POST("/login/email", userHandler.UserLoginByEmail)
-
-	// api.Use(middleware.AuthorizationMiddleware("user"))
-	// {
-	// 	api.GET("/home", userHandler.UserProfile)
-	// 	api.GET("/logout", userHandler.UserLogout)
-
-	// }
 }
+
+// api.POST("/signup", userHandler.UserSignUp)
+// api.POST("/signup/otp/verify", userHandler.SignupOtpVerify)
+// api.POST("/login/email", userHandler.UserLoginByEmail)
+
+// api.Use(middleware.AuthorizationMiddleware("user"))
+// {
+// 	api.GET("/home", userHandler.UserProfile)
+// 	api.GET("/logout", userHandler.UserLogout)
+
+// }

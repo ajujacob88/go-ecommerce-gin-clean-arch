@@ -26,7 +26,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	engine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	//setup routes
-	routes.UserRoutes(engine.Group("/"), userHandler)
+	routes.UserRoutes(engine.Group("/"), userHandler, producthandler)
 	routes.AdminRoutes(engine.Group("/admin"), adminHandler, producthandler)
 
 	return &ServerHTTP{engine: engine}

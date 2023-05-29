@@ -351,8 +351,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Admins and users can list all producs
-      operationId: list-all-products
+      description: Admins and users can list all products
       parameters:
       - description: Number of items to retrieve per page
         in: query
@@ -646,6 +645,50 @@ paths:
       summary: User_Logout
       tags:
       - user
+  /user/products:
+    get:
+      consumes:
+      - application/json
+      description: Admins and users can list all products
+      parameters:
+      - description: Number of items to retrieve per page
+        in: query
+        name: limit
+        type: integer
+      - description: Enter the page no to display
+        in: query
+        name: page
+        type: integer
+      - description: Search query string
+        in: query
+        name: query
+        type: string
+      - description: filter criteria for showing the products
+        in: query
+        name: filter
+        type: string
+      - description: sorting criteria for showing the products
+        in: query
+        name: sort_by
+        type: string
+      - description: sorting in descending order
+        in: query
+        name: sort_desc
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: List All products
+      tags:
+      - Products
   /user/signup:
     post:
       consumes:

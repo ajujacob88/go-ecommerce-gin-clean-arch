@@ -190,8 +190,7 @@ func (cr *ProductHandler) CreateProduct(c *gin.Context) {
 
 // List All Products
 // @Summary List All products
-// @ID list-all-products
-// @Description Admins and users can list all producs
+// @Description Admins and users can list all products
 // @Tags Products
 // @Accept json
 // @Produce json
@@ -203,6 +202,7 @@ func (cr *ProductHandler) CreateProduct(c *gin.Context) {
 // @Param sort_desc query bool false "sorting in descending order"
 // @Success 200 {object} res.Response
 // @Failure 500 {object} res.Response
+// @Router /user/products [get]
 // @Router /admin/products [get]
 func (cr *ProductHandler) ListAllProducts(c *gin.Context) {
 	var viewProductsQueryParam model.QueryParams
