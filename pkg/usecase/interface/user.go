@@ -5,6 +5,7 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 )
 
 type UserUseCase interface {
@@ -12,7 +13,7 @@ type UserUseCase interface {
 
 	OTPVerifyStatusManage(ctx context.Context, otpsession domain.OTPSession) error
 
-	LoginWithEmail(ctx context.Context, user domain.Users) (domain.Users, error)
+	LoginWithEmail(ctx context.Context, user req.UserLoginEmail) (domain.Users, error)
 
 	FindByEmail(ctx context.Context, Email string) (domain.Users, error)
 }

@@ -46,8 +46,10 @@ func (c *userDatabase) UserSignUp(ctx context.Context, newUser model.NewUserInfo
 func (c *userDatabase) FindUser(ctx context.Context, newUser model.NewUserInfo) (domain.Users, error) {
 	// check email or phone match in database
 	var user domain.Users
+	fmt.Println("user is", newUser, "user.email is", newUser.Email)
 	query := `SELECT * FROM users WHERE email = ? OR phone = ?;`
 	if err := c.DB.Raw(query, newUser.Email, newUser.Phone).Scan(&user).Error; err != nil {
+		fmt.Println("fialed to get user")
 		return user, errors.New("failed to get the user")
 	}
 	return user, nil
@@ -79,6 +81,7 @@ func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, otpsession dom
 	// 	Error
 
 	//again c.db.raw causing error, so here i used db.exec,, MobileNum[3:] is to remove the +91 since in database no +91 is stored
+	//use exec if no Return values is there and use raw if it is Select * from table
 
 	err := c.DB.Exec(`UPDATE user_infos  SET is_verified = true WHERE users_id =  (
 		SELECT id
@@ -103,7 +106,7 @@ func (c *userDatabase) FindByEmail(ctx context.Context, email string) (domain.Us
 	// }
 	var userData domain.Users
 	fmt.Println("email is", email, " and users.email is")
-	findUserQuery := `	SELECT users.id, users.first_name, users.last_name, users.email, users.phone, users.password, users.block_status, users.verify_status 
+	findUserQuery := `	SELECT users.id, users.first_name, users.last_name, users.email, users.phone, users.password 
 						FROM users 
 						WHERE users.email = $1;`
 

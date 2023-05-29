@@ -190,7 +190,7 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	copier.Copy(&user, &body)
 
 	// get user from database and check password in usecase
-	user, err := cr.userUseCase.LoginWithEmail(c, user)
+	user, err := cr.userUseCase.LoginWithEmail(c, body)
 	if err != nil {
 		response := res.ErrorResponse(400, "failed to login", err.Error(), nil)
 		c.JSON(http.StatusBadRequest, response)
@@ -208,7 +208,7 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	c.SetCookie("user-auth", tokenString["accessToken"], 60*60, "", "", false, true)
 
 	//response := res.SuccessResponse(200, "successfully logged in", tokenString["accessToken"])
-	response := res.SuccessResponse(200, "successfully logged in", nil)
+	response := res.SuccessResponse(200, "successfully logged in", user)
 	c.JSON(http.StatusOK, response)
 }
 

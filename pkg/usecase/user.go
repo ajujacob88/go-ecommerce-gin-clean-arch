@@ -9,6 +9,7 @@ import (
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -53,14 +54,16 @@ func (uc *userUseCase) OTPVerifyStatusManage(ctx context.Context, otpsession dom
 }
 
 // user login
-func (c *userUseCase) LoginWithEmail(ctx context.Context, user domain.Users) (domain.Users, error) {
-	dbUser, dberr := c.userRepo.FindUser(ctx, model.NewUserInfo{})
+func (c *userUseCase) LoginWithEmail(ctx context.Context, user req.UserLoginEmail) (domain.Users, error) {
+
+	//dbUser, dberr := c.userRepo.FindUser(ctx, user)
+	dbUser, dberr := c.userRepo.FindByEmail(ctx, user.Email)
 
 	//check wether the user is found or not
 	if dberr != nil {
-		return user, dberr
+		return dbUser, dberr
 	} else if dbUser.ID == 0 {
-		return user, errors.New("user not exist with this details")
+		return dbUser, errors.New("user not exist with this details")
 	}
 
 	// check the user block_status to check wether user is blocked or not
@@ -68,9 +71,11 @@ func (c *userUseCase) LoginWithEmail(ctx context.Context, user domain.Users) (do
 	// 	return user, errors.New("user blocked by admin")
 	// }
 
+	blockStatus, err := c.userRepo.BlockStatus(ctx, dbUser.ID)
+
 	//check the user password with dbPassword
 	if bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)) != nil {
-		return user, errors.New("The entered password is wrong")
+		return dbUser, errors.New("The entered password is wrong")
 	}
 
 	return dbUser, nil
