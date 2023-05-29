@@ -56,14 +56,11 @@ func (c *userDatabase) FindUser(ctx context.Context, newUser model.NewUserInfo) 
 // OTPVerifyStatusManage method to update the verification status
 func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, otpsession domain.OTPSession) error {
 
-	//err := c.DB.Model(&domain.UserInfo{}).Where("mobile_num = ?", otpsession.MobileNum).Update("is_verified", true).Error   //this can be used to update a single field
-	//err := c.DB.Model(&domain.UserInfo{}).Where("mobile_num = ?", otpsession.MobileNum).Updates(map[string]interface{}{"is_verified": true, "verified_at": time.Now()}).Error   //this is ok if the columns are in same table
+	//but here the mob_num is in users table and is verified is in userinfo table,
 
-	//but here the mob_num is in users table and is verified is in userinfo table, so use join
-	//var users domain.Users
+	fmt.Println("otpsessiont is", otpsession.MobileNum, "otpsession without +91 is", otpsession.MobileNum[3:], "and", otpsession.OtpId)
 
-	fmt.Println("otpsessionts is", otpsession.MobileNum, "and", otpsession.OtpId)
-
+	//using the DB.Model gorm model have the advantages of database switching and all, but inorder to learn the queries use db.exec or db.raw,,, also some companies wont use gorm model since it will slows down the execution and we will have litle control over it
 	//var user domain.Users
 	//var userInfo domain.UserInfo
 	// err := c.DB.Model(&domain.Users{}).
@@ -73,55 +70,20 @@ func (c *userDatabase) OTPVerifyStatusManage(ctx context.Context, otpsession dom
 	// 		"user_infos.is_verified": true,
 	// 	}).Error
 
-	// err := c.DB.Model(&domain.Users{}).
-	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
-	// 	Where("users.phone = ?", otpsession.MobileNum).
-	// 	Update("user_infos.is_verified", true).
-	// 	Error
-
-	// err := c.DB.Model(&domain.Users{}).
-	// 	Joins("JOIN users ON user_infos.users_id = users.id").
-	// 	Where("users.phone = ?", otpsession.MobileNum).
-	// 	Update("user_infos.is_verified", true).
-	// 	Error
-
-	// err := c.DB.Model(&domain.Users{}).
-	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
-	// 	Where("users.phone = ?", otpsession.MobileNum).
-	// 	Update("user_infos.is_verified", true).
-	// 	Error
-
-	// err := c.DB.Model(&domain.Users{}).
-	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
-	// 	Where("users.phone = ?", otpsession.MobileNum).
-	// 	Updates(map[string]interface{}{"user_infos.is_verified": true}).
-	// 	Error
-
-	// err := c.DB.Model(&domain.Users{}).
-	// 	Where("phone = ?", "7736832773").
-	// 	Update("first_name", "hello")
+	//anyway the above code is not working correctly error is there..., better use db.exec or db.raw
 
 	// err := c.DB.Model(&domain.UserInfo{}).
-	// 	Joins("JOIN user_infos ON users.id = user_infos.users_id").
-	// 	Where("users.phone = ?", "7736832773").
-	// 	Update("user_infos.check", "hello").Error
-
-	// err := c.DB.Model(&domain.UserInfo{}).
-	// 	Joins("JOIN users ON users.id = user_infos.users_id").
+	// 	Joins("users").
 	// 	Where("users.phone = ?", "7736832773").
 	// 	Update("user_infos.check", "hello").
 	// 	Error
 
-	// err := c.DB.Model(&domain.UserInfo{}).
-	// 	Joins("JOIN (SELECT id FROM users WHERE phone = ?) u ON u.id = user_infos.users_id", "7736832773").
-	// 	Update("user_infos.check", "hello").
-	// 	Error
+	//again c.db.raw causing error, so here i used db.exec,, MobileNum[3:] is to remove the +91 since in database no +91 is stored
 
-	err := c.DB.Model(&domain.UserInfo{}).
-		Joins("JOIN users ON users.id = user_infos.users_id").
-		Where("users.phone = ?", "7736832773").
-		Update("user_infos.check", "hello").
-		Error
+	err := c.DB.Exec(`UPDATE user_infos  SET is_verified = true WHERE users_id =  (
+		SELECT id
+	   FROM users
+	   WHERE phone = $1 )`, otpsession.MobileNum[3:]).Error
 
 	if err != nil {
 		return errors.New("failed to update OTP verification status")
