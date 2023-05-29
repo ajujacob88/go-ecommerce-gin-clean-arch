@@ -356,6 +356,74 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/products": {
+            "get": {
+                "description": "Admins and users can list all producs",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "List All products",
+                "operationId": "list-all-products",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Number of items to retrieve per page",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Enter the page no to display",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Search query string",
+                        "name": "query",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "filter criteria for showing the products",
+                        "name": "filter",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sorting criteria for showing the products",
+                        "name": "sort_by",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "sorting in descending order",
+                        "name": "sort_desc",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/products/": {
             "post": {
                 "description": "Admins can create new product listings",
@@ -366,7 +434,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Product"
+                    "Products"
                 ],
                 "summary": "Admin can create new product listings",
                 "operationId": "create-product",
@@ -420,7 +488,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Page number for pagination",
+                        "description": "Enter the page no to display",
                         "name": "page",
                         "in": "query"
                     },

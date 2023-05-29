@@ -122,7 +122,7 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Param page query int false "Page number for pagination"
+// @Param page query int false "Enter the page no to display"
 // @Param limit query int false "Number of items to retrieve per page"
 // @Param query query string false "Search query string"
 // @Param filter query string false "filter criteria for showing the users"

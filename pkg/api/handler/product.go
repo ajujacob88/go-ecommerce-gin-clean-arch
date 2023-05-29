@@ -164,7 +164,7 @@ func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
 // @Summary Admin can create new product listings
 // @ID create-product
 // @Description Admins can create new product listings
-// @Tags Product
+// @Tags Products
 // @Accept json
 // @Produce json
 // @Param new_product_details body domain.Product true "new product details"
@@ -185,5 +185,42 @@ func (cr *ProductHandler) CreateProduct(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, res.SuccessResponse(201, "New product added succesfully", createdProduct))
+
+}
+
+// List All Products
+// @Summary List All products
+// @ID list-all-products
+// @Description Admins and users can list all producs
+// @Tags Products
+// @Accept json
+// @Produce json
+// @Param limit query int false "Number of items to retrieve per page"
+// @Param page query int false "Enter the page no to display"
+// @Param query query string false "Search query string"
+// @Param filter query string false "filter criteria for showing the products"
+// @Param sort_by query string false "sorting criteria for showing the products"
+// @Param sort_desc query bool false "sorting in descending order"
+// @Success 200 {object} res.Response
+// @Failure 500 {object} res.Response
+// @Router /admin/products [get]
+func (cr *ProductHandler) ListAllProducts(c *gin.Context) {
+	var viewProductsQueryParam model.QueryParams
+
+	viewProductsQueryParam.Page, _ = strconv.Atoi(c.Query("page"))
+	viewProductsQueryParam.Limit, _ = strconv.Atoi(c.Query("limit"))
+	viewProductsQueryParam.Query = c.Query("query")
+	viewProductsQueryParam.Filter = c.Query("filter")
+	viewProductsQueryParam.SortBy = c.Query("sort_by")
+	viewProductsQueryParam.SortDesc, _ = strconv.ParseBool(c.Query("sort_desc"))
+
+	allProducts, err := cr.productUseCase.ListAllProducts(c.Request.Context(), viewProductsQueryParam)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to fetch the products", err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched all products", allProducts))
 
 }

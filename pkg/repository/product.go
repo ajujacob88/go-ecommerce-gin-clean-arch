@@ -3,9 +3,11 @@ package repository
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"gorm.io/gorm"
 )
 
@@ -98,4 +100,28 @@ func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.P
 							RETURNING *`
 	err := c.DB.Raw(productCreateQuery, newProduct.ProductCategoryID, newProduct.Name, newProduct.Description).Scan(&createdProduct).Error
 	return createdProduct, err
+}
+
+func (c *productDatabase) ListAllProducts(ctx context.Context, viewProductsQueryParam model.QueryParams) ([]domain.Product, error) {
+
+	findQuery := "SELECT * FROM products"
+	params := []interface{}{}
+
+	if viewProductsQueryParam.Query != "" && viewProductsQueryParam.Filter != "" {
+		findQuery = fmt.Sprintf("%s WHERE LOWER(%s) LIKE $%d", findQuery, viewProductsQueryParam.Filter, len(params)+1)
+		params = append(params, "%"+strings.ToLower(viewProductsQueryParam.Query)+"%")
+		fmt.Println("params is ", params)
+	}
+	if viewProductsQueryParam.SortBy != "" {
+		findQuery = fmt.Sprintf("%s ORDER BY %s %s", findQuery, viewProductsQueryParam.SortBy, orderByDirection(viewProductsQueryParam.SortDesc))
+	}
+	if viewProductsQueryParam.Limit != 0 && viewProductsQueryParam.Page != 0 {
+		findQuery = fmt.Sprintf("%s LIMIT $%d OFFSET $%d", findQuery, len(params)+1, len(params)+2)
+		params = append(params, viewProductsQueryParam.Limit, (viewProductsQueryParam.Page-1)*viewProductsQueryParam.Limit)
+	}
+
+	var allProducts []domain.Product
+	err := c.DB.Raw(findQuery, params...).Scan(&allProducts).Error
+
+	return allProducts, err
 }

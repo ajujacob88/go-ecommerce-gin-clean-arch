@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 )
 
 type ProductRepository interface {
@@ -14,4 +15,5 @@ type ProductRepository interface {
 	DeleteCategory(ctx context.Context, categoryID int) (domain.ProductCategory, error)
 
 	CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error)
+	ListAllProducts(ctx context.Context, viewProductsQueryParam model.QueryParams) ([]domain.Product, error)
 }

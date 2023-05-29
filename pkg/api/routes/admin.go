@@ -48,6 +48,7 @@ func AdminRoutes(
 		productRoutes := api.Group("/products")
 		{
 			productRoutes.POST("/", productHandler.CreateProduct)
+			productRoutes.GET("/", productHandler.ListAllProducts)
 		}
 
 	}

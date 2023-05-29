@@ -6,6 +6,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 )
 
 type productUseCase struct {
@@ -49,4 +50,9 @@ func (c *productUseCase) DeleteCategory(ctx context.Context, categoryID int) (do
 func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
 	createdProduct, err := c.productRepo.CreateProduct(ctx, newProduct)
 	return createdProduct, err
+}
+
+func (c *productUseCase) ListAllProducts(ctx context.Context, viewProductsQueryParam model.QueryParams) ([]domain.Product, error) {
+	allProducts, err := c.productRepo.ListAllProducts(ctx, viewProductsQueryParam)
+	return allProducts, err
 }
