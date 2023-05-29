@@ -71,7 +71,16 @@ func (c *userUseCase) LoginWithEmail(ctx context.Context, user req.UserLoginEmai
 	// 	return user, errors.New("user blocked by admin")
 	// }
 
-	blockStatus, err := c.userRepo.BlockStatus(ctx, dbUser.ID)
+	userId := dbUser.ID
+
+	blockStatus, err := c.userRepo.BlockStatus(ctx, userId)
+	if blockStatus {
+		return dbUser, errors.New("The user is blocked.. Please contact support")
+	}
+
+	if err != nil {
+		return dbUser, err
+	}
 
 	//check the user password with dbPassword
 	if bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)) != nil {

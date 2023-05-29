@@ -15,4 +15,6 @@ type UserRepository interface {
 	OTPVerifyStatusManage(ctx context.Context, otpsession domain.OTPSession) error
 
 	FindByEmail(ctx context.Context, Email string) (domain.Users, error)
+
+	BlockStatus(ctx context.Context, userId uint) (bool, error)
 }

@@ -119,3 +119,13 @@ func (c *userDatabase) FindByEmail(ctx context.Context, email string) (domain.Us
 
 	return userData, err
 }
+
+func (c *userDatabase) BlockStatus(ctx context.Context, userId uint) (bool, error) {
+
+	blockStatusQuery := `SELECT is_blocked FROM user_infos WHERE users_id = $1;`
+
+	var blockStatus bool
+
+	err := c.DB.Raw(blockStatusQuery, userId).Scan(&blockStatus).Error
+	return blockStatus, err
+}

@@ -208,7 +208,7 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	c.SetCookie("user-auth", tokenString["accessToken"], 60*60, "", "", false, true)
 
 	//response := res.SuccessResponse(200, "successfully logged in", tokenString["accessToken"])
-	response := res.SuccessResponse(200, "successfully logged in", user)
+	response := res.SuccessResponse(200, "successfully logged in", user.FirstName)
 	c.JSON(http.StatusOK, response)
 }
 
