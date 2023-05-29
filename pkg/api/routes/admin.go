@@ -41,6 +41,7 @@ func AdminRoutes(
 			categoryRoutes.GET("/", productHandler.ListAllCategories)
 			categoryRoutes.GET("/:id", productHandler.FindCategoryByID)
 			categoryRoutes.PUT("/", productHandler.UpdateCategory)
+			categoryRoutes.DELETE("/:id", productHandler.DeleteCategory)
 		}
 
 		//product management routes

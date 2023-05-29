@@ -39,6 +39,11 @@ func (c *productUseCase) UpdateCategory(ctx context.Context, updateCatInfo domai
 	return updatedCategory, err
 }
 
+func (c *productUseCase) DeleteCategory(ctx context.Context, categoryID int) (domain.ProductCategory, error) {
+	deletedCategory, err := c.productRepo.DeleteCategory(ctx, categoryID)
+	return deletedCategory, err
+}
+
 //----------Product Management
 
 func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {

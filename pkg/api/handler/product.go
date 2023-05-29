@@ -127,6 +127,36 @@ func (cr *ProductHandler) UpdateCategory(c *gin.Context) {
 
 }
 
+// Delete Category
+// @Summary Admin  can delete the product category
+// @ID delete-category
+// @Description Admins can delete categories
+// @Tags Product Category
+// @Accept json
+// @Produce json
+// @Param category_id path string true "Enter the category id"
+// @Success 202 {object} res.Response
+// @Failure 401 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Router /admin/categories/{category_id} [delete]
+func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
+	paramsID := c.Param("id")
+	categoryID, err := strconv.Atoi(paramsID)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the category id", err.Error(), nil))
+		return
+	}
+
+	deletedCategory, err := cr.productUseCase.DeleteCategory(c.Request.Context(), categoryID)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(401, "unable to delete the category, products listed with this category", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusAccepted, res.SuccessResponse(202, "Succesfully deleted the category", deletedCategory))
+
+}
+
 //------Product Management -----------
 
 // product management

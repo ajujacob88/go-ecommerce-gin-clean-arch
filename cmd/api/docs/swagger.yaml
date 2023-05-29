@@ -234,6 +234,35 @@ paths:
       tags:
       - Product Category
   /admin/categories/{category_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Admins can delete categories
+      operationId: delete-category
+      parameters:
+      - description: Enter the category id
+        in: path
+        name: category_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/res.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin  can delete the product category
+      tags:
+      - Product Category
     get:
       consumes:
       - application/json

@@ -81,6 +81,14 @@ func (c *productDatabase) UpdateCategory(ctx context.Context, updateCatInfo doma
 
 }
 
+func (c *productDatabase) DeleteCategory(ctx context.Context, categoryID int) (domain.ProductCategory, error) {
+	var deletedCategory domain.ProductCategory
+	deleteCatQuery := `DELETE FROM product_categories
+						WHERE id = $1`
+	err := c.DB.Raw(deleteCatQuery, categoryID).Scan(&deletedCategory).Error
+	return deletedCategory, err
+}
+
 //---------product management
 
 func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
