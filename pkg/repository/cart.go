@@ -74,14 +74,48 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 
 	} else {
 		// if the item is already present in the cart
-		insertToCartQuery := `	INSERT INTO cart_items (cart_id, product_details_id, quantity)
-								VALUES ($1, $2, 1)
+		updateCartQuery := `	UPDATE cart_items 
+								SET quantity = $1
+								WHERE id = $2
 								RETURNING *;`
-		err := tx.Raw(insertToCartQuery, cartID, productDetailsID).Scan(&cartItem).Error
+		err := tx.Raw(updateCartQuery, cartItem.Quantity+1, cartItem.ID).Scan(&cartItem).Error
 		if err != nil {
 			tx.Rollback()
 			return domain.CartItems{}, err
 		}
 	}
 
+	// Now update the subtotal in cart table
+	// product_details_id , qauntity and cart_id is known.
+	// Now fetch the price from the product_details table
+
+	var currentSubTotal, itemPrice float64
+	err = tx.Raw("SELECT price FROM product_details WHERE id = $1", productDetailsID).Scan(&itemPrice).Error
+	if err != nil {
+		tx.Rollback()
+		return domain.CartItems{}, err
+	}
+
+	// fetch the current subtotal from the cart table
+	err = tx.Raw("SELECT sub_total FROM carts WHERE id = $1", cartItem.CartID).Scan(&currentSubTotal).Error
+	if err != nil {
+		tx.Rollback()
+		return domain.CartItems{}, err
+	}
+
+	// add the price of the new product to the current subtotal and update it in the cart
+	newSubTotal := currentSubTotal + itemPrice
+
+	err = tx.Exec("UPDATE carts SET sub_total = $1 WHERE user_id = $2", newSubTotal, userID).Error
+	if err != nil {
+		tx.Rollback()
+		return domain.CartItems{}, err
+	}
+
+	// Now commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return domain.CartItems{}, err
+	}
+	return cartItem, nil
 }

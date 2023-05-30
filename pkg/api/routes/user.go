@@ -10,6 +10,7 @@ func UserRoutes(
 	api *gin.RouterGroup,
 	userHandler *handler.UserHandler,
 	productHandler *handler.ProductHandler,
+	cartHandler
 ) {
 
 	// User routes that don't require authentication
