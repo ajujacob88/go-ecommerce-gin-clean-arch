@@ -68,3 +68,8 @@ func (c *productUseCase) FindProductByID(ctx context.Context, productID int) (do
 	}
 	return product, err
 }
+
+func (c *productUseCase) UpdateProduct(ctx context.Context, updateProductInfo domain.Product) (domain.Product, error) {
+	updatedProduct, err := c.productRepo.UpdateProduct(ctx, updateProductInfo)
+	return updatedProduct, err
+}

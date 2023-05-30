@@ -422,6 +422,36 @@ paths:
       summary: Admin can create new product listings
       tags:
       - Products
+    put:
+      consumes:
+      - application/json
+      description: Admins can update products
+      operationId: update-product
+      parameters:
+      - description: provide the product info to be updated
+        in: body
+        name: product_details
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Product'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/res.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin  can update the product details
+      tags:
+      - Products
   /admin/products/{product_id}:
     get:
       consumes:

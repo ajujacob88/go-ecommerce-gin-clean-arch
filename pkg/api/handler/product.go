@@ -251,3 +251,31 @@ func (cr *ProductHandler) FindProductByID(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched the product", product))
 }
+
+// Update Product
+// @Summary Admin  can update the product details
+// @ID update-product
+// @Description Admins can update products
+// @Tags Products
+// @Accept json
+// @Produce json
+// @Param product_details body domain.Product true "provide the product info to be updated"
+// @Success 202 {object} res.Response
+// @Failure 401 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Router /admin/products/ [put]
+func (cr *ProductHandler) UpdateProduct(c *gin.Context) {
+	var updateProductInfo domain.Product
+	if err := c.Bind(&updateProductInfo); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to read the request body", err.Error(), nil))
+		return
+	}
+
+	updatedProduct, err := cr.productUseCase.UpdateProduct(c.Request.Context(), updateProductInfo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(401, "unable to update the product", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusAccepted, res.SuccessResponse(202, "Succesfully updated the product", updatedProduct))
+
+}

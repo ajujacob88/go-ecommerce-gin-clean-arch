@@ -134,3 +134,17 @@ func (c *productDatabase) FindProductByID(ctx context.Context, productID int) (d
 	err := c.DB.Raw(findProductQuery, productID).Scan(&product).Error
 	return product, err
 }
+
+func (c *productDatabase) UpdateProduct(ctx context.Context, updateProductInfo domain.Product) (domain.Product, error) {
+	var updatedProduct domain.Product
+	updateProdQuery := `UPDATE products
+						SET 
+							product_category_id = $1,
+							name = $2,
+							description = $3
+						WHERE id = $4
+						RETURNING id,product_category_id,name,description`
+
+	err := c.DB.Raw(updateProdQuery, updateProductInfo.ProductCategoryID, updateProductInfo.Name, updateProductInfo.Description, updateProductInfo.ID).Scan(&updatedProduct).Error
+	return updatedProduct, err
+}
