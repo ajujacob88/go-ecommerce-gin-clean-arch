@@ -770,6 +770,40 @@ paths:
       summary: Admin can unlock a blocked user
       tags:
       - Admin
+  /user/cart/add/{product_details_id}:
+    post:
+      consumes:
+      - application/json
+      description: User can add product into the cart
+      operationId: add-to-cart
+      parameters:
+      - description: product_details_id
+        in: path
+        name: product_details_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: User can add a productto the cart
+      tags:
+      - Cart
   /user/home:
     get:
       consumes:
