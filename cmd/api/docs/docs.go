@@ -63,6 +63,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/brands": {
+            "post": {
+                "description": "Admins can create new brands from the admin panel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Brand"
+                ],
+                "summary": "Admin can create new product brand",
+                "operationId": "create-brand",
+                "parameters": [
+                    {
+                        "description": "New brand name",
+                        "name": "brand_name",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.ProductBrand"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/categories": {
             "get": {
                 "description": "Admins can list all categories from the admin panel",
@@ -349,6 +396,53 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/product-details/": {
+            "post": {
+                "description": "This endpoint allows an admin user to add the product details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Details"
+                ],
+                "summary": "Add a product details",
+                "operationId": "add-product-details",
+                "parameters": [
+                    {
+                        "description": "Product details",
+                        "name": "product_details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.NewProductDetails"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
                         "schema": {
                             "$ref": "#/definitions/res.Response"
                         }
@@ -1154,12 +1248,15 @@ const docTemplate = `{
         "domain.Product": {
             "type": "object",
             "required": [
+                "brand_id",
                 "name",
                 "product_category_id"
             ],
             "properties": {
+                "brand_id": {
+                    "type": "integer"
+                },
                 "description": {
-                    "description": "BrandID           uint            ` + "`" + `gorm:\"not null\" json:\"brand_id\" validate:\"required\"` + "`" + `",
                     "type": "string"
                 },
                 "id": {
@@ -1169,6 +1266,20 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "product_category_id": {
+                    "type": "integer"
+                },
+                "product_image": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.ProductBrand": {
+            "type": "object",
+            "properties": {
+                "brand_name": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "integer"
                 }
             }
@@ -1240,6 +1351,62 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "category_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.NewProductDetails": {
+            "type": "object",
+            "required": [
+                "color",
+                "display_size",
+                "model_no",
+                "os",
+                "price",
+                "processor",
+                "product_id",
+                "qty_in_stock",
+                "sku",
+                "storage"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "display_size": {
+                    "type": "string"
+                },
+                "graphics_card": {
+                    "type": "string"
+                },
+                "model_no": {
+                    "type": "string"
+                },
+                "os": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "processor": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "product_item_image": {
+                    "type": "string"
+                },
+                "qty_in_stock": {
+                    "type": "integer"
+                },
+                "ram": {
+                    "type": "string"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "storage": {
                     "type": "string"
                 }
             }

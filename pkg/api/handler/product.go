@@ -157,6 +157,36 @@ func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
 
 }
 
+// ----------Product Brand Management
+
+// CreateBrand
+// @Summary Admin can create new product brand
+// @ID create-brand
+// @Description Admins can create new brands from the admin panel
+// @Tags Product Brand
+// @Accept json
+// @Produce json
+// @Param brand_name body domain.ProductBrand true "New brand name"
+// @Success 201 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Router /admin/brands [post]
+func (cr *ProductHandler) CreateBrand(c *gin.Context) {
+	var newBrandDetails domain.ProductBrand
+	if err := c.Bind(&newBrandDetails); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to process the request", err.Error(), nil))
+		return
+	}
+	//  call the createbrand usecase to create a new category
+	createdBrand, err := cr.productUseCase.CreateBrand(c.Request.Context(), newBrandDetails)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(400, "failed to create new brand", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Brand Created Succesfully", createdBrand))
+
+}
+
 //------Product Management -----------
 
 // product management
@@ -314,4 +344,34 @@ func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusAccepted, res.SuccessResponse(202, "Succesfully deleted the product", nil))
+}
+
+//--------------PRODUCT DETAILS---------
+
+// AddProductDetails
+// @Summary Add a product details
+// @ID add-product-details
+// @Description This endpoint allows an admin user to add the product details.
+// @Tags Product Details
+// @Accept json
+// @Produce json
+// @Param product_details body model.NewProductDetails true "Product details"
+// @Success 201 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Router /admin/product-details/ [post]
+func (cr *ProductHandler) AddProductDetails(c *gin.Context) {
+	var NewProductDetails model.NewProductDetails
+	if err := c.Bind(&NewProductDetails); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to process the request", err.Error(), nil))
+		return
+	}
+
+	addedProdDetails, err := cr.productUseCase.AddProductDetails(c.Request.Context(), NewProductDetails)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to add the product details", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully added the product details", addedProdDetails))
+
 }

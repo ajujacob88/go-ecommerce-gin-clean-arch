@@ -91,14 +91,26 @@ func (c *productDatabase) DeleteCategory(ctx context.Context, categoryID int) (d
 	return deletedCategory, err
 }
 
-//---------product management
+//---------brand management------------------
+
+func (c *productDatabase) CreateBrand(ctx context.Context, newBrandDetails domain.ProductBrand) (domain.ProductBrand, error) {
+	var createdBrand domain.ProductBrand
+	createBrandQuery := `INSERT INTO product_brands (brand_name)
+						VALUES($1)
+						RETURNING *;`
+
+	err := c.DB.Raw(createBrandQuery, newBrandDetails.BrandName).Scan(&createdBrand).Error
+	return createdBrand, err
+}
+
+//---------product management----------------------
 
 func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
 	var createdProduct domain.Product
-	productCreateQuery := `INSERT INTO products(product_category_id, name, description)
-							VALUES($1,$2,$3)
+	productCreateQuery := `INSERT INTO products(product_category_id, name, brand_id, description, product_image)
+							VALUES($1,$2,$3,$4,$5)
 							RETURNING *`
-	err := c.DB.Raw(productCreateQuery, newProduct.ProductCategoryID, newProduct.Name, newProduct.Description).Scan(&createdProduct).Error
+	err := c.DB.Raw(productCreateQuery, newProduct.ProductCategoryID, newProduct.Name, newProduct.BrandID, newProduct.Description, newProduct.ProductImage).Scan(&createdProduct).Error
 	return createdProduct, err
 }
 
@@ -155,4 +167,16 @@ func (c *productDatabase) DeleteProduct(ctx context.Context, productID int) erro
 						WHERE id = $1`
 	err := c.DB.Exec(deleteProQuery, productID).Error
 	return err
+}
+
+//-------Product details management----
+
+func (c *productDatabase) AddProductDetails(ctx context.Context, NewProductDetails model.NewProductDetails) (domain.ProductDetails, error) {
+	var addedProdDetails domain.ProductDetails
+	addProdDetailsQuery := `INSERT INTO product_details(product_id,model_no,processor,storage,ram,graphics_card,display_size,color,os,sku,qty_in_stock,price,product_details_image)
+							VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+							RETURNING *`
+
+	err := c.DB.Raw(addProdDetailsQuery, NewProductDetails.ProductID, NewProductDetails.ModelNo, NewProductDetails.Processor, NewProductDetails.Storage, NewProductDetails.Ram, NewProductDetails.GraphicsCard, NewProductDetails.DisplaySize, NewProductDetails.Color, NewProductDetails.OS, NewProductDetails.SKU, NewProductDetails.QtyInStock, NewProductDetails.Price, NewProductDetails.ProductDetailsImage).Scan(&addedProdDetails).Error
+	return addedProdDetails, err
 }

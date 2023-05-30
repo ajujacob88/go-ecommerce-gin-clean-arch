@@ -44,6 +44,13 @@ func AdminRoutes(
 			categoryRoutes.DELETE("/:id", productHandler.DeleteCategory)
 		}
 
+		//brand management routes
+		brandRoutes := api.Group("/brands")
+		{
+			brandRoutes.POST("/", productHandler.CreateBrand)
+
+		}
+
 		//product management routes
 		productRoutes := api.Group("/products")
 		{
@@ -52,6 +59,13 @@ func AdminRoutes(
 			productRoutes.GET("/:id", productHandler.FindProductByID)
 			productRoutes.PUT("/", productHandler.UpdateProduct)
 			productRoutes.DELETE("/:id", productHandler.DeleteProduct)
+		}
+
+		//product details routes
+		productDetails := api.Group("/product-details")
+		{
+			productDetails.POST("/", productHandler.AddProductDetails)
+
 		}
 
 	}

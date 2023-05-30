@@ -1,9 +1,9 @@
 definitions:
   domain.Product:
     properties:
+      brand_id:
+        type: integer
       description:
-        description: BrandID           uint            `gorm:"not null" json:"brand_id"
-          validate:"required"`
         type: string
       id:
         type: integer
@@ -11,9 +11,19 @@ definitions:
         type: string
       product_category_id:
         type: integer
+      product_image:
+        type: string
     required:
+    - brand_id
     - name
     - product_category_id
+    type: object
+  domain.ProductBrand:
+    properties:
+      brand_name:
+        type: string
+      id:
+        type: integer
     type: object
   domain.ProductCategory:
     properties:
@@ -62,6 +72,46 @@ definitions:
     properties:
       category_name:
         type: string
+    type: object
+  model.NewProductDetails:
+    properties:
+      color:
+        type: string
+      display_size:
+        type: string
+      graphics_card:
+        type: string
+      model_no:
+        type: string
+      os:
+        type: string
+      price:
+        type: number
+      processor:
+        type: string
+      product_id:
+        type: integer
+      product_item_image:
+        type: string
+      qty_in_stock:
+        type: integer
+      ram:
+        type: string
+      sku:
+        type: string
+      storage:
+        type: string
+    required:
+    - color
+    - display_size
+    - model_no
+    - os
+    - price
+    - processor
+    - product_id
+    - qty_in_stock
+    - sku
+    - storage
     type: object
   model.NewUserInfo:
     properties:
@@ -152,6 +202,37 @@ paths:
       summary: Create a new admin from admin panel
       tags:
       - Admin
+  /admin/brands:
+    post:
+      consumes:
+      - application/json
+      description: Admins can create new brands from the admin panel
+      operationId: create-brand
+      parameters:
+      - description: New brand name
+        in: body
+        name: brand_name
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ProductBrand'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin can create new product brand
+      tags:
+      - Product Brand
   /admin/categories:
     get:
       consumes:
@@ -347,6 +428,37 @@ paths:
       summary: Admin_Logout
       tags:
       - Admin
+  /admin/product-details/:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint allows an admin user to add the product details.
+      operationId: add-product-details
+      parameters:
+      - description: Product details
+        in: body
+        name: product_details
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewProductDetails'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Add a product details
+      tags:
+      - Product Details
   /admin/products:
     get:
       consumes:

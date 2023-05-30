@@ -46,6 +46,12 @@ func (c *productUseCase) DeleteCategory(ctx context.Context, categoryID int) (do
 	return deletedCategory, err
 }
 
+// -----------Brand Management -----------
+func (c *productUseCase) CreateBrand(ctx context.Context, newBrandDetails domain.ProductBrand) (domain.ProductBrand, error) {
+	createdBrand, err := c.productRepo.CreateBrand(ctx, newBrandDetails)
+	return createdBrand, err
+}
+
 //----------Product Management
 
 func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
@@ -77,4 +83,12 @@ func (c *productUseCase) UpdateProduct(ctx context.Context, updateProductInfo do
 func (c *productUseCase) DeleteProduct(ctx context.Context, productID int) error {
 	err := c.productRepo.DeleteProduct(ctx, productID)
 	return err
+}
+
+//------ Product Details manage
+
+func (c *productUseCase) AddProductDetails(ctx context.Context, NewProductDetails model.NewProductDetails) (domain.ProductDetails, error) {
+	addedProdDetails, err := c.productRepo.AddProductDetails(ctx, NewProductDetails)
+	return addedProdDetails, err
+
 }
