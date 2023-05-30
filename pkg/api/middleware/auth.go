@@ -39,6 +39,13 @@ func AuthorizationMiddleware(role string) gin.HandlerFunc {
 		fmt.Println("in middleware email", claims.Email)
 		c.Set(role+"-email", claims.Email)
 		c.Set("user-email", claims.Email)
+
+		//below func call is to retireve the id,, do merge the function similar to admin and use validatetoken only lateron after checking the need of claims.Email
+		userID, _ := ValidateToken2(tokenString)
+		if err != nil {
+			fmt.Println("Error in middlewareauthcheck failed to retrieve id, this is just for temporary checking")
+		}
+		c.Set("userID", userID)
 		c.Next()
 	}
 }
