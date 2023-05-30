@@ -73,3 +73,8 @@ func (c *productUseCase) UpdateProduct(ctx context.Context, updateProductInfo do
 	updatedProduct, err := c.productRepo.UpdateProduct(ctx, updateProductInfo)
 	return updatedProduct, err
 }
+
+func (c *productUseCase) DeleteProduct(ctx context.Context, productID int) error {
+	err := c.productRepo.DeleteProduct(ctx, productID)
+	return err
+}

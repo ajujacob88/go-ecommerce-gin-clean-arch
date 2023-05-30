@@ -148,3 +148,11 @@ func (c *productDatabase) UpdateProduct(ctx context.Context, updateProductInfo d
 	err := c.DB.Raw(updateProdQuery, updateProductInfo.ProductCategoryID, updateProductInfo.Name, updateProductInfo.Description, updateProductInfo.ID).Scan(&updatedProduct).Error
 	return updatedProduct, err
 }
+
+func (c *productDatabase) DeleteProduct(ctx context.Context, productID int) error {
+
+	deleteProQuery := `	DELETE FROM products 
+						WHERE id = $1`
+	err := c.DB.Exec(deleteProQuery, productID).Error
+	return err
+}

@@ -51,6 +51,7 @@ func AdminRoutes(
 			productRoutes.GET("/", productHandler.ListAllProducts)
 			productRoutes.GET("/:id", productHandler.FindProductByID)
 			productRoutes.PUT("/", productHandler.UpdateProduct)
+			productRoutes.DELETE("/:id", productHandler.DeleteProduct)
 		}
 
 	}

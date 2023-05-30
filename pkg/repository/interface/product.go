@@ -18,4 +18,5 @@ type ProductRepository interface {
 	ListAllProducts(ctx context.Context, viewProductsQueryParam model.QueryParams) ([]domain.Product, error)
 	FindProductByID(ctx context.Context, productID int) (domain.Product, error)
 	UpdateProduct(ctx context.Context, updateProductInfo domain.Product) (domain.Product, error)
+	DeleteProduct(ctx context.Context, productID int) error
 }

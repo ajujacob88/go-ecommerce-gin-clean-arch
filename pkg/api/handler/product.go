@@ -136,7 +136,7 @@ func (cr *ProductHandler) UpdateCategory(c *gin.Context) {
 // @Produce json
 // @Param category_id path string true "Enter the category id"
 // @Success 202 {object} res.Response
-// @Failure 401 {object} res.Response
+// @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Router /admin/categories/{category_id} [delete]
 func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
@@ -150,7 +150,7 @@ func (cr *ProductHandler) DeleteCategory(c *gin.Context) {
 	deletedCategory, err := cr.productUseCase.DeleteCategory(c.Request.Context(), categoryID)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(401, "unable to delete the category, products listed with this category", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "unable to delete the category, products listed with this category", err.Error(), nil))
 		return
 	}
 	c.JSON(http.StatusAccepted, res.SuccessResponse(202, "Succesfully deleted the category", deletedCategory))
@@ -181,7 +181,7 @@ func (cr *ProductHandler) CreateProduct(c *gin.Context) {
 	//  call the createcategory usecase to create a new category
 	createdProduct, err := cr.productUseCase.CreateProduct(c.Request.Context(), newProduct)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(400, "failed to add new product", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to add new product", err.Error(), nil))
 		return
 	}
 	c.JSON(http.StatusCreated, res.SuccessResponse(201, "New product added succesfully", createdProduct))
@@ -278,4 +278,40 @@ func (cr *ProductHandler) UpdateProduct(c *gin.Context) {
 	}
 	c.JSON(http.StatusAccepted, res.SuccessResponse(202, "Succesfully updated the product", updatedProduct))
 
+}
+
+// Delete Products
+// @Summary Admin  can delete the products
+// @ID delete-products
+// @Description Admins can delete categories
+// @Tags Products
+// @Accept json
+// @Produce json
+// @Param product_id path string true "Enter the product id"
+// @Success 202 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Failure 404 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Router /admin/products/{product_id} [delete]
+func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
+	paramsID := c.Param("id")
+	productID, err := strconv.Atoi(paramsID)
+
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the product id", err.Error(), nil))
+		return
+	}
+
+	_, err = cr.productUseCase.FindProductByID(c.Request.Context(), productID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, res.ErrorResponse(404, "No products are available in this id", err.Error(), nil))
+		return
+	}
+
+	err = cr.productUseCase.DeleteProduct(c.Request.Context(), productID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "unable to delete the products", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusAccepted, res.SuccessResponse(202, "Succesfully deleted the product", nil))
 }
