@@ -10,7 +10,7 @@ func UserRoutes(
 	api *gin.RouterGroup,
 	userHandler *handler.UserHandler,
 	productHandler *handler.ProductHandler,
-	cartHandler
+	cartHandler *handler.CartHandler,
 ) {
 
 	// User routes that don't require authentication
@@ -32,10 +32,18 @@ func UserRoutes(
 	{
 		//AuthorizationMiddleware as middleware to perform authorization checks for users accessing the "/user" endpoint.
 		home.Use(middleware.AuthorizationMiddleware("user"))
-		home.GET("/home", userHandler.Homehandler)
-		home.POST("/logout", userHandler.LogoutHandler)
-		home.GET("/products", productHandler.ListAllProducts)
-		home.GET("/products/:id", productHandler.FindProductByID)
+		{
+			home.GET("/home", userHandler.Homehandler)
+			home.POST("/logout", userHandler.LogoutHandler)
+			home.GET("/products", productHandler.ListAllProducts)
+			home.GET("/products/:id", productHandler.FindProductByID)
+
+			// cart routes
+			cart := api.Group("/cart")
+			{
+				cart.POST("/add/:product_details_id", cartHandler.AddToCart)
+			}
+		}
 	}
 
 }
