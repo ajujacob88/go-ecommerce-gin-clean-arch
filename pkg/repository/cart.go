@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -118,4 +119,90 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 		return domain.CartItems{}, err
 	}
 	return cartItem, nil
+}
+
+func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int, userId int) error {
+	tx := c.DB.Begin()
+
+	// find the cart id from the carts table
+	var cartID int
+	findCarIDQuery := `	SELECT id
+						FROM carts
+						WHERE user_id = $1;`
+
+	err := tx.Raw(findCarIDQuery, userId).Scan(&cartID).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// now find the quantity
+	var quantity int
+	findQuantityQuery := `	SELECT quantity
+							FROM cart_items
+							WHERE cart_id = $1
+							AND product_details_id = $2;`
+
+	err = tx.Raw(findQuantityQuery, cartID, productDetailsID).Scan(&quantity).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// if quantity is 1, then delete the row
+	if quantity == 0 {
+		tx.Rollback()
+		return fmt.Errorf("Nothing to remove from the cart")
+	} else if quantity == 1 {
+		deleteRowQuery := `	DELETE FROM cart_items
+							WHERE cart_id = $1
+							AND product_details_id = $2;`
+
+		err = tx.Raw(deleteRowQuery, cartID, productDetailsID).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else {
+		updateRowQuery := `	UPDATE cart_items
+							SET quantity = quantity - 1 
+							WHERE cart_id = $1
+							AND product_details_id = $2;`
+
+		err = tx.Raw(updateRowQuery, cartID, productDetailsID).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// Now fetch price from the product_details table
+	var itemPrice float64
+	fetchPriceQuery := `SELECT price
+						FROM product_details
+						WHERE id = $1;`
+
+	err = tx.Raw(fetchPriceQuery, productDetailsID).Scan(&itemPrice).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	//var updatedSubTotal float64
+	subTotalPriceQuery := `	UPDATE carts
+							SET sub_total = sub_total - $1
+							WHERE id = $2
+							RETURNING sub_total;`
+
+	err = tx.Raw(subTotalPriceQuery, itemPrice, cartID).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	// Now commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return err
 }

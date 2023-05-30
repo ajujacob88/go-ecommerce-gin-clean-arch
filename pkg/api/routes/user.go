@@ -37,13 +37,15 @@ func UserRoutes(
 			home.POST("/logout", userHandler.LogoutHandler)
 			home.GET("/products", productHandler.ListAllProducts)
 			home.GET("/products/:id", productHandler.FindProductByID)
-			home.POST("/add/:product_details_id", cartHandler.AddToCart)
+			//home.POST("/add/:product_details_id", cartHandler.AddToCart)
 
-			// cart routes
-			// cart := api.Group("/cart")
-			// {
-			// 	cart.POST("/add/:product_details_id", cartHandler.AddToCart)
-			// }
+			//cart routes
+			cart := api.Group("/cart")
+			{
+				cart.POST("/add/:product_details_id", cartHandler.AddToCart)
+				cart.POST("/remove/:product_details_id", cartHandler.RemoveFromCart)
+
+			}
 		}
 	}
 
