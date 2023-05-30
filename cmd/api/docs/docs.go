@@ -919,7 +919,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/add/{product_details_id}": {
+        "/user/cart/add/{product_details_id}": {
             "post": {
                 "description": "User can add product into the cart",
                 "consumes": [
@@ -945,6 +945,57 @@ const docTemplate = `{
                 "responses": {
                     "201": {
                         "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/cart/remove/{product_details_id}": {
+            "delete": {
+                "description": "User can remove product from the cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "User can remove a product from the cart",
+                "operationId": "remove-from-cart",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "product_details_id",
+                        "name": "product_details_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/res.Response"
                         }

@@ -67,11 +67,11 @@ func (cr *CartHandler) AddToCart(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param product_details_id path string true "product_details_id"
-// @Success 204 {object} res.Response
+// @Success 200 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 401 {object} res.Response
 // @Failure 422 {object} res.Response
-// @Router /user/cart/remove/{product_details_id} [post]
+// @Router /user/cart/remove/{product_details_id} [delete]
 func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 	paramsID := c.Param("product_details_id")
 	productDetailsID, err := strconv.Atoi(paramsID)
@@ -81,17 +81,21 @@ func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 	}
 
 	userId, err := handlerutil.GetUserIdFromContext(c)
+
+	fmt.Println("productdetailsid is", productDetailsID, "and userid is", userId)
+
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, res.ErrorResponse(401, "unable to fetch the user id from context", err.Error(), nil))
 		return
 	}
 
 	err = cr.cartUseCase.RemoveFromCart(c.Request.Context(), productDetailsID, userId)
+	fmt.Println("debug checkpoint2")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to remove products from the cart", err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusNoContent, res.SuccessResponse(204, "Successfully removed product from the cart", nil))
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Successfully removed product from the cart", nil))
 
 }

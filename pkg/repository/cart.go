@@ -158,7 +158,7 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 							WHERE cart_id = $1
 							AND product_details_id = $2;`
 
-		err = tx.Raw(deleteRowQuery, cartID, productDetailsID).Error
+		err = tx.Exec(deleteRowQuery, cartID, productDetailsID).Error
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -169,7 +169,7 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 							WHERE cart_id = $1
 							AND product_details_id = $2;`
 
-		err = tx.Raw(updateRowQuery, cartID, productDetailsID).Error
+		err = tx.Exec(updateRowQuery, cartID, productDetailsID).Error
 		if err != nil {
 			tx.Rollback()
 			return err
@@ -187,14 +187,14 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 		tx.Rollback()
 		return err
 	}
+	fmt.Println("debug check, item price is", itemPrice)
 
 	//var updatedSubTotal float64
 	subTotalPriceQuery := `	UPDATE carts
 							SET sub_total = sub_total - $1
-							WHERE id = $2
-							RETURNING sub_total;`
+							WHERE id = $2;`
 
-	err = tx.Raw(subTotalPriceQuery, itemPrice, cartID).Error
+	err = tx.Exec(subTotalPriceQuery, itemPrice, cartID).Error
 	if err != nil {
 		tx.Rollback()
 		return err
