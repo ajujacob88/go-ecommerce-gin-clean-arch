@@ -34,6 +34,7 @@ func UserRoutes(
 		home.GET("/home", userHandler.Homehandler)
 		home.POST("/logout", userHandler.LogoutHandler)
 		home.GET("/products", productHandler.ListAllProducts)
+		home.GET("/products/:id", productHandler.FindProductByID)
 	}
 
 }

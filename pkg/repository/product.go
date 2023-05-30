@@ -125,3 +125,12 @@ func (c *productDatabase) ListAllProducts(ctx context.Context, viewProductsQuery
 
 	return allProducts, err
 }
+
+func (c *productDatabase) FindProductByID(ctx context.Context, productID int) (domain.Product, error) {
+	var product domain.Product
+	findProductQuery := `SELECT * FROM products
+						WHERE id = $1`
+
+	err := c.DB.Raw(findProductQuery, productID).Scan(&product).Error
+	return product, err
+}

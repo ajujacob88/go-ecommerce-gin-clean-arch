@@ -120,6 +120,7 @@ func (c *userDatabase) FindByEmail(ctx context.Context, email string) (domain.Us
 	return userData, err
 }
 
+// used in userlogin handler
 func (c *userDatabase) BlockStatus(ctx context.Context, userId uint) (bool, error) {
 
 	blockStatusQuery := `SELECT is_blocked FROM user_infos WHERE users_id = $1;`

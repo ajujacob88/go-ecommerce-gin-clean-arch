@@ -224,3 +224,30 @@ func (cr *ProductHandler) ListAllProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched all products", allProducts))
 
 }
+
+// Find Product By ID
+// @Summary Admin and users can Fetch a specific product by product id
+// @Description Admin and users can Fetch a specific product by product id
+// @Tags Products
+// @Accept json
+// @Produce json
+// @Param product_id path string true "provide the ID of the product to be fetched"
+// @Success 200 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 500 {object} res.Response
+// @Router /user/products/{product_id} [get]
+// @Router /admin/products/{product_id} [get]
+func (cr *ProductHandler) FindProductByID(c *gin.Context) {
+	paramsID := c.Param("id")
+	productID, err := strconv.Atoi(paramsID)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the product id", err.Error(), nil))
+		return
+	}
+	product, err := cr.productUseCase.FindProductByID(c.Request.Context(), productID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "Unable to find the product", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched the product", product))
+}

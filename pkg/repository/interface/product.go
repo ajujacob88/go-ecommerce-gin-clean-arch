@@ -16,4 +16,5 @@ type ProductRepository interface {
 
 	CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error)
 	ListAllProducts(ctx context.Context, viewProductsQueryParam model.QueryParams) ([]domain.Product, error)
+	FindProductByID(ctx context.Context, productID int) (domain.Product, error)
 }

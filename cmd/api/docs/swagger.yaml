@@ -422,6 +422,35 @@ paths:
       summary: Admin can create new product listings
       tags:
       - Products
+  /admin/products/{product_id}:
+    get:
+      consumes:
+      - application/json
+      description: Admin and users can Fetch a specific product by product id
+      parameters:
+      - description: provide the ID of the product to be fetched
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin and users can Fetch a specific product by product id
+      tags:
+      - Products
   /admin/users:
     get:
       consumes:
@@ -687,6 +716,35 @@ paths:
           schema:
             $ref: '#/definitions/res.Response'
       summary: List All products
+      tags:
+      - Products
+  /user/products/{product_id}:
+    get:
+      consumes:
+      - application/json
+      description: Admin and users can Fetch a specific product by product id
+      parameters:
+      - description: provide the ID of the product to be fetched
+        in: path
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: Admin and users can Fetch a specific product by product id
       tags:
       - Products
   /user/signup:

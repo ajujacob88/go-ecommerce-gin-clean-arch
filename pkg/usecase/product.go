@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -55,4 +56,15 @@ func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Pr
 func (c *productUseCase) ListAllProducts(ctx context.Context, viewProductsQueryParam model.QueryParams) ([]domain.Product, error) {
 	allProducts, err := c.productRepo.ListAllProducts(ctx, viewProductsQueryParam)
 	return allProducts, err
+}
+
+func (c *productUseCase) FindProductByID(ctx context.Context, productID int) (domain.Product, error) {
+	product, err := c.productRepo.FindProductByID(ctx, productID)
+	if product.Name == "" {
+		return product, fmt.Errorf("invalid product id")
+	}
+	if productID == 0 {
+		return domain.Product{}, fmt.Errorf("no product is found with that id")
+	}
+	return product, err
 }
