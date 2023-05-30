@@ -1,13 +1,10 @@
 package middleware
 
 import (
-	"errors"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
-	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -17,6 +14,7 @@ type Claims struct {
 }
 
 // The middleware verifies the presence and validity of a token stored in a cookie and sets the user's email in the Gin context if the authorization is successful.
+/* done in seperate user.go in middleware
 func AuthorizationMiddleware(role string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie(role + "-auth") //Inside the middleware, the function first tries to retrieve the JWT token from the cookie named role + "-token".
@@ -39,13 +37,14 @@ func AuthorizationMiddleware(role string) gin.HandlerFunc {
 		fmt.Println("in middleware email", claims.Email)
 		c.Set(role+"-email", claims.Email)
 		c.Set("user-email", claims.Email)
-
+		/*
 		//below func call is to retireve the id,, do merge the function similar to admin and use validatetoken only lateron after checking the need of claims.Email
 		userID, _ := ValidateToken2(tokenString)
 		if err != nil {
 			fmt.Println("Error in middlewareauthcheck failed to retrieve id, this is just for temporary checking")
 		}
-		c.Set("userID", userID)
+
+		//c.Set("userID", userID)
 		c.Next()
 	}
 }
@@ -77,6 +76,7 @@ func ValidateToken(tokenString string) (Claims, error) {
 	}
 	return claims, nil
 }
+*/
 
 // validate token for admin,, please merge this with the previous ValidateToken(for user) lateron
 func ValidateToken2(tokenString string) (int, error) {
@@ -103,7 +103,7 @@ func ValidateToken2(tokenString string) (int, error) {
 	//type assertion - It attempts to assert that the value stored in the parsedID variable is of type float64.
 	value, ok := parsedID.(float64)
 	if !ok {
-		return 0, fmt.Errorf("expected a float value, but got %T, parsing id failed", parsedID)
+		return 0, fmt.Errorf("expected a float value, but got %T, parsing id failed(error in middleware.auth)", parsedID)
 
 	}
 

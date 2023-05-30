@@ -38,7 +38,7 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 
 	//If user has no cart, creating a new one
 	if cartID == 0 {
-		createCartQuery := `"INSERT INTO carts(user_id, sub_total)
+		createCartQuery := `INSERT INTO carts(user_id, sub_total)
 							VALUES ($1, $2)
 							RETURNING id;`
 		err := tx.Raw(createCartQuery, userID, 0).Scan(&cartID).Error

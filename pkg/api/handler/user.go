@@ -198,14 +198,14 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	}
 
 	// generate token using jwt in map
-	tokenString, err := auth.GenerateJWT(user.Email)
+	tokenString, err := auth.GenerateJWT(user.ID)
 	if err != nil {
 		response := res.ErrorResponse(500, "faild to login", err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
-	c.SetCookie("user-auth", tokenString["accessToken"], 60*60, "", "", false, true)
+	c.SetCookie("UserAuth", tokenString["accessToken"], 60*60, "", "", false, true)
 
 	//response := res.SuccessResponse(200, "successfully logged in", tokenString["accessToken"])
 	response := res.SuccessResponse(200, "successfully logged in", user.FirstName)

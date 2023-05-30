@@ -31,7 +31,7 @@ func UserRoutes(
 	home := api.Group("/user")
 	{
 		//AuthorizationMiddleware as middleware to perform authorization checks for users accessing the "/user" endpoint.
-		home.Use(middleware.AuthorizationMiddleware("user"))
+		home.Use(middleware.UserAuth)
 		{
 			home.GET("/home", userHandler.Homehandler)
 			home.POST("/logout", userHandler.LogoutHandler)
