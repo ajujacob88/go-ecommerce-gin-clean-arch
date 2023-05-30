@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -32,7 +33,7 @@ func NewCartHandler(usecase services.CartUseCase) *CartHandler {
 // @Failure 400 {object} res.Response
 // @Failure 401 {object} res.Response
 // @Failure 422 {object} res.Response
-// @Router /user/cart/add/{product_details_id} [post]
+// @Router /user/add/{product_details_id} [post]
 func (cr *CartHandler) AddToCart(c *gin.Context) {
 	paramsID := c.Param("product_details_id")
 	productDetailsID, err := strconv.Atoi(paramsID)
@@ -42,6 +43,7 @@ func (cr *CartHandler) AddToCart(c *gin.Context) {
 	}
 
 	userID, err := handlerutil.GetUserIdFromContext(c)
+	fmt.Println("userid is ", userID)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, res.ErrorResponse(401, "unable to fetch the user id from context", err.Error(), nil))
 		return

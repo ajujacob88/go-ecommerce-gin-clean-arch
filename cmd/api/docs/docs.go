@@ -919,7 +919,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/cart/add/{product_details_id}": {
+        "/user/add/{product_details_id}": {
             "post": {
                 "description": "User can add product into the cart",
                 "consumes": [
