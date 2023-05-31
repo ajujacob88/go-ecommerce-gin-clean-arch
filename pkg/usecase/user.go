@@ -96,6 +96,13 @@ func (c *userUseCase) FindByEmail(ctx context.Context, email string) (domain.Use
 	return users, err
 }
 
+//----user address
+
+func (c *userUseCase) AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
+	address, err := c.userRepo.AddAddress(ctx, userAddressInput, userID)
+	return address, err
+}
+
 /*
 
 func NewUserUseCase(repo interfaces.UserRepository) services.UserUseCase {

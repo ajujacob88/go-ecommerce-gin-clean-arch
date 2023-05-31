@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/auth"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
@@ -261,5 +262,40 @@ func (cr *UserHandler) LogoutHandler(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)                                           //sets the SameSite cookie attribute to "Lax" for the response. This attribute restricts the scope of cookies and helps prevent cross-site request forgery attacks
 	c.SetCookie("UserAuth", "", -1, "", "", false, true)                          //Immediately by setting the maxAge to -1, and marks the cookie as secure and HTTP-only
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Logged-Out"))
+
+}
+
+// AddAddress
+// @Summary User can add the user address
+// @ID add-address
+// @Description Add address
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user_address body model.UserAddressInput true "User address"
+// @Success 201 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Router /user/addresses/ [post]
+func (cr *UserHandler) AddAddress(c *gin.Context) {
+	var userAddressInput model.UserAddressInput
+	if err := c.Bind(&userAddressInput); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
+		return
+	}
+
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		return
+	}
+
+	address, err := cr.userUseCase.AddAddress(c.Request.Context(), userAddressInput, userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to add the address", err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully added the address", address))
 
 }

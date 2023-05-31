@@ -34,12 +34,13 @@ func UserRoutes(
 		home.Use(middleware.UserAuth)
 		{
 			home.GET("/home", userHandler.Homehandler)
-			home.POST("/logout", userHandler.LogoutHandler)
+			home.GET("/logout", userHandler.LogoutHandler)
 			home.GET("/products", productHandler.ListAllProducts)
 			home.GET("/products/:id", productHandler.FindProductByID)
 			home.POST("/cart/add/:product_details_id", cartHandler.AddToCart)
 			home.DELETE("/cart/remove/:product_details_id", cartHandler.RemoveFromCart)
 			home.GET("/cart", cartHandler.ViewCart)
+			home.POST("/addresses", userHandler.AddAddress)
 
 			//cart routes
 			// cart := api.Group("/cart")

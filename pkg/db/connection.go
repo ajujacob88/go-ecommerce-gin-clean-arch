@@ -20,6 +20,7 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 		//user tables
 		&domain.Users{},
 		&domain.UserInfo{},
+		&domain.UserAddress{},
 
 		//otp table for temporary storage purpose
 		&domain.OTPSession{},

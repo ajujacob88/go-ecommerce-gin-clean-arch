@@ -145,6 +145,23 @@ definitions:
     - otp
     - otpid
     type: object
+  model.UserAddressInput:
+    properties:
+      city:
+        type: string
+      district:
+        type: string
+      house_number:
+        type: string
+      landmark:
+        type: string
+      pincode:
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+    type: object
   req.UserLoginEmail:
     properties:
       email:
@@ -770,6 +787,37 @@ paths:
       summary: Admin can unlock a blocked user
       tags:
       - Admin
+  /user/addresses/:
+    post:
+      consumes:
+      - application/json
+      description: Add address
+      operationId: add-address
+      parameters:
+      - description: User address
+        in: body
+        name: user_address
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserAddressInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: User can add the user address
+      tags:
+      - Users
   /user/cart:
     get:
       consumes:

@@ -17,4 +17,6 @@ type UserRepository interface {
 	FindByEmail(ctx context.Context, Email string) (domain.Users, error)
 
 	BlockStatus(ctx context.Context, userId uint) (bool, error)
+
+	AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error)
 }

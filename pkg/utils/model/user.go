@@ -22,3 +22,13 @@ type UserDataOutput struct {
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
 }
+
+type UserAddressInput struct {
+	HouseNumber string `json:"house_number"`
+	Street      string `json:"street"`
+	City        string `json:"city"`
+	District    string `json:"district"`
+	State       string `json:"state"`
+	Pincode     string `json:"pincode"`
+	Landmark    string `json:"landmark"`
+}

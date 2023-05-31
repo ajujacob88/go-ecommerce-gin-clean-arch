@@ -36,6 +36,19 @@ type UserInfo struct {
 
 }
 
+type UserAddress struct {
+	ID          uint   `json:"id" gorm:"primaryKey;unique"`
+	UserID      uint   `json:"user_id"`
+	Users       Users  `gorm:"foreignKey:UserID" json:"-"`
+	HouseNumber string `json:"house_number"`
+	Street      string `json:"street"`
+	City        string `json:"city"`
+	District    string `json:"district"`
+	State       string `json:"state"`
+	Pincode     string `json:"pincode"`
+	Landmark    string `json:"landmark"`
+}
+
 /*
 
 type Address struct {

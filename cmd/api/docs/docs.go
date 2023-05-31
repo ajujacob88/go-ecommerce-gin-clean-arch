@@ -919,6 +919,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/addresses/": {
+            "post": {
+                "description": "Add address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User can add the user address",
+                "operationId": "add-address",
+                "parameters": [
+                    {
+                        "description": "User address",
+                        "name": "user_address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserAddressInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/cart": {
             "get": {
                 "description": "User can view the cart and total price",
@@ -1588,6 +1635,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "otpid": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserAddressInput": {
+            "type": "object",
+            "properties": {
+                "city": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "house_number": {
+                    "type": "string"
+                },
+                "landmark": {
+                    "type": "string"
+                },
+                "pincode": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "string"
+                },
+                "street": {
                     "type": "string"
                 }
             }

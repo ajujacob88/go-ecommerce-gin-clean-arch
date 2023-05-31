@@ -16,6 +16,8 @@ type UserUseCase interface {
 	LoginWithEmail(ctx context.Context, user req.UserLoginEmail) (domain.Users, error)
 
 	FindByEmail(ctx context.Context, Email string) (domain.Users, error)
+
+	AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error)
 }
 
 /* no need already in the code arch
