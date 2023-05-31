@@ -99,3 +99,14 @@ func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 	c.JSON(http.StatusOK, res.SuccessResponse(200, "Successfully removed product from the cart", nil))
 
 }
+
+func (cr *CartHandler) ViewCart(c *gin.Context) {
+	userId, err := handlerutil.GetUserIdFromContext(c)
+	fmt.Println("userid is", userId)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, res.ErrorResponse(401, "unable to fetch the user id from context", err.Error(), nil))
+		return
+	}
+
+	viewCart, err := cr.cartUseCase.ViewCart(c.Request.Context(), userId)
+}

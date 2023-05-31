@@ -6,6 +6,7 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"gorm.io/gorm"
 )
 
@@ -61,7 +62,7 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 	}
 	if qty_in_stock <= 0 {
 		tx.Rollback()
-		return domain.CartItems{}, fmt.Errorf("Failed to add to cart, Product out of stock")
+		return domain.CartItems{}, fmt.Errorf("Failed to add to cart, Product out of stock/ not enough quantity available")
 	}
 
 	// check if the productDetails is already present in the cart
@@ -235,4 +236,53 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 		return err
 	}
 	return err
+}
+
+//----VIEW CART
+
+func (c *cartDatabase) ViewCart(ctx context.Context, userId int) ([]model.ViewCart, error) {
+	tx := c.DB.Begin()
+	//find the cart_id from the carts table
+	var cartDetails model.CartDetails
+
+	err := tx.Raw("SELECT id, sub_total FROM carts WHERE user_id = $1", userId).Scan(&cartDetails).Error
+	if err != nil {
+		tx.Rollback()
+		return model.ViewCart{}, err
+	}
+
+	var viewCart []model.ViewCart
+	joinQuery := `	SELECT product_details_id, product_brands.brand_name,products.name,product_details.model_no,cart_items.quantity,product_details.product_details_image,product_details.price,carts.sub_total
+					FROM cart_items
+					JOIN product_details
+					ON cart_items.product_details_id = product_details.id
+					JOIN products
+					ON products.id = product_details.product_id
+					JOIN product_brands
+					ON product_brands.id = products.brand_id
+					WHERE cart_items.cart_id = $1 `
+
+	rows, err := tx.Raw(joinQuery, cartDetails.ID).Rows()
+	if err != nil {
+		tx.Rollback()
+		return model.ViewCart{}, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var item model.ViewCart
+		err := rows.Scan(&item.ProductItemID, &item.Brand, &item.Name, &item.Model, &item.Quantity, &item.ProductItemImage, &item.Price, &item.Total)
+		if err != nil {
+			tx.Rollback()
+			return model.ViewCart{}, err
+		}
+		viewCart = append(viewCart, item)
+	}
+	// Now commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return model.ViewCart{}, err
+	}
+	return viewCart, err
+
 }
