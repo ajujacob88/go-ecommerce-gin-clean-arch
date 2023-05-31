@@ -39,6 +39,7 @@ func UserRoutes(
 			home.GET("/products/:id", productHandler.FindProductByID)
 			home.POST("/cart/add/:product_details_id", cartHandler.AddToCart)
 			home.DELETE("/cart/remove/:product_details_id", cartHandler.RemoveFromCart)
+			home.GET("/cart", cartHandler.ViewCart)
 
 			//cart routes
 			// cart := api.Group("/cart")

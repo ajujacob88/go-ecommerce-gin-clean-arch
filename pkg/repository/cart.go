@@ -248,7 +248,7 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) ([]model.ViewCa
 	err := tx.Raw("SELECT id, sub_total FROM carts WHERE user_id = $1", userId).Scan(&cartDetails).Error
 	if err != nil {
 		tx.Rollback()
-		return model.ViewCart{}, err
+		return []model.ViewCart{}, err
 	}
 
 	var viewCart []model.ViewCart
@@ -265,7 +265,7 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) ([]model.ViewCa
 	rows, err := tx.Raw(joinQuery, cartDetails.ID).Rows()
 	if err != nil {
 		tx.Rollback()
-		return model.ViewCart{}, err
+		return []model.ViewCart{}, err
 	}
 	defer rows.Close()
 
@@ -274,14 +274,14 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) ([]model.ViewCa
 		err := rows.Scan(&item.ProductItemID, &item.Brand, &item.Name, &item.Model, &item.Quantity, &item.ProductItemImage, &item.Price, &item.Total)
 		if err != nil {
 			tx.Rollback()
-			return model.ViewCart{}, err
+			return []model.ViewCart{}, err
 		}
 		viewCart = append(viewCart, item)
 	}
 	// Now commit the transaction
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
-		return model.ViewCart{}, err
+		return []model.ViewCart{}, err
 	}
 	return viewCart, err
 

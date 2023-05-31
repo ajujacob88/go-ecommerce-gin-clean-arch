@@ -100,6 +100,17 @@ func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 
 }
 
+// ViewCart
+// @Summary User can view the items in the cart and there total price
+// @ID view-cart
+// @Description User can view the cart and total price
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 200 {object} res.Response
+// @Failure 401 {object} response.Response
+// @Failure 500 {object} res.Response
+// @Router /user/cart [get]
 func (cr *CartHandler) ViewCart(c *gin.Context) {
 	userId, err := handlerutil.GetUserIdFromContext(c)
 	fmt.Println("userid is", userId)
@@ -109,4 +120,10 @@ func (cr *CartHandler) ViewCart(c *gin.Context) {
 	}
 
 	viewCart, err := cr.cartUseCase.ViewCart(c.Request.Context(), userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "unable to fetch the cart details", err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, res.SuccessResponse(200, "Successfully fetch the cart", viewCart))
 }

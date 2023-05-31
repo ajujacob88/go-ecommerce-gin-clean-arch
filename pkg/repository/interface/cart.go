@@ -10,5 +10,5 @@ import (
 type CartRepository interface {
 	AddToCart(ctx context.Context, productDetailsID int, userID int) (domain.CartItems, error)
 	RemoveFromCart(ctx context.Context, productDetailsID int, userId int) error
-	ViewCart(ctx context.Context, userId int) (model.ViewCart, error)
+	ViewCart(ctx context.Context, userId int) ([]model.ViewCart, error)
 }
