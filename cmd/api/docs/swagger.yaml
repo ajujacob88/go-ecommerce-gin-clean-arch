@@ -770,6 +770,30 @@ paths:
       summary: Admin can unlock a blocked user
       tags:
       - Admin
+  /user/cart:
+    get:
+      consumes:
+      - application/json
+      description: User can view the cart and total price
+      operationId: view-cart
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/res.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/res.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: User can view the items in the cart and there total price
+      tags:
+      - Cart
   /user/cart/add/{product_details_id}:
     post:
       consumes:

@@ -108,7 +108,7 @@ func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} res.Response
-// @Failure 401 {object} response.Response
+// @Failure 401 {object} res.Response
 // @Failure 500 {object} res.Response
 // @Router /user/cart [get]
 func (cr *CartHandler) ViewCart(c *gin.Context) {

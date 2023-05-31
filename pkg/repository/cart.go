@@ -260,6 +260,8 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) ([]model.ViewCa
 					ON products.id = product_details.product_id
 					JOIN product_brands
 					ON product_brands.id = products.brand_id
+					JOIN carts
+                    ON carts.id = cart_items.cart_id
 					WHERE cart_items.cart_id = $1 `
 
 	rows, err := tx.Raw(joinQuery, cartDetails.ID).Rows()
