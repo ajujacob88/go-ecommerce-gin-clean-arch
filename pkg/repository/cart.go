@@ -252,7 +252,7 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) ([]model.ViewCa
 	}
 
 	var viewCart []model.ViewCart
-	joinQuery := `	SELECT product_details_id, product_brands.brand_name,products.name,product_details.model_no,cart_items.quantity,product_details.product_details_image,product_details.price,carts.sub_total
+	joinQuery := `	SELECT product_details_id, product_brands.brand_name,products.name,product_details.model_no,cart_items.quantity,product_details.product_details_image,product_details.price,(cart_items.quantity * product_details.price) AS subtotal,carts.sub_total
 					FROM cart_items
 					JOIN product_details
 					ON cart_items.product_details_id = product_details.id
@@ -273,7 +273,7 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) ([]model.ViewCa
 
 	for rows.Next() {
 		var item model.ViewCart
-		err := rows.Scan(&item.ProductItemID, &item.Brand, &item.Name, &item.Model, &item.Quantity, &item.ProductItemImage, &item.Price, &item.Total)
+		err := rows.Scan(&item.ProductItemID, &item.Brand, &item.Name, &item.Model, &item.Quantity, &item.ProductItemImage, &item.Price, &item.Total, &item.SubTotal)
 		if err != nil {
 			tx.Rollback()
 			return []model.ViewCart{}, err
