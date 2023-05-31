@@ -49,6 +49,21 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 		}
 	}
 
+	// check if the stocks are available
+	var qty_in_stock int
+	productStockQuery := ` 	SELECT qty_in_stock 
+						FROM product_details
+						WHERE id = $1`
+	err = tx.Raw(productStockQuery, productDetailsID).Scan(&qty_in_stock).Error
+	if err != nil {
+		tx.Rollback()
+		return domain.CartItems{}, err
+	}
+	if qty_in_stock <= 0 {
+		tx.Rollback()
+		return domain.CartItems{}, fmt.Errorf("Failed to add to cart, Product out of stock")
+	}
+
 	// check if the productDetails is already present in the cart
 	var cartItem domain.CartItems
 	cartItemQuery := `	SELECT id, quantity
@@ -113,6 +128,19 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 		return domain.CartItems{}, err
 	}
 
+	// this is for while placing the order, done by myself
+	/* No need to reduce the qty_in_stock here..., need to reduce only while placing the order
+	// Now reduce the qty_in_stock in product details table
+	updateCartQuery := `	UPDATE product_details
+								SET qty_in_stock = $1
+								WHERE id = $2;`
+	err = tx.Exec(updateCartQuery, qty_in_stock-1, productDetailsID).Error //qty_in_stock already retrieved in the beginnning part of this function
+	if err != nil {
+		tx.Rollback()
+		return domain.CartItems{}, err
+	}
+	*/
+
 	// Now commit the transaction
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
@@ -120,6 +148,8 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 	}
 	return cartItem, nil
 }
+
+//---------Remove FROM CART
 
 func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int, userId int) error {
 	tx := c.DB.Begin()
