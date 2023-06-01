@@ -109,3 +109,8 @@ func (c *userUseCase) UpdateAddress(ctx context.Context, userAddressInput model.
 	updatedAddress, err := c.userRepo.UpdateAddress(ctx, userAddressInput, addressID)
 	return updatedAddress, err
 }
+
+func (c *userUseCase) DeleteAddress(ctx context.Context, addressID int) error {
+	err := c.userRepo.DeleteAddress(ctx, addressID)
+	return err
+}

@@ -23,4 +23,6 @@ type UserRepository interface {
 	AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error)
 
 	UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, addressID int) (domain.UserAddress, error)
+
+	DeleteAddress(ctx context.Context, addressID int) error
 }

@@ -802,6 +802,36 @@ paths:
       summary: User can add the user address
       tags:
       - user
+  /user/addresses/{address_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete address
+      operationId: delete-address
+      parameters:
+      - description: address id
+        in: path
+        name: address_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: User can delete the user address
+      tags:
+      - user
   /user/addresses/edit/{address_id}:
     patch:
       consumes:

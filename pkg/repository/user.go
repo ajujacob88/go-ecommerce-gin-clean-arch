@@ -189,3 +189,8 @@ func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput model
 	}
 	return updatedAddress, nil
 }
+
+func (c *userDatabase) DeleteAddress(ctx context.Context, addressID int) error {
+	err := c.DB.Exec("DELETE FROM user_addresses WHERE id = ?", addressID).Error
+	return err
+}

@@ -296,6 +296,10 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 
 	paramsID := c.Param("address_id")
 	addressID, err := strconv.Atoi(paramsID)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the address id", err.Error(), nil))
+		return
+	}
 
 	updatedAddress, err := cr.userUseCase.UpdateAddress(c.Request.Context(), userAddressInput, addressID)
 	if err != nil {
@@ -304,5 +308,33 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully updated the address", updatedAddress))
+
+}
+
+// DeleteAddress
+// @Summary User can delete the user address
+// @ID delete-address
+// @Description Delete address
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param address_id path string true "address id"
+// @Success 201 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Router /user/addresses/{address_id} [delete]
+func (cr *UserHandler) DeleteAddress(c *gin.Context) {
+	paramsID := c.Param("address_id")
+	addressID, err := strconv.Atoi(paramsID)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the address id", err.Error(), nil))
+		return
+	}
+
+	if err = cr.userUseCase.DeleteAddress(c.Request.Context(), addressID); err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to delete the address", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully deleted the address", nil))
 
 }

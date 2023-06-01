@@ -996,6 +996,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/addresses/{address_id}": {
+            "delete": {
+                "description": "Delete address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "User can delete the user address",
+                "operationId": "delete-address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "address id",
+                        "name": "address_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/res.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/cart": {
             "get": {
                 "description": "User can view the cart and total price",
