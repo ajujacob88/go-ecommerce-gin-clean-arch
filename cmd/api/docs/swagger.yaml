@@ -802,6 +802,42 @@ paths:
       summary: User can add the user address
       tags:
       - user
+  /user/addresses/edit/{address_id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update address
+      operationId: update-address
+      parameters:
+      - description: User address
+        in: body
+        name: user_address
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserAddressInput'
+      - description: address id
+        in: path
+        name: address_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/res.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/res.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/res.Response'
+      summary: User can edit the user address
+      tags:
+      - user
   /user/cart:
     get:
       consumes:

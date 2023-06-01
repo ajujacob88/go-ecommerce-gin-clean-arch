@@ -156,7 +156,9 @@ func (c *userDatabase) AddAddress(ctx context.Context, userAddressInput model.Us
 
 }
 
-func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
+/*
+//no need of this function since multiple address for a user will be there, so udating based on user id wont be right, so update based on address id written as the next function
+func (c *userDatabase) UpdateAddressByUserID(ctx context.Context, userAddressInput model.UserAddressInput, userID int, addressID int) (domain.UserAddress, error) {
 	var updatedAddress domain.UserAddress
 
 	//	address is already there, update it
@@ -165,6 +167,23 @@ func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput model
 									WHERE user_id = $8
 									RETURNING *`
 	err := c.DB.Raw(updateAddressQuery, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark, userID).Scan(&updatedAddress).Error
+	if err != nil {
+		return domain.UserAddress{}, err
+	}
+	return updatedAddress, nil
+}
+
+*/
+
+func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, addressID int) (domain.UserAddress, error) {
+	var updatedAddress domain.UserAddress
+
+	//	address is already there, update it
+	updateAddressQuery := `	UPDATE user_addresses SET
+									house_number = $1, street = $2, city = $3, district = $4, state = $5, pincode = $6, landmark = $7
+									WHERE id = $8
+									RETURNING *`
+	err := c.DB.Raw(updateAddressQuery, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark, addressID).Scan(&updatedAddress).Error
 	if err != nil {
 		return domain.UserAddress{}, err
 	}

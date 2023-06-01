@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/auth"
@@ -127,41 +128,6 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 	response := res.SuccessResponse(200, "OTP validation Successfull..Account Created Successfully", nil)
 	c.JSON(200, response)
 }
-
-/* old one signup otp verify delete this after modification complete
-func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
-	var user domain.Users
-	var otp req.OTPVerify
-	if err := c.BindJSON(&otp); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "Error binding json",
-		})
-		return
-	}
-	if err := verify.TwilioVerifyOTP("+91"+user.Phone, otp.OTP); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid Otp",
-		})
-		//fmt.Println("otp print 4")
-		return
-	}
-	//fmt.Println("otp print 5")
-
-	//user.VerifyStatus = true
-
-	// Call the OTPVerifyStatusManage method to update the verification status
-	//fmt.Println("user.id is", user.ID, "and user.Email is", user.Email)
-	err := cr.userUseCase.OTPVerifyStatusManage(c.Request.Context(), user.Email, true)
-	if err != nil {
-		response := res.ErrorResponse(500, "Failed to update verification status", err.Error(), user)
-		c.JSON(http.StatusInternalServerError, response)
-		return
-	}
-
-	response := res.SuccessResponse(200, "OTP validation OK..Account Created Successfully", nil)
-	c.JSON(200, response)
-}
-*/
 
 // UserLogin
 // @Summary User Login
@@ -301,6 +267,18 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 }
 
 // UpdateAddress
+// @Summary User can edit the user address
+// @ID update-address
+// @Description Update address
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_address body model.UserAddressInput true "User address"
+// @Param address_id path string true "address id"
+// @Success 201 {object} res.Response
+// @Failure 422 {object} res.Response
+// @Failure 400 {object} res.Response
+// @Router /user/addresses/edit/{address_id} [patch]
 func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 	var userAddressInput model.UserAddressInput
 
@@ -309,13 +287,17 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 		return
 	}
 
-	userID, err := handlerutil.GetUserIdFromContext(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
-		return
-	}
+	//no need since i am going to update based on address id
+	// userID, err := handlerutil.GetUserIdFromContext(c)
+	// if err != nil {
+	// 	c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+	// 	return
+	// }
 
-	updatedAddress, err := cr.userUseCase.UpdateAddress(c.Request.Context(), userAddressInput, userID)
+	paramsID := c.Param("address_id")
+	addressID, err := strconv.Atoi(paramsID)
+
+	updatedAddress, err := cr.userUseCase.UpdateAddress(c.Request.Context(), userAddressInput, addressID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to update the address", err.Error(), nil))
 		return

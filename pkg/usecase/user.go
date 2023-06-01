@@ -105,7 +105,7 @@ func (c *userUseCase) AddAddress(ctx context.Context, userAddressInput model.Use
 
 }
 
-func (c *userUseCase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
-	updatedAddress, err := c.userRepo.UpdateAddress(ctx, userAddressInput, userID)
+func (c *userUseCase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, addressID int) (domain.UserAddress, error) {
+	updatedAddress, err := c.userRepo.UpdateAddress(ctx, userAddressInput, addressID)
 	return updatedAddress, err
 }

@@ -41,6 +41,7 @@ func UserRoutes(
 			home.DELETE("/cart/remove/:product_details_id", cartHandler.RemoveFromCart)
 			home.GET("/cart", cartHandler.ViewCart)
 			home.POST("/addresses", userHandler.AddAddress)
+			home.PATCH("/addresses/edit/:address_id", userHandler.UpdateAddress)
 
 			//cart routes
 			// cart := api.Group("/cart")
