@@ -478,18 +478,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Search query string",
-                        "name": "query",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "filter criteria for showing the products",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "sorting criteria for showing the products",
                         "name": "sort_by",
                         "in": "query"
@@ -731,18 +719,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Search query string",
-                        "name": "query",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "filter criteria for showing the users",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
                         "description": "sorting criteria for showing the users",
                         "name": "sort_by",
                         "in": "query"
@@ -929,7 +905,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "user"
                 ],
                 "summary": "User can add the user address",
                 "operationId": "add-address",
@@ -1247,18 +1223,6 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Enter the page no to display",
                         "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Search query string",
-                        "name": "query",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "filter criteria for showing the products",
-                        "name": "filter",
                         "in": "query"
                     },
                     {

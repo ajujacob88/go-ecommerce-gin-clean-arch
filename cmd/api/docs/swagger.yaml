@@ -490,14 +490,6 @@ paths:
         in: query
         name: page
         type: integer
-      - description: Search query string
-        in: query
-        name: query
-        type: string
-      - description: filter criteria for showing the products
-        in: query
-        name: filter
-        type: string
       - description: sorting criteria for showing the products
         in: query
         name: sort_by
@@ -658,14 +650,6 @@ paths:
         in: query
         name: limit
         type: integer
-      - description: Search query string
-        in: query
-        name: query
-        type: string
-      - description: filter criteria for showing the users
-        in: query
-        name: filter
-        type: string
       - description: sorting criteria for showing the users
         in: query
         name: sort_by
@@ -817,7 +801,7 @@ paths:
             $ref: '#/definitions/res.Response'
       summary: User can add the user address
       tags:
-      - Users
+      - user
   /user/cart:
     get:
       consumes:
@@ -1003,14 +987,6 @@ paths:
         in: query
         name: page
         type: integer
-      - description: Search query string
-        in: query
-        name: query
-        type: string
-      - description: filter criteria for showing the products
-        in: query
-        name: filter
-        type: string
       - description: sorting criteria for showing the products
         in: query
         name: sort_by

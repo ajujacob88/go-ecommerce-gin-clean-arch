@@ -124,8 +124,10 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 // @Produce json
 // @Param page query int false "Enter the page no to display"
 // @Param limit query int false "Number of items to retrieve per page"
-// @Param query query string false "Search query string"
-// @Param filter query string false "filter criteria for showing the users"
+//
+//	query query string false "Search query string"
+//	filter query string false "filter criteria for showing the users"
+//
 // @Param sort_by query string false "sorting criteria for showing the users"
 // @Param sort_desc query bool false "sorting in descending order"
 // @Success 200 {object} res.Response

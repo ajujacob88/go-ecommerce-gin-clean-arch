@@ -269,7 +269,7 @@ func (cr *UserHandler) LogoutHandler(c *gin.Context) {
 // @Summary User can add the user address
 // @ID add-address
 // @Description Add address
-// @Tags Users
+// @Tags user
 // @Accept json
 // @Produce json
 // @Param user_address body model.UserAddressInput true "User address"

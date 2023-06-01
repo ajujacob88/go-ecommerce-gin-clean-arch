@@ -226,8 +226,8 @@ func (cr *ProductHandler) CreateProduct(c *gin.Context) {
 // @Produce json
 // @Param limit query int false "Number of items to retrieve per page"
 // @Param page query int false "Enter the page no to display"
-// @Param query query string false "Search query string"
-// @Param filter query string false "filter criteria for showing the products"
+// cpmmenting - query query string false "Search query string"
+// commenting - filter query string false "filter criteria for showing the products"
 // @Param sort_by query string false "sorting criteria for showing the products"
 // @Param sort_desc query bool false "sorting in descending order"
 // @Success 200 {object} res.Response
