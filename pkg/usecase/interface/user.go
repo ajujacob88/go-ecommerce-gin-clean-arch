@@ -18,6 +18,8 @@ type UserUseCase interface {
 	FindByEmail(ctx context.Context, Email string) (domain.Users, error)
 
 	AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error)
+
+	UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error)
 }
 
 /* no need already in the code arch

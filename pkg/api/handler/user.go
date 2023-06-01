@@ -299,3 +299,28 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully added the address", address))
 
 }
+
+// UpdateAddress
+func (cr *UserHandler) UpdateAddress(c *gin.Context) {
+	var userAddressInput model.UserAddressInput
+
+	if err := c.Bind(&userAddressInput); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to fetch the address body", err.Error(), nil))
+		return
+	}
+
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		return
+	}
+
+	updatedAddress, err := cr.userUseCase.UpdateAddress(c.Request.Context(), userAddressInput, userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to update the address", err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully updated the address", updatedAddress))
+
+}
