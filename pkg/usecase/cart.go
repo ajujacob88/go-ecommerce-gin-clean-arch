@@ -30,7 +30,7 @@ func (c *cartUseCase) RemoveFromCart(ctx context.Context, productDetailsID int, 
 
 }
 
-func (c *cartUseCase) ViewCart(ctx context.Context, userId int) ([]model.ViewCart, error) {
+func (c *cartUseCase) ViewCart(ctx context.Context, userId int) (model.ViewCart, error) {
 	viewCart, err := c.cartRepo.ViewCart(ctx, userId)
 	return viewCart, err
 
