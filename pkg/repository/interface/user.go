@@ -18,5 +18,9 @@ type UserRepository interface {
 
 	BlockStatus(ctx context.Context, userId uint) (bool, error)
 
+	FindAddressByID(ctx context.Context, userID int) (domain.UserAddress, error)
+
 	AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error)
+
+	UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error)
 }

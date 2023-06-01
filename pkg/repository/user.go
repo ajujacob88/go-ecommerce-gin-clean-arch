@@ -131,6 +131,48 @@ func (c *userDatabase) BlockStatus(ctx context.Context, userId uint) (bool, erro
 	return blockStatus, err
 }
 
+// ---to add address
+func (c *userDatabase) FindAddressByID(ctx context.Context, userID int) (domain.UserAddress, error) {
+	var userAddress domain.UserAddress
+	findAddressQuery := `SELECT * FROM user_addresses WHERE user_id = $1`
+	err := c.DB.Raw(findAddressQuery, userID).Scan(&userAddress).Error
+	if err != nil {
+		return domain.UserAddress{}, err
+	}
+	return userAddress, nil
+}
+
+func (c *userDatabase) AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
+	var addedAddress domain.UserAddress
+
+	insertAddressQuery := `	INSERT INTO user_addresses(
+								user_id, house_number, street, city, district, state, pincode, landmark) 
+								VALUES($1,$2,$3,$4,$5,$6, $7, $8) RETURNING *`
+	err := c.DB.Raw(insertAddressQuery, userID, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark).Scan(&addedAddress).Error
+	if err != nil {
+		return domain.UserAddress{}, err
+	}
+	return addedAddress, nil
+
+}
+
+func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
+	var updatedAddress domain.UserAddress
+
+	//	address is already there, update it
+	updateAddressQuery := `	UPDATE user_addresses SET
+									house_number = $1, street = $2, city = $3, district = $4, state = $5, pincode = $6, landmark = $7
+									WHERE user_id = $8
+									RETURNING *`
+	err := c.DB.Raw(updateAddressQuery, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark, userID).Scan(&updatedAddress).Error
+	if err != nil {
+		return domain.UserAddress{}, err
+	}
+	return updatedAddress, nil
+}
+
+/*
+// no neeed just backup, delete after seperating
 func (c *userDatabase) AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
 	var existingAddress, addedAddress domain.UserAddress
 	findAddressQuery := `SELECT * FROM user_addresses WHERE user_id = $1`
@@ -138,20 +180,21 @@ func (c *userDatabase) AddAddress(ctx context.Context, userAddressInput model.Us
 	if err != nil {
 		return domain.UserAddress{}, err
 	}
-	if existingAddress.ID == 0 || existingAddress.UserID == 0 {
+	if existingAddress.ID == 0 {
 		//no address is found in user table, so insert query
 		insertAddressQuery := `	INSERT INTO user_addresses(
-								user_id, house_number, street, city, district, state, pincode, landmark) 
+								user_id, house_number, street, city, district, state, pincode, landmark)
 								VALUES($1,$2,$3,$4,$5,$6, $7, $8) RETURNING *`
 		err := c.DB.Raw(insertAddressQuery, userID, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark).Scan(&addedAddress).Error
 		return addedAddress, err
 	} else {
 		//	address is already there, update it
-		updateAddressQuery := `	UPDATE addresses SET
-								house_number = $1, street = $2, city = $3, district = $4, state = $5, pincode = $5, landmark = $6
-								WHERE user_id = $7
+		updateAddressQuery := `	UPDATE user_addresses SET
+								house_number = $1, street = $2, city = $3, district = $4, state = $5, pincode = $6, landmark = $7
+								WHERE user_id = $8
 								RETURNING *`
 		err := c.DB.Raw(updateAddressQuery, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark, userID).Scan(&addedAddress).Error
 		return addedAddress, err
 	}
 }
+*/

@@ -99,8 +99,19 @@ func (c *userUseCase) FindByEmail(ctx context.Context, email string) (domain.Use
 //----user address
 
 func (c *userUseCase) AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
-	address, err := c.userRepo.AddAddress(ctx, userAddressInput, userID)
-	return address, err
+	// check and find if already an address is there
+	//var existingAddress domain.UserAddress
+	existingAddress, err := c.userRepo.FindAddressByID(ctx, userID)
+	if err != nil {
+		return domain.UserAddress{}, err
+	}
+	if existingAddress.ID == 0 {
+		address, err := c.userRepo.AddAddress(ctx, userAddressInput, userID)
+		return address, err
+	} else {
+		address, err := c.userRepo.UpdateAddress(ctx, userAddressInput, userID)
+		return address, err
+	}
 }
 
 /*
