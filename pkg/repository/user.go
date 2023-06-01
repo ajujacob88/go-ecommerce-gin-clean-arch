@@ -149,6 +149,7 @@ func (c *userDatabase) AddAddress(ctx context.Context, userAddressInput model.Us
 								user_id, house_number, street, city, district, state, pincode, landmark) 
 								VALUES($1,$2,$3,$4,$5,$6, $7, $8) RETURNING *`
 	err := c.DB.Raw(insertAddressQuery, userID, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark).Scan(&addedAddress).Error
+
 	if err != nil {
 		return domain.UserAddress{}, err
 	}
@@ -175,22 +176,33 @@ func (c *userDatabase) UpdateAddressByUserID(ctx context.Context, userAddressInp
 
 */
 
-func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, addressID int) (domain.UserAddress, error) {
+func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID, addressID int) (domain.UserAddress, error) {
 	var updatedAddress domain.UserAddress
 
 	//	address is already there, update it
 	updateAddressQuery := `	UPDATE user_addresses SET
 									house_number = $1, street = $2, city = $3, district = $4, state = $5, pincode = $6, landmark = $7
-									WHERE id = $8
+									WHERE id = $8 AND user_id = $9
 									RETURNING *`
-	err := c.DB.Raw(updateAddressQuery, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark, addressID).Scan(&updatedAddress).Error
-	if err != nil {
-		return domain.UserAddress{}, err
+	result := c.DB.Raw(updateAddressQuery, userAddressInput.HouseNumber, userAddressInput.Street, userAddressInput.City, userAddressInput.District, userAddressInput.State, userAddressInput.Pincode, userAddressInput.Landmark, addressID, userID).Scan(&updatedAddress)
+	if result.Error != nil {
+		return domain.UserAddress{}, result.Error
+	}
+	// check the db.raw is exected succesfully like the conditions  id = $8 AND user_id = $9 met,,, then only we can pass the error.. may be this condition neednt required to check, beacuse in front end the user is actually seeing his only address.
+	// Handle the case where no rows were updated
+	if result.RowsAffected == 0 {
+		return domain.UserAddress{}, errors.New("this addresssss is not mapped into this user")
 	}
 	return updatedAddress, nil
 }
 
-func (c *userDatabase) DeleteAddress(ctx context.Context, addressID int) error {
-	err := c.DB.Exec("DELETE FROM user_addresses WHERE id = ?", addressID).Error
-	return err
+func (c *userDatabase) DeleteAddress(ctx context.Context, userID, addressID int) error {
+	result := c.DB.Exec("DELETE FROM user_addresses WHERE id = $1 AND user_id = $2", addressID, userID)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return errors.New("this address is not mapped into this user")
+	}
+	return nil
 }

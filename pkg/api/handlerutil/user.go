@@ -14,3 +14,7 @@ func GetUserIdFromContext(c *gin.Context) (int, error) {
 	userID, err := strconv.Atoi(fmt.Sprintf("%v", ID))
 	return userID, err
 }
+
+// //both c.Get and c.Value can be used to retrieve data from context.. here i just used c.Value and i have also used the function GetUserIdFromContext
+// id, valuebool := c.Get("userID")
+// userid, err := strconv.Atoi(fmt.Sprintf("%v", id))

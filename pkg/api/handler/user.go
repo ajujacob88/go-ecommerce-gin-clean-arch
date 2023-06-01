@@ -250,6 +250,10 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 		return
 	}
 
+	// //both c.Get and c.Value can be used to retrieve data from context.. here i just used c.Value and i have also used the function GetUserIdFromContext
+	// id, valuebool := c.Get("userID")
+	// userid, err := strconv.Atoi(fmt.Sprintf("%v", id))
+
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
@@ -287,12 +291,12 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 		return
 	}
 
-	//no need since i am going to update based on address id
-	// userID, err := handlerutil.GetUserIdFromContext(c)
-	// if err != nil {
-	// 	c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
-	// 	return
-	// }
+	//update based on address id as well as userid
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		return
+	}
 
 	paramsID := c.Param("address_id")
 	addressID, err := strconv.Atoi(paramsID)
@@ -301,7 +305,7 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 		return
 	}
 
-	updatedAddress, err := cr.userUseCase.UpdateAddress(c.Request.Context(), userAddressInput, addressID)
+	updatedAddress, err := cr.userUseCase.UpdateAddress(c.Request.Context(), userAddressInput, userID, addressID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to update the address", err.Error(), nil))
 		return
@@ -331,7 +335,13 @@ func (cr *UserHandler) DeleteAddress(c *gin.Context) {
 		return
 	}
 
-	if err = cr.userUseCase.DeleteAddress(c.Request.Context(), addressID); err != nil {
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		return
+	}
+
+	if err = cr.userUseCase.DeleteAddress(c.Request.Context(), userID, addressID); err != nil {
 		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to delete the address", err.Error(), nil))
 		return
 	}
