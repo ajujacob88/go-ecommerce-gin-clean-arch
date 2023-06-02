@@ -159,7 +159,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NewCategory"
+                            "$ref": "#/definitions/request.NewCategory"
                         }
                     }
                 ],
@@ -424,7 +424,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NewProductDetails"
+                            "$ref": "#/definitions/request.NewProductDetails"
                         }
                     }
                 ],
@@ -773,7 +773,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.BlockUser"
+                            "$ref": "#/definitions/request.BlockUser"
                         }
                     }
                 ],
@@ -916,7 +916,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserAddressInput"
+                            "$ref": "#/definitions/request.UserAddressInput"
                         }
                     }
                 ],
@@ -963,7 +963,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserAddressInput"
+                            "$ref": "#/definitions/request.UserAddressInput"
                         }
                     },
                     {
@@ -1418,7 +1418,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NewUserInfo"
+                            "$ref": "#/definitions/request.NewUserInfo"
                         }
                     }
                 ],
@@ -1465,7 +1465,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.OTPVerify"
+                            "$ref": "#/definitions/request.OTPVerify"
                         }
                     }
                 ],
@@ -1543,7 +1543,37 @@ const docTemplate = `{
                 }
             }
         },
-        "model.BlockUser": {
+        "req.UserLoginEmail": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.AdminLoginInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.BlockUser": {
             "type": "object",
             "properties": {
                 "reason": {
@@ -1554,7 +1584,33 @@ const docTemplate = `{
                 }
             }
         },
-        "model.NewCategory": {
+        "request.NewAdminInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "phone",
+                "user_name"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email    string ` + "`" + `json:\"email\" validate:\"required,email\"` + "`" + `",
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 10
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.NewCategory": {
             "type": "object",
             "properties": {
                 "category_name": {
@@ -1562,7 +1618,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.NewProductDetails": {
+        "request.NewProductDetails": {
             "type": "object",
             "required": [
                 "color",
@@ -1618,7 +1674,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.NewUserInfo": {
+        "request.NewUserInfo": {
             "type": "object",
             "required": [
                 "email",
@@ -1646,7 +1702,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.OTPVerify": {
+        "request.OTPVerify": {
             "type": "object",
             "required": [
                 "otp",
@@ -1661,7 +1717,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserAddressInput": {
+        "request.UserAddressInput": {
             "type": "object",
             "properties": {
                 "city": {
@@ -1683,62 +1739,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "street": {
-                    "type": "string"
-                }
-            }
-        },
-        "req.UserLoginEmail": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.AdminLoginInfo": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.NewAdminInfo": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "phone",
-                "user_name"
-            ],
-            "properties": {
-                "email": {
-                    "description": "Email    string ` + "`" + `json:\"email\" validate:\"required,email\"` + "`" + `",
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string",
-                    "maxLength": 10,
-                    "minLength": 10
-                },
-                "user_name": {
                     "type": "string"
                 }
             }

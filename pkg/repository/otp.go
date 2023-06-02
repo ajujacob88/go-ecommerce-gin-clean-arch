@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"gorm.io/gorm"
 )
 
@@ -30,7 +30,7 @@ func (c otpDatabase) SaveOTP(ctx context.Context, resp string, phoneNumber strin
 	return err
 }
 
-func (c otpDatabase) RetrieveOtpSession(ctx context.Context, otpverify model.OTPVerify) (domain.OTPSession, error) {
+func (c otpDatabase) RetrieveOtpSession(ctx context.Context, otpverify request.OTPVerify) (domain.OTPSession, error) {
 	var otpsession domain.OTPSession
 	err := c.DB.Where("otp_id=?", otpverify.OtpId).Find(&otpsession).Error
 	if err != nil {

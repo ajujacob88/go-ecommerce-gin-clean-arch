@@ -32,19 +32,58 @@ definitions:
       id:
         type: integer
     type: object
-  model.BlockUser:
+  req.UserLoginEmail:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  request.AdminLoginInfo:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  request.BlockUser:
     properties:
       reason:
         type: string
       user_id:
         type: integer
     type: object
-  model.NewCategory:
+  request.NewAdminInfo:
+    properties:
+      email:
+        description: Email    string `json:"email" validate:"required,email"`
+        type: string
+      password:
+        type: string
+      phone:
+        maxLength: 10
+        minLength: 10
+        type: string
+      user_name:
+        type: string
+    required:
+    - email
+    - password
+    - phone
+    - user_name
+    type: object
+  request.NewCategory:
     properties:
       category_name:
         type: string
     type: object
-  model.NewProductDetails:
+  request.NewProductDetails:
     properties:
       color:
         type: string
@@ -84,7 +123,7 @@ definitions:
     - sku
     - storage
     type: object
-  model.NewUserInfo:
+  request.NewUserInfo:
     properties:
       email:
         type: string
@@ -106,7 +145,7 @@ definitions:
     - password
     - phone
     type: object
-  model.OTPVerify:
+  request.OTPVerify:
     properties:
       otp:
         type: string
@@ -116,7 +155,7 @@ definitions:
     - otp
     - otpid
     type: object
-  model.UserAddressInput:
+  request.UserAddressInput:
     properties:
       city:
         type: string
@@ -132,45 +171,6 @@ definitions:
         type: string
       street:
         type: string
-    type: object
-  req.UserLoginEmail:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-    required:
-    - email
-    - password
-    type: object
-  request.AdminLoginInfo:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-    required:
-    - email
-    - password
-    type: object
-  request.NewAdminInfo:
-    properties:
-      email:
-        description: Email    string `json:"email" validate:"required,email"`
-        type: string
-      password:
-        type: string
-      phone:
-        maxLength: 10
-        minLength: 10
-        type: string
-      user_name:
-        type: string
-    required:
-    - email
-    - password
-    - phone
-    - user_name
     type: object
   res.Response:
     properties:
@@ -281,7 +281,7 @@ paths:
         name: category_name
         required: true
         schema:
-          $ref: '#/definitions/model.NewCategory'
+          $ref: '#/definitions/request.NewCategory'
       produces:
       - application/json
       responses:
@@ -457,7 +457,7 @@ paths:
         name: product_details
         required: true
         schema:
-          $ref: '#/definitions/model.NewProductDetails'
+          $ref: '#/definitions/request.NewProductDetails'
       produces:
       - application/json
       responses:
@@ -688,7 +688,7 @@ paths:
         name: user_id
         required: true
         schema:
-          $ref: '#/definitions/model.BlockUser'
+          $ref: '#/definitions/request.BlockUser'
       produces:
       - application/json
       responses:
@@ -783,7 +783,7 @@ paths:
         name: user_address
         required: true
         schema:
-          $ref: '#/definitions/model.UserAddressInput'
+          $ref: '#/definitions/request.UserAddressInput'
       produces:
       - application/json
       responses:
@@ -844,7 +844,7 @@ paths:
         name: user_address
         required: true
         schema:
-          $ref: '#/definitions/model.UserAddressInput'
+          $ref: '#/definitions/request.UserAddressInput'
       - description: address id
         in: path
         name: address_id
@@ -1116,7 +1116,7 @@ paths:
         name: user_details
         required: true
         schema:
-          $ref: '#/definitions/model.NewUserInfo'
+          $ref: '#/definitions/request.NewUserInfo'
       produces:
       - application/json
       responses:
@@ -1147,7 +1147,7 @@ paths:
         name: otpverify
         required: true
         schema:
-          $ref: '#/definitions/model.OTPVerify'
+          $ref: '#/definitions/request.OTPVerify'
       produces:
       - application/json
       responses:

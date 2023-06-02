@@ -8,8 +8,8 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/auth"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
 	"github.com/gin-gonic/gin"
@@ -57,14 +57,14 @@ func NewUserHandler(usecase services.UserUseCase, otpusecase services.OTPUseCase
 // @Tags Users Signup
 // @Accept json
 // @Produce json
-// @Param user_details body model.NewUserInfo true "New user Details"
+// @Param user_details body request.NewUserInfo true "New user Details"
 // @Success 200 {object} res.Response
 // @Failure 500 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Router /user/signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	//var user domain.Users
-	var newUserInfo model.NewUserInfo
+	var newUserInfo request.NewUserInfo
 	if err := c.BindJSON(&newUserInfo); err != nil {
 		response := res.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
 		c.JSON(http.StatusBadRequest, response)
@@ -99,14 +99,14 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 // @Tags Users otp verify
 // @Accept json
 // @Produce json
-// @Param otpverify body model.OTPVerify true "OTP verification details"
+// @Param otpverify body request.OTPVerify true "OTP verification details"
 // @Success 200 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Router /user/signup/otp/verify [post]
 func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 	//var user domain.Users
-	var otpverify model.OTPVerify
+	var otpverify request.OTPVerify
 	if err := c.BindJSON(&otpverify); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
 		return
@@ -238,13 +238,13 @@ func (cr *UserHandler) LogoutHandler(c *gin.Context) {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Param user_address body model.UserAddressInput true "User address"
+// @Param user_address body request.UserAddressInput true "User address"
 // @Success 201 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Router /user/addresses/ [post]
 func (cr *UserHandler) AddAddress(c *gin.Context) {
-	var userAddressInput model.UserAddressInput
+	var userAddressInput request.UserAddressInput
 	if err := c.Bind(&userAddressInput); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
 		return
@@ -277,14 +277,14 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Param user_address body model.UserAddressInput true "User address"
+// @Param user_address body request.UserAddressInput true "User address"
 // @Param address_id path string true "address id"
 // @Success 201 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Router /user/addresses/edit/{address_id} [patch]
 func (cr *UserHandler) UpdateAddress(c *gin.Context) {
-	var userAddressInput model.UserAddressInput
+	var userAddressInput request.UserAddressInput
 
 	if err := c.Bind(&userAddressInput); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to fetch the address body", err.Error(), nil))

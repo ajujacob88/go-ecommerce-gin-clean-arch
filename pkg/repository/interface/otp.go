@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 )
 
 type OTPRepository interface {
 	SaveOTP(ctx context.Context, resp string, phoneNumber string) error
-	RetrieveOtpSession(ctx context.Context, otpverify model.OTPVerify) (domain.OTPSession, error)
+	RetrieveOtpSession(ctx context.Context, otpverify request.OTPVerify) (domain.OTPSession, error)
 }

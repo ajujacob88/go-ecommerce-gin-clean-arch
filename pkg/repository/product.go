@@ -7,8 +7,8 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"gorm.io/gorm"
 )
 
@@ -172,7 +172,7 @@ func (c *productDatabase) DeleteProduct(ctx context.Context, productID int) erro
 
 //-------Product details management----
 
-func (c *productDatabase) AddProductDetails(ctx context.Context, NewProductDetails model.NewProductDetails) (domain.ProductDetails, error) {
+func (c *productDatabase) AddProductDetails(ctx context.Context, NewProductDetails request.NewProductDetails) (domain.ProductDetails, error) {
 	var addedProdDetails domain.ProductDetails
 	addProdDetailsQuery := `INSERT INTO product_details(product_id,model_no,processor,storage,ram,graphics_card,display_size,color,os,sku,qty_in_stock,price,product_details_image)
 							VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)

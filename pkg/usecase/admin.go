@@ -12,7 +12,6 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/jinzhu/copier"
@@ -98,7 +97,7 @@ func (c *adminUseCase) FindUserByID(ctx context.Context, userID int) (domain.Use
 	return user, err
 }
 
-func (c *adminUseCase) BlockUser(ctx context.Context, blockInfo model.BlockUser, adminID int) (domain.UserInfo, error) {
+func (c *adminUseCase) BlockUser(ctx context.Context, blockInfo request.BlockUser, adminID int) (domain.UserInfo, error) {
 	blockedUser, err := c.adminRepo.BlockUser(ctx, blockInfo, adminID)
 	return blockedUser, err
 }

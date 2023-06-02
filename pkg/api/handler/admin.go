@@ -9,7 +9,6 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
 	"github.com/gin-gonic/gin"
 )
@@ -199,14 +198,14 @@ func (cr *AdminHandler) FindUserByID(c *gin.Context) {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Param user_id body model.BlockUser true "ID of the user to be blocked"
+// @Param user_id body request.BlockUser true "ID of the user to be blocked"
 // @Success 200 {object} res.Response
 // @Failure 401 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Failure 500 {object} res.Response
 // @Router /admin/users/:id/block [put]
 func (cr *AdminHandler) BlockUser(c *gin.Context) {
-	var blockUser model.BlockUser
+	var blockUser request.BlockUser
 	if err := c.Bind(&blockUser); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to read the request body", err.Error(), nil))
 		return

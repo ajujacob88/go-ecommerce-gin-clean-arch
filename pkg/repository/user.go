@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"gorm.io/gorm"
@@ -19,7 +20,7 @@ func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
 	return &userDatabase{DB}
 }
 
-func (c *userDatabase) UserSignUp(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error) {
+func (c *userDatabase) UserSignUp(ctx context.Context, newUser request.NewUserInfo) (model.UserDataOutput, error) {
 	var userData model.UserDataOutput
 
 	//save the user details
@@ -43,7 +44,7 @@ func (c *userDatabase) UserSignUp(ctx context.Context, newUser model.NewUserInfo
 	return userData, err
 }
 
-func (c *userDatabase) FindUser(ctx context.Context, newUser model.NewUserInfo) (domain.Users, error) {
+func (c *userDatabase) FindUser(ctx context.Context, newUser request.NewUserInfo) (domain.Users, error) {
 	// check email or phone match in database
 	var user domain.Users
 	fmt.Println("user is", newUser, "user.email is", newUser.Email)
@@ -142,7 +143,7 @@ func (c *userDatabase) FindAddressByID(ctx context.Context, userID int) (domain.
 	return userAddress, nil
 }
 
-func (c *userDatabase) AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
+func (c *userDatabase) AddAddress(ctx context.Context, userAddressInput request.UserAddressInput, userID int) (domain.UserAddress, error) {
 	var addedAddress domain.UserAddress
 
 	insertAddressQuery := `	INSERT INTO user_addresses(
@@ -176,7 +177,7 @@ func (c *userDatabase) UpdateAddressByUserID(ctx context.Context, userAddressInp
 
 */
 
-func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID, addressID int) (domain.UserAddress, error) {
+func (c *userDatabase) UpdateAddress(ctx context.Context, userAddressInput request.UserAddressInput, userID, addressID int) (domain.UserAddress, error) {
 	var updatedAddress domain.UserAddress
 
 	//	address is already there, update it

@@ -5,11 +5,13 @@ import (
 	"errors"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -24,7 +26,7 @@ func NewUserUseCase(repo interfaces.UserRepository) services.UserUseCase {
 
 }
 
-func (c *userUseCase) UserSignUp(ctx context.Context, newUser model.NewUserInfo) (model.UserDataOutput, error) {
+func (c *userUseCase) UserSignUp(ctx context.Context, newUser request.NewUserInfo) (model.UserDataOutput, error) {
 	checkUser, err := c.userRepo.FindUser(ctx, newUser)
 	if err != nil {
 		return model.UserDataOutput{}, err
@@ -98,14 +100,14 @@ func (c *userUseCase) FindByEmail(ctx context.Context, email string) (domain.Use
 
 //----user address
 
-func (c *userUseCase) AddAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID int) (domain.UserAddress, error) {
+func (c *userUseCase) AddAddress(ctx context.Context, userAddressInput request.UserAddressInput, userID int) (domain.UserAddress, error) {
 
 	address, err := c.userRepo.AddAddress(ctx, userAddressInput, userID)
 	return address, err
 
 }
 
-func (c *userUseCase) UpdateAddress(ctx context.Context, userAddressInput model.UserAddressInput, userID, addressID int) (domain.UserAddress, error) {
+func (c *userUseCase) UpdateAddress(ctx context.Context, userAddressInput request.UserAddressInput, userID, addressID int) (domain.UserAddress, error) {
 	updatedAddress, err := c.userRepo.UpdateAddress(ctx, userAddressInput, userID, addressID)
 	return updatedAddress, err
 }

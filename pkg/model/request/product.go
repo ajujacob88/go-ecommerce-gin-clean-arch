@@ -1,6 +1,7 @@
-package model
+package request
 
-/*
+//model structs input
+
 type NewCategory struct {
 	CategoryName string `json:"category_name"`
 }
@@ -20,4 +21,3 @@ type NewProductDetails struct {
 	Price               float64 `gorm:"not null" json:"price" validate:"required"`
 	ProductDetailsImage string  `json:"product_item_image"`
 }
-*/

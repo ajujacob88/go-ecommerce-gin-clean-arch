@@ -6,9 +6,9 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/twilio/twilio-go"
 	twilioApi "github.com/twilio/twilio-go/rest/verify/v2"
 )
@@ -50,7 +50,7 @@ func (c *otpUseCase) TwilioSendOtp(ctx context.Context, phoneNumber string) (str
 	return *resp.Sid, nil
 }
 
-func (c *otpUseCase) TwilioVerifyOTP(ctx context.Context, otpverify model.OTPVerify) (domain.OTPSession, error) {
+func (c *otpUseCase) TwilioVerifyOTP(ctx context.Context, otpverify request.OTPVerify) (domain.OTPSession, error) {
 	//create a twilio client with twilio details
 	password := config.GetConfig().AUTHTOKEN
 	userName := config.GetConfig().ACCOUNTSID

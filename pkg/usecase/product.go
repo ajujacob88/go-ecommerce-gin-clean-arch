@@ -6,9 +6,9 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 )
 
 type productUseCase struct {
@@ -88,7 +88,7 @@ func (c *productUseCase) DeleteProduct(ctx context.Context, productID int) error
 
 //------ Product Details manage
 
-func (c *productUseCase) AddProductDetails(ctx context.Context, NewProductDetails model.NewProductDetails) (domain.ProductDetails, error) {
+func (c *productUseCase) AddProductDetails(ctx context.Context, NewProductDetails request.NewProductDetails) (domain.ProductDetails, error) {
 	addedProdDetails, err := c.productRepo.AddProductDetails(ctx, NewProductDetails)
 	return addedProdDetails, err
 

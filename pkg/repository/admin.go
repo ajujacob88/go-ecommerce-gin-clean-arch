@@ -9,7 +9,6 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 
 	"gorm.io/gorm"
 )
@@ -127,7 +126,7 @@ func (c *adminDatabase) FindUserByID(ctx context.Context, userID int) (domain.Us
 	return user, err
 }
 
-func (c *adminDatabase) BlockUser(ctx context.Context, blockInfo model.BlockUser, adminID int) (domain.UserInfo, error) {
+func (c *adminDatabase) BlockUser(ctx context.Context, blockInfo request.BlockUser, adminID int) (domain.UserInfo, error) {
 	var userInfo domain.UserInfo
 	blockQuery := `UPDATE user_infos SET is_blocked = 'true', blocked_at = NOW(), blocked_by = $1, reason_for_blocking = $2 WHERE users_id = $3 RETURNING *;`
 	err := c.DB.Raw(blockQuery, adminID, blockInfo.Reason, blockInfo.UserID).Scan(&userInfo).Error

@@ -151,7 +151,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NewCategory"
+                            "$ref": "#/definitions/request.NewCategory"
                         }
                     }
                 ],
@@ -416,7 +416,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NewProductDetails"
+                            "$ref": "#/definitions/request.NewProductDetails"
                         }
                     }
                 ],
@@ -765,7 +765,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.BlockUser"
+                            "$ref": "#/definitions/request.BlockUser"
                         }
                     }
                 ],
@@ -908,7 +908,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserAddressInput"
+                            "$ref": "#/definitions/request.UserAddressInput"
                         }
                     }
                 ],
@@ -955,7 +955,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserAddressInput"
+                            "$ref": "#/definitions/request.UserAddressInput"
                         }
                     },
                     {
@@ -1410,7 +1410,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NewUserInfo"
+                            "$ref": "#/definitions/request.NewUserInfo"
                         }
                     }
                 ],
@@ -1457,7 +1457,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.OTPVerify"
+                            "$ref": "#/definitions/request.OTPVerify"
                         }
                     }
                 ],
@@ -1535,7 +1535,37 @@
                 }
             }
         },
-        "model.BlockUser": {
+        "req.UserLoginEmail": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.AdminLoginInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.BlockUser": {
             "type": "object",
             "properties": {
                 "reason": {
@@ -1546,7 +1576,33 @@
                 }
             }
         },
-        "model.NewCategory": {
+        "request.NewAdminInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "phone",
+                "user_name"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email    string `json:\"email\" validate:\"required,email\"`",
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 10
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.NewCategory": {
             "type": "object",
             "properties": {
                 "category_name": {
@@ -1554,7 +1610,7 @@
                 }
             }
         },
-        "model.NewProductDetails": {
+        "request.NewProductDetails": {
             "type": "object",
             "required": [
                 "color",
@@ -1610,7 +1666,7 @@
                 }
             }
         },
-        "model.NewUserInfo": {
+        "request.NewUserInfo": {
             "type": "object",
             "required": [
                 "email",
@@ -1638,7 +1694,7 @@
                 }
             }
         },
-        "model.OTPVerify": {
+        "request.OTPVerify": {
             "type": "object",
             "required": [
                 "otp",
@@ -1653,7 +1709,7 @@
                 }
             }
         },
-        "model.UserAddressInput": {
+        "request.UserAddressInput": {
             "type": "object",
             "properties": {
                 "city": {
@@ -1675,62 +1731,6 @@
                     "type": "string"
                 },
                 "street": {
-                    "type": "string"
-                }
-            }
-        },
-        "req.UserLoginEmail": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.AdminLoginInfo": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.NewAdminInfo": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "phone",
-                "user_name"
-            ],
-            "properties": {
-                "email": {
-                    "description": "Email    string `json:\"email\" validate:\"required,email\"`",
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string",
-                    "maxLength": 10,
-                    "minLength": 10
-                },
-                "user_name": {
                     "type": "string"
                 }
             }

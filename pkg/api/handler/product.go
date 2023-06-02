@@ -6,8 +6,8 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
 	"github.com/gin-gonic/gin"
 )
@@ -31,13 +31,13 @@ func NewProductHandler(usecase services.ProductUseCase) *ProductHandler {
 // @Tags Product Category
 // @Accept json
 // @Produce json
-// @Param category_name body model.NewCategory true "New category name"
+// @Param category_name body request.NewCategory true "New category name"
 // @Success 201 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Router /admin/categories [post]
 func (cr *ProductHandler) CreateCategory(c *gin.Context) {
-	var category model.NewCategory
+	var category request.NewCategory
 	if err := c.Bind(&category); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to process the request", err.Error(), nil))
 		return
@@ -356,13 +356,13 @@ func (cr *ProductHandler) DeleteProduct(c *gin.Context) {
 // @Tags Product Details
 // @Accept json
 // @Produce json
-// @Param product_details body model.NewProductDetails true "Product details"
+// @Param product_details body request.NewProductDetails true "Product details"
 // @Success 201 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Router /admin/product-details/ [post]
 func (cr *ProductHandler) AddProductDetails(c *gin.Context) {
-	var NewProductDetails model.NewProductDetails
+	var NewProductDetails request.NewProductDetails
 	if err := c.Bind(&NewProductDetails); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to process the request", err.Error(), nil))
 		return

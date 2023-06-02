@@ -5,7 +5,7 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 )
 
 type ProductRepository interface {
@@ -23,5 +23,5 @@ type ProductRepository interface {
 
 	CreateBrand(ctx context.Context, newBrandDetails domain.ProductBrand) (domain.ProductBrand, error)
 
-	AddProductDetails(ctx context.Context, NewProductDetails model.NewProductDetails) (domain.ProductDetails, error)
+	AddProductDetails(ctx context.Context, NewProductDetails request.NewProductDetails) (domain.ProductDetails, error)
 }
