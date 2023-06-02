@@ -16,7 +16,7 @@ type NewUserInfo struct {
 	Password string `json:"password" validate:"required"`
 }
 */
-
+/*
 type UserDataOutput struct {
 	ID        uint   `json:"user_id"`
 	FirstName string `json:"first_name"`
@@ -24,6 +24,7 @@ type UserDataOutput struct {
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
 }
+*/
 
 /*
 type UserAddressInput struct {
@@ -38,6 +39,8 @@ type UserAddressInput struct {
 
 */
 
+/*
+
 type ShowAddress struct {
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
@@ -51,3 +54,4 @@ type ShowAddress struct {
 	Pincode     string `json:"pincode"`
 	Landmark    string `json:"landmark"`
 }
+*/

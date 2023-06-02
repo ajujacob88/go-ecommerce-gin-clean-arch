@@ -7,8 +7,8 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"gorm.io/gorm"
 )
 
@@ -20,8 +20,8 @@ func NewUserRepository(DB *gorm.DB) interfaces.UserRepository {
 	return &userDatabase{DB}
 }
 
-func (c *userDatabase) UserSignUp(ctx context.Context, newUser request.NewUserInfo) (model.UserDataOutput, error) {
-	var userData model.UserDataOutput
+func (c *userDatabase) UserSignUp(ctx context.Context, newUser request.NewUserInfo) (response.UserDataOutput, error) {
+	var userData response.UserDataOutput
 
 	//save the user details
 	UserSignUpQuery := `INSERT INTO users(first_name, last_name, email, phone, password, created_at)
@@ -30,7 +30,7 @@ func (c *userDatabase) UserSignUp(ctx context.Context, newUser request.NewUserIn
 	err := c.DB.Raw(UserSignUpQuery, newUser.FirstName, newUser.LastName, newUser.Email, newUser.Phone, newUser.Password).Scan(&userData).Error
 
 	if err != nil {
-		return model.UserDataOutput{}, fmt.Errorf("failed to create the user %s", newUser.FirstName)
+		return response.UserDataOutput{}, fmt.Errorf("failed to create the user %s", newUser.FirstName)
 	}
 
 	//insert the data into userinfo table
@@ -38,7 +38,7 @@ func (c *userDatabase) UserSignUp(ctx context.Context, newUser request.NewUserIn
 							VALUES ('f','f',$1);`
 	err = c.DB.Exec(insertUserinfoQuery, userData.ID).Error
 	if err != nil {
-		return model.UserDataOutput{}, fmt.Errorf("failed to create the user(falied to copy to userinfo table) %s", newUser.FirstName)
+		return response.UserDataOutput{}, fmt.Errorf("failed to create the user(falied to copy to userinfo table) %s", newUser.FirstName)
 	}
 
 	return userData, err
@@ -208,6 +208,6 @@ func (c *userDatabase) DeleteAddress(ctx context.Context, userID, addressID int)
 	return nil
 }
 
-func (c *userDatabase) ListAddress(ctx context.Context, userID int) (model.ShowAddress, error) {
-	return model.ShowAddress{}, nil
+func (c *userDatabase) ListAddress(ctx context.Context, userID int) (response.ShowAddress, error) {
+	return response.ShowAddress{}, nil
 }

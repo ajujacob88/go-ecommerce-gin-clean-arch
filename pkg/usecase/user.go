@@ -6,10 +6,10 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 
 	"golang.org/x/crypto/bcrypt"
@@ -26,10 +26,10 @@ func NewUserUseCase(repo interfaces.UserRepository) services.UserUseCase {
 
 }
 
-func (c *userUseCase) UserSignUp(ctx context.Context, newUser request.NewUserInfo) (model.UserDataOutput, error) {
+func (c *userUseCase) UserSignUp(ctx context.Context, newUser request.NewUserInfo) (response.UserDataOutput, error) {
 	checkUser, err := c.userRepo.FindUser(ctx, newUser)
 	if err != nil {
-		return model.UserDataOutput{}, err
+		return response.UserDataOutput{}, err
 	}
 
 	//if that user not exists then create new user
@@ -37,7 +37,7 @@ func (c *userUseCase) UserSignUp(ctx context.Context, newUser request.NewUserInf
 		//hash the pasword
 		hashPasswd, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), 10)
 		if err != nil {
-			return model.UserDataOutput{}, errors.New("failed to hash the password")
+			return response.UserDataOutput{}, errors.New("failed to hash the password")
 		}
 		newUser.Password = string(hashPasswd)
 
@@ -45,7 +45,7 @@ func (c *userUseCase) UserSignUp(ctx context.Context, newUser request.NewUserInf
 		return userData, err
 	}
 	err = utils.CompareUsers(newUser, checkUser)
-	return model.UserDataOutput{}, err
+	return response.UserDataOutput{}, err
 
 }
 

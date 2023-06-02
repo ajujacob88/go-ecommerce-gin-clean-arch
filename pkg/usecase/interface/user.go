@@ -5,12 +5,12 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 )
 
 type UserUseCase interface {
-	UserSignUp(ctx context.Context, newUser request.NewUserInfo) (model.UserDataOutput, error)
+	UserSignUp(ctx context.Context, newUser request.NewUserInfo) (response.UserDataOutput, error)
 
 	OTPVerifyStatusManage(ctx context.Context, otpsession domain.OTPSession) error
 
