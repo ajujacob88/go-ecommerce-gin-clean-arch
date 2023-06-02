@@ -37,7 +37,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.NewAdminInfo"
+                            "$ref": "#/definitions/request.NewAdminInfo"
                         }
                     }
                 ],
@@ -341,7 +341,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.AdminLoginInfo"
+                            "$ref": "#/definitions/request.AdminLoginInfo"
                         }
                     }
                 ],
@@ -1543,21 +1543,6 @@ const docTemplate = `{
                 }
             }
         },
-        "model.AdminLoginInfo": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
         "model.BlockUser": {
             "type": "object",
             "properties": {
@@ -1566,32 +1551,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "model.NewAdminInfo": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "phone",
-                "user_name"
-            ],
-            "properties": {
-                "email": {
-                    "description": "Email    string ` + "`" + `json:\"email\" validate:\"required,email\"` + "`" + `",
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string",
-                    "maxLength": 10,
-                    "minLength": 10
-                },
-                "user_name": {
-                    "type": "string"
                 }
             }
         },
@@ -1739,6 +1698,47 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.AdminLoginInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.NewAdminInfo": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "phone",
+                "user_name"
+            ],
+            "properties": {
+                "email": {
+                    "description": "Email    string ` + "`" + `json:\"email\" validate:\"required,email\"` + "`" + `",
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 10
+                },
+                "user_name": {
                     "type": "string"
                 }
             }

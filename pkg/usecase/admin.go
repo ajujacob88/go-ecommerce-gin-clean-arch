@@ -7,9 +7,13 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
@@ -25,7 +29,7 @@ func NewAdminUseCase(adminRepo interfaces.AdminRepository) services.AdminUseCase
 	}
 }
 
-func (c *adminUseCase) CreateAdmin(ctx context.Context, newAdmin model.NewAdminInfo, adminID int) (domain.Admin, error) {
+func (c *adminUseCase) CreateAdmin(ctx context.Context, newAdmin request.NewAdminInfo, adminID int) (domain.Admin, error) {
 	isSuperAdmin, err := c.adminRepo.IsSuperAdmin(ctx, adminID)
 	if err != nil {
 		return domain.Admin{}, err
@@ -44,8 +48,8 @@ func (c *adminUseCase) CreateAdmin(ctx context.Context, newAdmin model.NewAdminI
 	return newAdminOutput, err
 
 }
-func (c *adminUseCase) AdminLogin(ctx context.Context, input model.AdminLoginInfo) (string, model.AdminDataOutput, error) {
-	var adminDataInModel model.AdminDataOutput
+func (c *adminUseCase) AdminLogin(ctx context.Context, input request.AdminLoginInfo) (string, response.AdminDataOutput, error) {
+	var adminDataInModel response.AdminDataOutput
 	// Now find the admindata with the given email from the databse
 	adminInfo, err := c.adminRepo.FindAdmin(ctx, input.Email)
 	if err != nil {
@@ -84,7 +88,7 @@ func (c *adminUseCase) AdminLogin(ctx context.Context, input model.AdminLoginInf
 	return tokenString, adminDataInModel, err
 }
 
-func (c *adminUseCase) ListAllUsers(ctx context.Context, viewUserInfo model.QueryParams) ([]domain.Users, bool, error) {
+func (c *adminUseCase) ListAllUsers(ctx context.Context, viewUserInfo common.QueryParams) ([]domain.Users, bool, error) {
 	users, isNoUsers, err := c.adminRepo.ListAllUsers(ctx, viewUserInfo)
 	return users, isNoUsers, err
 }

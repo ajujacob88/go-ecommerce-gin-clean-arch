@@ -6,8 +6,11 @@ import (
 	"strings"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+
 	"gorm.io/gorm"
 )
 
@@ -28,7 +31,7 @@ func (c *adminDatabase) IsSuperAdmin(ctx context.Context, adminID int) (bool, er
 	return isSuperAdmin, err
 }
 
-func (c *adminDatabase) CreateAdmin(ctx context.Context, newAdminInfo model.NewAdminInfo) (domain.Admin, error) {
+func (c *adminDatabase) CreateAdmin(ctx context.Context, newAdminInfo request.NewAdminInfo) (domain.Admin, error) {
 	var newAdmin domain.Admin
 	createAdminQuery := `	INSERT INTO admins(user_name, email, phone, password,is_super_admin, is_blocked, created_at, updated_at)
 						 	VALUES($1, $2, $3,$4, false, false, NOW(), NOW()) RETURNING *;`
@@ -47,7 +50,7 @@ func (c *adminDatabase) FindAdmin(ctx context.Context, email string) (domain.Adm
 	return adminData, err
 }
 
-func (c *adminDatabase) ListAllUsers(ctx context.Context, queryParams model.QueryParams) ([]domain.Users, bool, error) {
+func (c *adminDatabase) ListAllUsers(ctx context.Context, queryParams common.QueryParams) ([]domain.Users, bool, error) {
 	findQuery := "SELECT * FROM users"
 	params := []interface{}{}
 

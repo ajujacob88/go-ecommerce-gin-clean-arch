@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 )
 
 type cartUseCase struct {
@@ -30,7 +30,7 @@ func (c *cartUseCase) RemoveFromCart(ctx context.Context, productDetailsID int, 
 
 }
 
-func (c *cartUseCase) ViewCart(ctx context.Context, userId int) (model.ViewCart, error) {
+func (c *cartUseCase) ViewCart(ctx context.Context, userId int) (response.ViewCart, error) {
 	viewCart, err := c.cartRepo.ViewCart(ctx, userId)
 	return viewCart, err
 

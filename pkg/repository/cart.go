@@ -5,8 +5,9 @@ import (
 	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
+
 	"gorm.io/gorm"
 )
 
@@ -240,18 +241,18 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 
 //----VIEW CART
 
-func (c *cartDatabase) ViewCart(ctx context.Context, userId int) (model.ViewCart, error) {
+func (c *cartDatabase) ViewCart(ctx context.Context, userId int) (response.ViewCart, error) {
 	tx := c.DB.Begin()
 	//find the cart_id from the carts table
-	var cartDetails model.CartDetails
+	var cartDetails response.CartDetails
 
 	err := tx.Raw("SELECT id, sub_total FROM carts WHERE user_id = $1", userId).Scan(&cartDetails).Error
 	if err != nil {
 		tx.Rollback()
-		return model.ViewCart{}, err
+		return response.ViewCart{}, err
 	}
 
-	var cartItems []model.CartItems
+	var cartItems []response.CartItems
 	joinQuery := `	SELECT product_details_id, product_brands.brand_name,products.name,product_details.model_no,cart_items.quantity,product_details.product_details_image,product_details.price,(cart_items.quantity * product_details.price) AS total
 					FROM cart_items
 					JOIN product_details
@@ -267,27 +268,27 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) (model.ViewCart
 	rows, err := tx.Raw(joinQuery, cartDetails.ID).Rows()
 	if err != nil {
 		tx.Rollback()
-		return model.ViewCart{}, err
+		return response.ViewCart{}, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var item model.CartItems
+		var item response.CartItems
 		err := rows.Scan(&item.ProductItemID, &item.Brand, &item.Name, &item.Model, &item.Quantity, &item.ProductItemImage, &item.Price, &item.Total)
 		if err != nil {
 			tx.Rollback()
-			return model.ViewCart{}, err
+			return response.ViewCart{}, err
 		}
 		cartItems = append(cartItems, item)
 	}
 	// Now commit the transaction
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
-		return model.ViewCart{}, err
+		return response.ViewCart{}, err
 	}
 	//return cartItems, err
 
-	var viewCart model.ViewCart
+	var viewCart response.ViewCart
 	viewCart.CartItemsAll = cartItems
 	viewCart.SubTotal = cartDetails.SubTotal
 	return viewCart, err

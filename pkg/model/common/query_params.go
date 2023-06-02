@@ -1,6 +1,7 @@
-package model
+package common
 
-/*
+//model structs used for both input and output
+
 type QueryParams struct {
 	Page     int    `json:"page"`
 	Limit    int    `json:"limit"`
@@ -9,5 +10,3 @@ type QueryParams struct {
 	SortBy   string `json:"sort_by"`
 	SortDesc bool   `json:"sort_desc"`
 }
-
-*/

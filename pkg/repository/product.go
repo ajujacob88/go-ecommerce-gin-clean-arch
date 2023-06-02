@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"gorm.io/gorm"
@@ -114,7 +115,7 @@ func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.P
 	return createdProduct, err
 }
 
-func (c *productDatabase) ListAllProducts(ctx context.Context, viewProductsQueryParam model.QueryParams) ([]domain.Product, error) {
+func (c *productDatabase) ListAllProducts(ctx context.Context, viewProductsQueryParam common.QueryParams) ([]domain.Product, error) {
 
 	findQuery := "SELECT * FROM products"
 	params := []interface{}{}

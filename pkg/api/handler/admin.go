@@ -6,6 +6,8 @@ import (
 	"strconv"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
@@ -30,13 +32,13 @@ func NewAdminHandler(usecase services.AdminUseCase) *AdminHandler {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Param admin_details body model.NewAdminInfo true "New Admin Details"
+// @Param admin_details body request.NewAdminInfo true "New Admin Details"
 // @Success 201 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Router /admin/admins [post]
 func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
-	var newAdminInfo model.NewAdminInfo
+	var newAdminInfo request.NewAdminInfo
 	if err := c.Bind(&newAdminInfo); err != nil {
 		//The 422 status code is often used in API scenarios where clients submit data that fails validation, such as missing required fields, invalid data formats, or conflicting information.
 		response := res.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
@@ -71,14 +73,14 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Param admin_credentials body model.AdminLoginInfo true "Admin Login Credentials"
+// @Param admin_credentials body request.AdminLoginInfo true "Admin Login Credentials"
 // @Success 200 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Router /admin/login [post]
 func (cr *AdminHandler) AdminLogin(c *gin.Context) {
 	//receive the data from request body
-	var body model.AdminLoginInfo
+	var body request.AdminLoginInfo
 	if err := c.Bind(&body); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, res.Response{StatusCode: 422, Message: "unable to process the request", Errors: err.Error(), Data: nil})
 		return
@@ -135,7 +137,7 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 // @Failure 500 {object} res.Response
 // @Router /admin/users [get]
 func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
-	var viewUserInfo model.QueryParams
+	var viewUserInfo common.QueryParams
 
 	viewUserInfo.Page, _ = strconv.Atoi(c.Query("page"))
 	viewUserInfo.Limit, _ = strconv.Atoi(c.Query("limit"))

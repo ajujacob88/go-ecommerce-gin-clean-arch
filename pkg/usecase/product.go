@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
@@ -59,7 +60,7 @@ func (c *productUseCase) CreateProduct(ctx context.Context, newProduct domain.Pr
 	return createdProduct, err
 }
 
-func (c *productUseCase) ListAllProducts(ctx context.Context, viewProductsQueryParam model.QueryParams) ([]domain.Product, error) {
+func (c *productUseCase) ListAllProducts(ctx context.Context, viewProductsQueryParam common.QueryParams) ([]domain.Product, error) {
 	allProducts, err := c.productRepo.ListAllProducts(ctx, viewProductsQueryParam)
 	return allProducts, err
 }

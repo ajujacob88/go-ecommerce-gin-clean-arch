@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/model"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
@@ -235,7 +236,7 @@ func (cr *ProductHandler) CreateProduct(c *gin.Context) {
 // @Router /user/products [get]
 // @Router /admin/products [get]
 func (cr *ProductHandler) ListAllProducts(c *gin.Context) {
-	var viewProductsQueryParam model.QueryParams
+	var viewProductsQueryParam common.QueryParams
 
 	viewProductsQueryParam.Page, _ = strconv.Atoi(c.Query("page"))
 	viewProductsQueryParam.Limit, _ = strconv.Atoi(c.Query("limit"))

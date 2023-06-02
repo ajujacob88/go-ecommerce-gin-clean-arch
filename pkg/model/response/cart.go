@@ -1,6 +1,7 @@
-package model
+package response
 
-/*
+//model structs used for input
+
 type CartItems struct {
 	ProductItemID    uint
 	Brand            string
@@ -22,4 +23,3 @@ type CartDetails struct {
 	ID       int
 	SubTotal float64
 }
-*/

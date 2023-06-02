@@ -32,41 +32,12 @@ definitions:
       id:
         type: integer
     type: object
-  model.AdminLoginInfo:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-    required:
-    - email
-    - password
-    type: object
   model.BlockUser:
     properties:
       reason:
         type: string
       user_id:
         type: integer
-    type: object
-  model.NewAdminInfo:
-    properties:
-      email:
-        description: Email    string `json:"email" validate:"required,email"`
-        type: string
-      password:
-        type: string
-      phone:
-        maxLength: 10
-        minLength: 10
-        type: string
-      user_name:
-        type: string
-    required:
-    - email
-    - password
-    - phone
-    - user_name
     type: object
   model.NewCategory:
     properties:
@@ -172,6 +143,35 @@ definitions:
     - email
     - password
     type: object
+  request.AdminLoginInfo:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  request.NewAdminInfo:
+    properties:
+      email:
+        description: Email    string `json:"email" validate:"required,email"`
+        type: string
+      password:
+        type: string
+      phone:
+        maxLength: 10
+        minLength: 10
+        type: string
+      user_name:
+        type: string
+    required:
+    - email
+    - password
+    - phone
+    - user_name
+    type: object
   res.Response:
     properties:
       data: {}
@@ -200,7 +200,7 @@ paths:
         name: admin_details
         required: true
         schema:
-          $ref: '#/definitions/model.NewAdminInfo'
+          $ref: '#/definitions/request.NewAdminInfo'
       produces:
       - application/json
       responses:
@@ -402,7 +402,7 @@ paths:
         name: admin_credentials
         required: true
         schema:
-          $ref: '#/definitions/model.AdminLoginInfo'
+          $ref: '#/definitions/request.AdminLoginInfo'
       produces:
       - application/json
       responses:
