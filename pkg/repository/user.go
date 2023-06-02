@@ -209,5 +209,15 @@ func (c *userDatabase) DeleteAddress(ctx context.Context, userID, addressID int)
 }
 
 func (c *userDatabase) ListAddress(ctx context.Context, userID int) (response.ShowAddress, error) {
-	return response.ShowAddress{}, nil
+	var []allAddress response.ShowAddress
+
+	listAddressQuery := `	SELECT house_number,street,city,district,state,pincode,landmark  
+							FROM user_addresses							
+							WHERE user_id = $1; `
+
+	err := c.DB.Raw(listAddressQuery, userID).Scan(&allAddress).Error
+	if err != nil {
+		return response.ShowAddress{}, err
+	}
+	return allAddress, nil
 }

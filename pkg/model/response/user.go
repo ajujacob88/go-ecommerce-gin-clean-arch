@@ -11,10 +11,9 @@ type UserDataOutput struct {
 }
 
 type ShowAddress struct {
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	Email       string `json:"email"`
-	Phone       string `json:"phone"`
+	// FullName    string `json:"full_name"`
+	// Email       string `json:"email"`
+	// Phone       string `json:"phone"`
 	HouseNumber string `json:"house_number"`
 	Street      string `json:"street"`
 	City        string `json:"city"`

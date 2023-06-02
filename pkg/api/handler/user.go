@@ -347,3 +347,30 @@ func (cr *UserHandler) DeleteAddress(c *gin.Context) {
 	c.JSON(http.StatusCreated, response.SuccessResponse(201, "Succesfully deleted the address", nil))
 
 }
+
+// ListAllAddress
+// @Summary User can list all the user address
+// @ID list-address
+// @Description list all address
+// @Tags user
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Router /user/addresses [get]
+func (cr *UserHandler) ListAddress(c *gin.Context) {
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		return
+	}
+	allAddress, err := cr.userUseCase.ListAddress(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to fetch the address", err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully updated the address", allAddress))
+
+}

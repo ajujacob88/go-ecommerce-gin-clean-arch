@@ -115,3 +115,8 @@ func (c *userUseCase) DeleteAddress(ctx context.Context, userID, addressID int) 
 	err := c.userRepo.DeleteAddress(ctx, userID, addressID)
 	return err
 }
+
+func (c *userUseCase) ListAddress(ctx context.Context, userID int) (response.ShowAddress, error) {
+	allAddress, err := c.userRepo.ListAddress(ctx, userID)
+	return allAddress, err
+}

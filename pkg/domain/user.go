@@ -47,6 +47,9 @@ type UserAddress struct {
 	State       string `json:"state"`
 	Pincode     string `json:"pincode"`
 	Landmark    string `json:"landmark"`
+	//FullName    string `json:"full_name"`
+	// Email       string `json:"email"`
+	// Phone       string `json:"phone"`
 }
 
 /*

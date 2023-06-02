@@ -771,6 +771,30 @@ paths:
       summary: Admin can unlock a blocked user
       tags:
       - Admin
+  /user/addresses:
+    get:
+      consumes:
+      - application/json
+      description: list all address
+      operationId: list-address
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User can list all the user address
+      tags:
+      - user
   /user/addresses/:
     post:
       consumes:
