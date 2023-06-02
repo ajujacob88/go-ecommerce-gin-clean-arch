@@ -206,3 +206,7 @@ func (c *userDatabase) DeleteAddress(ctx context.Context, userID, addressID int)
 	}
 	return nil
 }
+
+func (c *userDatabase) ListAddress(ctx context.Context, userID int) (model.ShowAddress, error) {
+	return model.ShowAddress{}, nil
+}
