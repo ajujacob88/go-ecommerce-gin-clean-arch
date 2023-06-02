@@ -371,6 +371,6 @@ func (cr *UserHandler) ListAddress(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully updated the address", allAddress))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully fetched all the addresses", allAddress))
 
 }

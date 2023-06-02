@@ -23,7 +23,7 @@ type UserUseCase interface {
 
 	DeleteAddress(ctx context.Context, userID, addressID int) error
 
-	ListAddress(ctx context.Context, userID int) (response.ShowAddress, error)
+	ListAddress(ctx context.Context, userID int) ([]response.ShowAddress, error)
 }
 
 /* no need already in the code arch
