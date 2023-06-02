@@ -8,8 +8,8 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,15 +32,15 @@ func NewAdminHandler(usecase services.AdminUseCase) *AdminHandler {
 // @Accept json
 // @Produce json
 // @Param admin_details body request.NewAdminInfo true "New Admin Details"
-// @Success 201 {object} res.Response
-// @Failure 400 {object} res.Response
-// @Failure 422 {object} res.Response
+// @Success 201 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 422 {object} response.Response
 // @Router /admin/admins [post]
 func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	var newAdminInfo request.NewAdminInfo
 	if err := c.Bind(&newAdminInfo); err != nil {
 		//The 422 status code is often used in API scenarios where clients submit data that fails validation, such as missing required fields, invalid data formats, or conflicting information.
-		response := res.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
+		response := response.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
@@ -49,19 +49,19 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	adminID, err := handlerutil.GetAdminIdFromContext(c)
 	fmt.Println("Admin ID is(for superuser check)", adminID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to fetch the admin ID", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the admin ID", err.Error(), nil))
 		return
 	}
 	//Now call the create admin method from admin usecase. The admin data will be saved to domain.admin after the succesful execution of the function
 	newAdminOutput, err := cr.adminUseCase.CreateAdmin(c.Request.Context(), newAdminInfo, adminID)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to create the admin", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to create the admin", err.Error(), nil))
 		return
 	}
 
 	//if no error, then  201 status as new admin is created succesfully
-	c.JSON(http.StatusCreated, res.SuccessResponse(201, "admin created successfully", newAdminOutput))
+	c.JSON(http.StatusCreated, response.SuccessResponse(201, "admin created successfully", newAdminOutput))
 
 }
 
@@ -73,26 +73,26 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param admin_credentials body request.AdminLoginInfo true "Admin Login Credentials"
-// @Success 200 {object} res.Response
-// @Failure 422 {object} res.Response
-// @Failure 400 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 400 {object} response.Response
 // @Router /admin/login [post]
 func (cr *AdminHandler) AdminLogin(c *gin.Context) {
 	//receive the data from request body
 	var body request.AdminLoginInfo
 	if err := c.Bind(&body); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.Response{StatusCode: 422, Message: "unable to process the request", Errors: err.Error(), Data: nil})
+		c.JSON(http.StatusUnprocessableEntity, response.Response{StatusCode: 422, Message: "unable to process the request", Errors: err.Error(), Data: nil})
 		return
 	}
 	//call the adminlogin method of the adminusecase to login as an admin
 	tokenString, adminDataInModel, err := cr.adminUseCase.AdminLogin(c.Request.Context(), body)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to login", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to login", err.Error(), nil))
 		return
 	}
 	c.SetSameSite(http.SameSiteLaxMode) //sets the SameSite attribute of the cookie to "Lax" mode. It is a security measure that helps protect against certain types of cross-site request forgery (CSRF) attacks.
 	c.SetCookie("AdminAuth", tokenString, 3600*24*30, "", "", false, true)
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Logged in", adminDataInModel))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully Logged in", adminDataInModel))
 }
 
 // AdminLogout
@@ -102,9 +102,9 @@ func (cr *AdminHandler) AdminLogin(c *gin.Context) {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Success 200 {object} res.Response
-// @Failure 400 {object} res.Response
-// @Failure 500 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
 // @Router /admin/logout [get]
 func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 	// Set the user authentication cookie's expiration to -1 to invalidate it.
@@ -112,7 +112,7 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 	c.SetSameSite(http.SameSiteLaxMode)
 	c.SetCookie("AdminAuth", "", -1, "", "", false, true)
 	//c.Status(http.StatusOK)
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Logged-Out"))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully Logged-Out"))
 
 }
 
@@ -131,9 +131,9 @@ func (cr *AdminHandler) AdminLogout(c *gin.Context) {
 //
 // @Param sort_by query string false "sorting criteria for showing the users"
 // @Param sort_desc query bool false "sorting in descending order"
-// @Success 200 {object} res.Response
-// @Success 204 {object} res.Response
-// @Failure 500 {object} res.Response
+// @Success 200 {object} response.Response
+// @Success 204 {object} response.Response
+// @Failure 500 {object} response.Response
 // @Router /admin/users [get]
 func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
 	var viewUserInfo common.QueryParams
@@ -148,17 +148,17 @@ func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
 	users, isAnyUsers, err := cr.adminUseCase.ListAllUsers(c.Request.Context(), viewUserInfo)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to fetch users", err.Error(), nil))
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to fetch users", err.Error(), nil))
 		return
 	}
 	//if isAnyUsers == false, then return status no content bacause user table is empty
 
 	if !isAnyUsers {
-		c.JSON(http.StatusNoContent, res.SuccessResponse(204, "No user found", users))
+		c.JSON(http.StatusNoContent, response.SuccessResponse(204, "No user found", users))
 		return
 	}
 
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched all users", users))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully fetched all users", users))
 
 }
 
@@ -170,24 +170,24 @@ func (cr *AdminHandler) ListAllUsers(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id path string true "provide the ID of the user to be fetched"
-// @Success 200 {object} res.Response
-// @Failure 422 {object} res.Response
-// @Failure 500 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 500 {object} response.Response
 // @Router /admin/users/{user_id} [get]
 func (cr *AdminHandler) FindUserByID(c *gin.Context) {
 	paramsID := c.Param("id")
 	userID, err := strconv.Atoi(paramsID)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the user id", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to parse the user id", err.Error(), nil))
 		return
 	}
 	user, err := cr.adminUseCase.FindUserByID(c.Request.Context(), userID)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to fetch the user", err.Error(), nil))
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to fetch the user", err.Error(), nil))
 		return
 	}
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully fetched the user details", user))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully fetched the user details", user))
 
 }
 
@@ -199,30 +199,30 @@ func (cr *AdminHandler) FindUserByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id body request.BlockUser true "ID of the user to be blocked"
-// @Success 200 {object} res.Response
-// @Failure 401 {object} res.Response
-// @Failure 422 {object} res.Response
-// @Failure 500 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 500 {object} response.Response
 // @Router /admin/users/:id/block [put]
 func (cr *AdminHandler) BlockUser(c *gin.Context) {
 	var blockUser request.BlockUser
 	if err := c.Bind(&blockUser); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to read the request body", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to read the request body", err.Error(), nil))
 		return
 	}
 
 	adminID, err := handlerutil.GetAdminIdFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch admin id from context", err.Error(), nil))
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch admin id from context", err.Error(), nil))
 		return
 	}
 	blockedUser, err := cr.adminUseCase.BlockUser(c.Request.Context(), blockUser, adminID)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to block the user", err.Error(), nil))
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to block the user", err.Error(), nil))
 		return
 	}
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully blocked the user", blockedUser))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully blocked the user", blockedUser))
 }
 
 // UnblockUser
@@ -233,9 +233,9 @@ func (cr *AdminHandler) BlockUser(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_id path string true "ID of the user to be unblocked"
-// @Success 200 {object} res.Response
-// @Failure 400 {object} res.Response
-// @Failure 500 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
 // @Router /admin/users/unblock/{user_id} [put]
 func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 	paramsID := c.Param("id")
@@ -244,13 +244,13 @@ func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 	fmt.Println("paramsid is", id)
 
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse user id", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to parse user id", err.Error(), nil))
 		return
 	}
 	unBlockedUser, err := cr.adminUseCase.UnblockUser(c.Request.Context(), id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, res.ErrorResponse(500, "failed to unblock user", err.Error(), nil))
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to unblock user", err.Error(), nil))
 		return
 	}
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "successfully unblocked the user", unBlockedUser))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "successfully unblocked the user", unBlockedUser))
 }

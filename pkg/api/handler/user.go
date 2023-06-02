@@ -9,8 +9,8 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/auth"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
@@ -57,35 +57,35 @@ func NewUserHandler(usecase services.UserUseCase, otpusecase services.OTPUseCase
 // @Accept json
 // @Produce json
 // @Param user_details body request.NewUserInfo true "New user Details"
-// @Success 200 {object} res.Response
-// @Failure 500 {object} res.Response
-// @Failure 422 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure 422 {object} response.Response
 // @Router /user/signup [post]
 func (cr *UserHandler) UserSignUp(c *gin.Context) {
 	//var user domain.Users
 	var newUserInfo request.NewUserInfo
 	if err := c.BindJSON(&newUserInfo); err != nil {
-		response := res.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
+		response := response.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	userDetails, err := cr.userUseCase.UserSignUp(c.Request.Context(), newUserInfo)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to create user", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to create user", err.Error(), nil))
 	}
 
 	//twilio otp send
 
 	responseID, err := cr.otpUseCase.TwilioSendOtp(c.Request.Context(), "+91"+userDetails.Phone)
 	if err != nil {
-		response := res.ErrorResponse(500, "failed to generate otp", err.Error(), nil)
+		response := response.ErrorResponse(500, "failed to generate otp", err.Error(), nil)
 
 		c.JSON(http.StatusInternalServerError, response)
 		return
 
 	}
-	response := res.SuccessResponse(200, "Success: Enter the otp and the response id", responseID)
+	response := response.SuccessResponse(200, "Success: Enter the otp and the response id", responseID)
 	c.JSON(http.StatusOK, response)
 
 }
@@ -99,32 +99,32 @@ func (cr *UserHandler) UserSignUp(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param otpverify body request.OTPVerify true "OTP verification details"
-// @Success 200 {object} res.Response
-// @Failure 400 {object} res.Response
-// @Failure 422 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 422 {object} response.Response
 // @Router /user/signup/otp/verify [post]
 func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 	//var user domain.Users
 	var otpverify request.OTPVerify
 	if err := c.BindJSON(&otpverify); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
 		return
 	}
 	otpsession, err := cr.otpUseCase.TwilioVerifyOTP(c.Request.Context(), otpverify)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "Invalid Otp", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "Invalid Otp", err.Error(), nil))
 		return
 	}
 
 	// Call the OTPVerifyStatusManage method to update the verification status
 	err = cr.userUseCase.OTPVerifyStatusManage(c.Request.Context(), otpsession)
 	if err != nil {
-		response := res.ErrorResponse(500, "Failed to update verification status", err.Error(), nil)
+		response := response.ErrorResponse(500, "Failed to update verification status", err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
-	response := res.SuccessResponse(200, "OTP validation Successfull..Account Created Successfully", nil)
+	response := response.SuccessResponse(200, "OTP validation Successfull..Account Created Successfully", nil)
 	c.JSON(200, response)
 }
 
@@ -136,16 +136,16 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_credentials body request.UserLoginEmail true "user Login Credentials"
-// @Success 200 {object} res.Response
-// @Failure 422 {object} res.Response
-// @Failure 400 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 400 {object} response.Response
 // @Router /user/login/email [post]
 func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	//receive data from request body
 	var body request.UserLoginEmail
 
 	if err := c.ShouldBindJSON(&body); err != nil {
-		response := res.ErrorResponse(400, "Input is invalid", err.Error(), nil)
+		response := response.ErrorResponse(400, "Input is invalid", err.Error(), nil)
 
 		c.JSON(http.StatusBadRequest, response)
 		return
@@ -158,7 +158,7 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	// get user from database and check password in usecase
 	user, err := cr.userUseCase.LoginWithEmail(c, body)
 	if err != nil {
-		response := res.ErrorResponse(400, "failed to login", err.Error(), nil)
+		response := response.ErrorResponse(400, "failed to login", err.Error(), nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
@@ -166,15 +166,15 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	// generate token using jwt in map
 	tokenString, err := auth.GenerateJWT(user.ID)
 	if err != nil {
-		response := res.ErrorResponse(500, "faild to login", err.Error(), nil)
+		response := response.ErrorResponse(500, "faild to login", err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
 	c.SetCookie("UserAuth", tokenString["accessToken"], 60*60, "", "", false, true)
 
-	//response := res.SuccessResponse(200, "successfully logged in", tokenString["accessToken"])
-	response := res.SuccessResponse(200, "successfully logged in", user.FirstName)
+	//response := response.SuccessResponse(200, "successfully logged in", tokenString["accessToken"])
+	response := response.SuccessResponse(200, "successfully logged in", user.FirstName)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -185,9 +185,9 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Success 200 {object} res.Response
-// @Failure 422 {object} res.Response
-// @Failure 400 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 400 {object} response.Response
 // @Router /user/home [get]
 func (cr *UserHandler) Homehandler(c *gin.Context) {
 	email, ok := c.Get(("user-email"))
@@ -205,7 +205,7 @@ func (cr *UserHandler) Homehandler(c *gin.Context) {
 		return
 	}
 	fmt.Println("user is", user)
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "user  home", nil))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "user  home", nil))
 
 }
 
@@ -216,9 +216,9 @@ func (cr *UserHandler) Homehandler(c *gin.Context) {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Success 200 {object} res.Response
-// @Failure 400 {object} res.Response
-// @Failure 500 {object} res.Response
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
 // @Router /user/logout [get]
 func (cr *UserHandler) LogoutHandler(c *gin.Context) {
 	//c.SetCookie("user-token", "", -1, "/", "localhost", false, true)
@@ -226,7 +226,7 @@ func (cr *UserHandler) LogoutHandler(c *gin.Context) {
 	c.Writer.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate") //indicates to the client that it should not cache any response data and should always revalidate it with the server
 	c.SetSameSite(http.SameSiteLaxMode)                                           //sets the SameSite cookie attribute to "Lax" for the response. This attribute restricts the scope of cookies and helps prevent cross-site request forgery attacks
 	c.SetCookie("UserAuth", "", -1, "", "", false, true)                          //Immediately by setting the maxAge to -1, and marks the cookie as secure and HTTP-only
-	c.JSON(http.StatusOK, res.SuccessResponse(200, "Succesfully Logged-Out"))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully Logged-Out"))
 
 }
 
@@ -238,14 +238,14 @@ func (cr *UserHandler) LogoutHandler(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param user_address body request.UserAddressInput true "User address"
-// @Success 201 {object} res.Response
-// @Failure 422 {object} res.Response
-// @Failure 400 {object} res.Response
+// @Success 201 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 400 {object} response.Response
 // @Router /user/addresses/ [post]
 func (cr *UserHandler) AddAddress(c *gin.Context) {
 	var userAddressInput request.UserAddressInput
 	if err := c.Bind(&userAddressInput); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
 		return
 	}
 
@@ -255,17 +255,17 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
 		return
 	}
 
 	address, err := cr.userUseCase.AddAddress(c.Request.Context(), userAddressInput, userID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to add the address", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to add the address", err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully added the address", address))
+	c.JSON(http.StatusCreated, response.SuccessResponse(201, "Succesfully added the address", address))
 
 }
 
@@ -278,39 +278,39 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 // @Produce json
 // @Param user_address body request.UserAddressInput true "User address"
 // @Param address_id path string true "address id"
-// @Success 201 {object} res.Response
-// @Failure 422 {object} res.Response
-// @Failure 400 {object} res.Response
+// @Success 201 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 400 {object} response.Response
 // @Router /user/addresses/edit/{address_id} [patch]
 func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 	var userAddressInput request.UserAddressInput
 
 	if err := c.Bind(&userAddressInput); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "unable to fetch the address body", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to fetch the address body", err.Error(), nil))
 		return
 	}
 
 	//update based on address id as well as userid
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
 		return
 	}
 
 	paramsID := c.Param("address_id")
 	addressID, err := strconv.Atoi(paramsID)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the address id", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to parse the address id", err.Error(), nil))
 		return
 	}
 
 	updatedAddress, err := cr.userUseCase.UpdateAddress(c.Request.Context(), userAddressInput, userID, addressID)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to update the address", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to update the address", err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully updated the address", updatedAddress))
+	c.JSON(http.StatusCreated, response.SuccessResponse(201, "Succesfully updated the address", updatedAddress))
 
 }
 
@@ -322,28 +322,28 @@ func (cr *UserHandler) UpdateAddress(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param address_id path string true "address id"
-// @Success 201 {object} res.Response
-// @Failure 422 {object} res.Response
-// @Failure 400 {object} res.Response
+// @Success 201 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 400 {object} response.Response
 // @Router /user/addresses/{address_id} [delete]
 func (cr *UserHandler) DeleteAddress(c *gin.Context) {
 	paramsID := c.Param("address_id")
 	addressID, err := strconv.Atoi(paramsID)
 	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, res.ErrorResponse(422, "failed to parse the address id", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to parse the address id", err.Error(), nil))
 		return
 	}
 
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, res.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
 		return
 	}
 
 	if err = cr.userUseCase.DeleteAddress(c.Request.Context(), userID, addressID); err != nil {
-		c.JSON(http.StatusBadRequest, res.ErrorResponse(400, "failed to delete the address", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to delete the address", err.Error(), nil))
 		return
 	}
-	c.JSON(http.StatusCreated, res.SuccessResponse(201, "Succesfully deleted the address", nil))
+	c.JSON(http.StatusCreated, response.SuccessResponse(201, "Succesfully deleted the address", nil))
 
 }

@@ -1,5 +1,8 @@
 package res
 
+//move to mpdels/response folder,,, delete this file after some days..
+/*
+
 import "strings"
 
 type Response struct {
@@ -28,3 +31,4 @@ func ErrorResponse(statusCode int, message string, err string, data interface{})
 		Data:       data,
 	}
 }
+*/
