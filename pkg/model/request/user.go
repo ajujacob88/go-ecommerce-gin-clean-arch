@@ -17,6 +17,11 @@ type NewUserInfo struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type UserLoginEmail struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
 type UserAddressInput struct {
 	HouseNumber string `json:"house_number"`
 	Street      string `json:"street"`

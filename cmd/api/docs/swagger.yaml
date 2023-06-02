@@ -32,16 +32,6 @@ definitions:
       id:
         type: integer
     type: object
-  req.UserLoginEmail:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-    required:
-    - email
-    - password
-    type: object
   request.AdminLoginInfo:
     properties:
       email:
@@ -171,6 +161,16 @@ definitions:
         type: string
       street:
         type: string
+    type: object
+  request.UserLoginEmail:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
     type: object
   res.Response:
     properties:
@@ -996,7 +996,7 @@ paths:
         name: user_credentials
         required: true
         schema:
-          $ref: '#/definitions/req.UserLoginEmail'
+          $ref: '#/definitions/request.UserLoginEmail'
       produces:
       - application/json
       responses:

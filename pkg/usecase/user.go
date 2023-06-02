@@ -10,7 +10,6 @@ import (
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -56,7 +55,7 @@ func (uc *userUseCase) OTPVerifyStatusManage(ctx context.Context, otpsession dom
 }
 
 // user login
-func (c *userUseCase) LoginWithEmail(ctx context.Context, user req.UserLoginEmail) (domain.Users, error) {
+func (c *userUseCase) LoginWithEmail(ctx context.Context, user request.UserLoginEmail) (domain.Users, error) {
 
 	//dbUser, dberr := c.userRepo.FindUser(ctx, user)
 	dbUser, dberr := c.userRepo.FindByEmail(ctx, user.Email)

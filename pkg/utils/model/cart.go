@@ -1,5 +1,6 @@
 package model
 
+//no need,, spliited to models folder,,, delete after few days
 /*
 type CartItems struct {
 	ProductItemID    uint

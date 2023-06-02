@@ -10,7 +10,6 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/req"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/res"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -136,14 +135,14 @@ func (cr *UserHandler) SignupOtpVerify(c *gin.Context) {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Param user_credentials body req.UserLoginEmail true "user Login Credentials"
+// @Param user_credentials body request.UserLoginEmail true "user Login Credentials"
 // @Success 200 {object} res.Response
 // @Failure 422 {object} res.Response
 // @Failure 400 {object} res.Response
 // @Router /user/login/email [post]
 func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	//receive data from request body
-	var body req.UserLoginEmail
+	var body request.UserLoginEmail
 
 	if err := c.ShouldBindJSON(&body); err != nil {
 		response := res.ErrorResponse(400, "Input is invalid", err.Error(), nil)

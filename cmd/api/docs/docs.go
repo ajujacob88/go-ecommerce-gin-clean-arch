@@ -1236,7 +1236,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/req.UserLoginEmail"
+                            "$ref": "#/definitions/request.UserLoginEmail"
                         }
                     }
                 ],
@@ -1543,21 +1543,6 @@ const docTemplate = `{
                 }
             }
         },
-        "req.UserLoginEmail": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
         "request.AdminLoginInfo": {
             "type": "object",
             "required": [
@@ -1739,6 +1724,21 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "street": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UserLoginEmail": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
                     "type": "string"
                 }
             }
