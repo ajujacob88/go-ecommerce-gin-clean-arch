@@ -1,5 +1,5 @@
 package response
 
 type UserOrder struct {
-	AmountToPay int `json:"amount_to_pay"`
+	AmountToPay float64 `json:"amount_to_pay"`
 }
