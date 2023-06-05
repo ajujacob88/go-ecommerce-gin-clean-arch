@@ -42,10 +42,10 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 	// 	return
 	// }
 
-	placedOrderDetails, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userId, placeOrderInfo)
-
-	// if paymentMethodInfo.PaymentType == "CashOnDelivery" {
-	// 	placedOrderDetails, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userId, placeOrderInfo)
-	// }
+	placedOrderDetails, deliveryAddress, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userId, placeOrderInfo)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to place the order", err.Error(), nil))
+		return
+	}
 
 }
