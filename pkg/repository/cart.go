@@ -294,3 +294,30 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) (response.ViewC
 	return viewCart, err
 
 }
+
+// check the cart is valid for placing the order
+func (c *cartDatabase) CheckCartIsValidForOrder(ctx context.Context, userID int) (response.ViewCart, error) {
+	userCart, err := c.ViewCart(ctx, userID)
+	if err != nil {
+		return response.ViewCart{}, err
+	}
+
+	// check any of the product is out of stock in the cart
+	// check if the stocks are available
+
+	var outOfStockProductsID int
+	productStockQuery := ` 	SELECT DISTINCT product_details.id
+							FROM product_details
+							INNER JOIN cart_items ON product_details.id = cart_items.product_details_id
+							INNER JOIN carts ON cart_items.cart_id = carts.id
+							WHERE carts.user_id = $1 AND product_details.qty_in_stock <= 0`
+	err = c.DB.Raw(productStockQuery, userID).Scan(&outOfStockProductsID).Error
+	if err != nil {
+		return response.ViewCart{}, err
+	}
+	if outOfStockProductsID != 0 {
+		return response.ViewCart{}, fmt.Errorf("some products are out of stock - hence cart is not valid for placing order")
+	}
+	return userCart, nil
+
+}

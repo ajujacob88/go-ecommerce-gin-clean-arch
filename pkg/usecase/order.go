@@ -39,6 +39,9 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 		return response.UserOrder{}, err
 	}
 	//check the cart of the user is valid to place the order
+	cart, err := c.cartRepo.
+
+
 
 	if paymentMethodInfo.PaymentType == "CashOnDelivery" {
 
