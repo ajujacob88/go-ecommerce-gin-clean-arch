@@ -133,6 +133,7 @@ func (c *userDatabase) BlockStatus(ctx context.Context, userId uint) (bool, erro
 }
 
 // ---to add address
+// no need of this method i think,, check and delte the findaddresbyid method later
 func (c *userDatabase) FindAddressByID(ctx context.Context, userID int) (domain.UserAddress, error) {
 	var userAddress domain.UserAddress
 	findAddressQuery := `SELECT * FROM user_addresses WHERE user_id = $1`
@@ -220,4 +221,19 @@ func (c *userDatabase) ListAddress(ctx context.Context, userID int) ([]response.
 		return []response.ShowAddress{}, err
 	}
 	return allAddress, nil
+}
+
+//  in the frontend, you can implement logic to retrieve and display only the addresses that belong to the currently logged-in user. This way, the user will only see their own addresses and won't have the option to select addresses created by other users. it is recommended to implement checks in both the frontend and backend to ensure data integrity and security.
+
+func (c *userDatabase) FindAddress(ctx context.Context, userID int, addressID int) (domain.UserAddress, error) {
+	var userAddress domain.UserAddress
+	findAddressQuery := `SELECT * FROM user_addresses WHERE user_id = $1 AND id = $2`
+	result := c.DB.Raw(findAddressQuery, userID, addressID).Scan(&userAddress)
+	if result.Error != nil {
+		return domain.UserAddress{}, result.Error
+	}
+	if result.RowsAffected == 0 {
+		return domain.UserAddress{}, errors.New("invalid addressid / this address is not mapped into this user")
+	}
+	return userAddress, nil
 }

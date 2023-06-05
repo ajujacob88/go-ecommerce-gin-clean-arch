@@ -12,10 +12,10 @@ import (
 
 type OrderHandler struct {
 	orderUseCase   services.OrderUseCase
-	paymentUseCase services.PaymentUseCae
+	paymentUseCase services.PaymentUseCase
 }
 
-func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services.PaymentUseCae) *OrderHandler {
+func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services.PaymentUseCase) *OrderHandler {
 	return &OrderHandler{
 		orderUseCase:   orderusecase,
 		paymentUseCase: paymentusecase,
@@ -35,6 +35,17 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 		return
 	}
 
-	paymentMethodInfo, err := cr.paymentUseCase.GetPaymentMethodInfoByID(c.Request.Context(), userId)
+	// paymentMethodInfo, err := cr.paymentUseCase.GetPaymentMethodInfoByID(c.Request.Context(), placeOrderInfo.PaymentMethodID)
+
+	// if err != nil {
+	// 	c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to place the order", err.Error(), nil))
+	// 	return
+	// }
+
+	placedOrderDetails, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userId, placeOrderInfo)
+
+	// if paymentMethodInfo.PaymentType == "CashOnDelivery" {
+	// 	placedOrderDetails, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userId, placeOrderInfo)
+	// }
 
 }

@@ -28,4 +28,6 @@ type UserRepository interface {
 	DeleteAddress(ctx context.Context, userID, addressID int) error
 
 	ListAddress(ctx context.Context, userID int) ([]response.ShowAddress, error)
+
+	FindAddress(ctx context.Context, userID, addressID int) (domain.UserAddress, error)
 }
