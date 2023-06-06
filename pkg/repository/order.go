@@ -52,4 +52,11 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order) (
 		tx.Rollback()
 		return domain.Order{}, err
 	}
+
+	//create the orderline entry
+	orderLineEntryQuery := `	INSERT INTO order_lines(product_details_id, order_id, quantity, price)
+								VALUES ($1, $2, $3, $4);`
+
+	//before that fetch the product_details_id and fetch the product details including price from the cart_items
+
 }

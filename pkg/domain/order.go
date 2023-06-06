@@ -34,5 +34,7 @@ type OrderLine struct {
 	ProductDetailsID uint           `json:"product_details_id"`
 	ProductDetails   ProductDetails `gorm:"ForeignKey: ProductDetailsID" json:"-"`
 	OrderID          uint           `json:"order_id"`
-	Order            Order
+	Order            Order          `gorm:"ForeignKey: OrderID" json:"-"`
+	Quantity         int            `json:"quantity"`
+	Price            float64        `json:"price"`
 }
