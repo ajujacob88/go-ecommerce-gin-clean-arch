@@ -2,8 +2,10 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
@@ -29,7 +31,7 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 		return
 	}
 
-	userId, err := handlerutil.GetUserIdFromContext(c)
+	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the user ID", err.Error(), nil))
 		return
@@ -42,12 +44,22 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 	// 	return
 	// }
 
-	placedOrderDetails, deliveryAddress, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userId, placeOrderInfo)
+	placedOrderDetails, deliveryAddress, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userID, placeOrderInfo)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to place the order", err.Error(), nil))
 		return
 	}
 
-	//now make and save a shop order
+	//now make and save the Order
+	orderInfo := domain.Order{
+		UserID:              uint(userID),
+		OrderDate:           time.Now(),
+		PaymentMethodInfoID: uint(placeOrderInfo.PaymentMethodID),
+		ShippingAddressID:   deliveryAddress.ID,
+		OrderTotalPrice:     placedOrderDetails.AmountToPay,
+		OrderStatusID:       1,
+	}
+	// save the order details
+	order, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo)
 
 }
