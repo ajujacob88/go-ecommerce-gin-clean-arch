@@ -48,4 +48,6 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 		return
 	}
 
+	//now make and save a shop order
+
 }
