@@ -28,3 +28,11 @@ type DeliveryStatus struct {
 	ID     uint   `json:"id" gorm:"primaryKey"`
 	Status string `json:"status"`
 }
+
+type OrderLine struct {
+	ID               uint           `gorm:"primaryKey"`
+	ProductDetailsID uint           `json:"product_details_id"`
+	ProductDetails   ProductDetails `gorm:"ForeignKey: ProductDetailsID" json:"-"`
+	OrderID          uint           `json:"order_id"`
+	Order            Order
+}

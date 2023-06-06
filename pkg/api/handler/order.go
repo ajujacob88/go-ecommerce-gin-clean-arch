@@ -60,6 +60,6 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 		OrderStatusID:       1,
 	}
 	// save the order details
-	order, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo)
+	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo)
 
 }
