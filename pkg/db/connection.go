@@ -37,6 +37,17 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 		//cart tables
 		&domain.Carts{},
 		&domain.CartItems{},
+
+		//order tables
+		&domain.Order{},
+		&domain.OrderLine{},
+		&domain.OrderStatus{},
+		&domain.DeliveryStatus{},
+
+		//payment tables
+		&domain.PaymentMethodInfo{},
+		&domain.PaymentDetails{},
+		&domain.PaymentStatus{},
 	)
 
 	if err != nil {

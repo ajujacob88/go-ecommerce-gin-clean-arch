@@ -145,6 +145,16 @@ definitions:
     - otp
     - otpid
     type: object
+  request.PlaceOrder:
+    properties:
+      address_id:
+        type: integer
+      payment_method_id:
+        type: integer
+    required:
+    - address_id
+    - payment_method_id
+    type: object
   request.UserAddressInput:
     properties:
       city:
@@ -771,6 +781,37 @@ paths:
       summary: Admin can unlock a blocked user
       tags:
       - Admin
+  /cart/placeorder/:
+    post:
+      consumes:
+      - application/json
+      description: This endpoint allows a user to place the order from cart.
+      operationId: place-order-from-cart
+      parameters:
+      - description: Place Order details
+        in: body
+        name: place_order_details
+        required: true
+        schema:
+          $ref: '#/definitions/request.PlaceOrder'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Place the order from cart
+      tags:
+      - Order
   /user/addresses:
     get:
       consumes:
