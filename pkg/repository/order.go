@@ -47,13 +47,6 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, c
 								VALUES ($1, $2, $3, $4);`
 
 	//before that fetch all the product_details_id in the cart and fetch the product details including price from the cart_items
-	// var cart_id int
-	// err = tx.Raw("SELECT id FROM carts WHERE user_id = ?", orderInfo.UserID).Scan(&cart_id).Error
-	// if err != nil {
-	// 	tx.Rollback()
-	// 	return domain.Order{}, err
-	// }
-
 	for i := range cartItems {
 		// check if product is in stock and fetch product
 		var productDetails struct {
@@ -113,4 +106,18 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, c
 	}
 	tx.Commit()
 	return createdOrder, nil
+}
+
+func (c *orderDatabase) ViewOrderById(ctx context.Context, userID, orderID int) (domain.Order, error) {
+	var order domain.Order
+	viewOrderQuery := `SELECT * FROM orders WHERE user_id = $1 AND id = $2;`
+	err := c.DB.Raw(viewOrderQuery, userID, orderID).Scan(&order).Error
+
+	if err != nil {
+		return domain.Order{}, err
+	} else if order.ID == 0 { //if no order is found
+		return domain.Order{}, fmt.Errorf("no order found")
+	}
+
+	return order, err
 }

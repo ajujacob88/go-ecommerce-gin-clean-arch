@@ -28,3 +28,15 @@ func (c *paymentDatabase) GetPaymentMethodInfoByID(ctx context.Context, paymentM
 	}
 	return paymentmethodInfo, nil
 }
+
+func (c *paymentDatabase) FetchPaymentDetails(ctx context.Context, orderID int) (domain.PaymentDetails, error) {
+	var paymentDetails domain.PaymentDetails
+	fetchPaymentDetailsQuery := `	SELECT *
+									FROM payment_details
+									WHERE order_id = $1`
+	err := c.DB.Raw(fetchPaymentDetailsQuery, orderID).Scan(&paymentDetails).Error
+	if err != nil {
+		return domain.PaymentDetails{}, fmt.Errorf("failed to fetch payment details \n %v", err.Error())
+	}
+	return paymentDetails, nil
+}

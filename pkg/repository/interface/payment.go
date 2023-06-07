@@ -8,4 +8,5 @@ import (
 
 type PaymentRepository interface {
 	GetPaymentMethodInfoByID(ctx context.Context, paymentMethodID int) (domain.PaymentMethodInfo, error)
+	FetchPaymentDetails(ctx context.Context, orderID int) (domain.PaymentDetails, error)
 }

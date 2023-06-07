@@ -8,4 +8,6 @@ import (
 
 type PaymentUseCase interface {
 	GetPaymentMethodInfoByID(ctx context.Context, paymentMethodID int) (domain.PaymentMethodInfo, error)
+
+	RazorPayCheckout(ctx context.Context, userID, orderID int) (domain.Order, string, error)
 }
