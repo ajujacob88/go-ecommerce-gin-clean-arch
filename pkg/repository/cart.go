@@ -333,7 +333,7 @@ func (c *cartDatabase) FindCartIDFromUserID(ctx context.Context, user_id int) (i
 
 func (c *cartDatabase) FindCartItemsByCartID(ctx context.Context, cart_id int) ([]domain.CartItems, error) {
 	var cartItems []domain.CartItems
-	err := c.DB.Raw("SELECT * FROM cart_items WHERE cart_id = ?", cart_id).Scan(cartItems).Error
+	err := c.DB.Raw("SELECT * FROM cart_items WHERE cart_id = ?", cart_id).Scan(&cartItems).Error
 	if err != nil {
 		return []domain.CartItems{}, err
 	}
@@ -347,7 +347,7 @@ func (c *cartDatabase) FindCartItemsByUserID(ctx context.Context, user_id int) (
 		return []domain.CartItems{}, err
 	}
 	var cartItems []domain.CartItems
-	err = c.DB.Raw("SELECT * FROM cart_items WHERE cart_id = ?", cart_id).Scan(cartItems).Error
+	err = c.DB.Raw("SELECT * FROM cart_items WHERE cart_id = ?", cart_id).Scan(&cartItems).Error
 	if err != nil {
 		return []domain.CartItems{}, err
 	}

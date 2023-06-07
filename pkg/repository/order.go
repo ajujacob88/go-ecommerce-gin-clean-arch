@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -27,22 +28,6 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, c
 							VALUES($1,$2,$3,$4,$5,$6)
 							RETURNING *;`
 	err := tx.Raw(createOrderQuery, orderInfo.UserID, orderInfo.OrderDate, orderInfo.PaymentMethodInfoID, orderInfo.ShippingAddressID, orderInfo.OrderTotalPrice, orderInfo.OrderStatusID).Scan(createdOrder).Error
-	if err != nil {
-		tx.Rollback()
-		return domain.Order{}, err
-	}
-
-	//update cart_items table
-	updateCartItemsQuery := `DELETE FROM cart_items WHERE cart_id = (SELECT id FROM carts WHERE user_id = $1);` //subquery written inside a query
-	err = tx.Exec(updateCartItemsQuery, orderInfo.UserID).Error
-	if err != nil {
-		tx.Rollback()
-		return domain.Order{}, err
-	}
-
-	//update carts table
-	updateCartQuery := `DELETE FROM carts WHERE user_id = $1;`
-	err = tx.Exec(updateCartQuery, orderInfo.UserID).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.Order{}, err
@@ -75,5 +60,57 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, c
 			QntyInStock int
 			Price       float64
 		}
+
+		prodctDetailFetchQuery := `	SELECT qty_in_stock, price 
+									FROM product_details
+									WHERE id = $1`
+		err := tx.Raw(prodctDetailFetchQuery, cartItems[i].ProductDetailsID).Scan(&productDetails).Error
+		if err != nil {
+			tx.Rollback()
+			return domain.Order{}, err
+		}
+
+		// if product is out of stock
+		if productDetails.QntyInStock < int(cartItems[i].Quantity) {
+			tx.Rollback()
+			return domain.Order{}, fmt.Errorf("product item out of stock for the id %v", cartItems[i].ProductDetailsID)
+		}
+
+		//now create the order line -- each items total price
+		productItemTotalPrice := productDetails.Price * float64(cartItems[i].Quantity)
+		err = tx.Exec(orderLineEntryQuery, cartItems[i].ProductDetailsID, createdOrder.ID, cartItems[i].Quantity, productItemTotalPrice).Error
+		if err != nil {
+			tx.Rollback()
+			return domain.Order{}, err
+		}
+
+		// Now reduce the qty_in_stock in product details table
+		reduceQuantityQuery := `	UPDATE product_details
+									SET qty_in_stock = qty_in_stock - $1
+									WHERE id = $2;`
+		err = tx.Exec(reduceQuantityQuery, cartItems[i].Quantity, cartItems[i].ProductDetailsID).Error
+		if err != nil {
+			tx.Rollback()
+			return domain.Order{}, err
+		}
+
 	}
+
+	//update cart_items table
+	updateCartItemsQuery := `DELETE FROM cart_items WHERE cart_id = (SELECT id FROM carts WHERE user_id = $1);` //subquery written inside a query
+	err = tx.Exec(updateCartItemsQuery, orderInfo.UserID).Error
+	if err != nil {
+		tx.Rollback()
+		return domain.Order{}, err
+	}
+
+	//update carts table
+	updateCartQuery := `DELETE FROM carts WHERE user_id = $1;`
+	err = tx.Exec(updateCartQuery, orderInfo.UserID).Error
+	if err != nil {
+		tx.Rollback()
+		return domain.Order{}, err
+	}
+	tx.Commit()
+	return createdOrder, nil
 }
