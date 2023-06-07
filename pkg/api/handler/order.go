@@ -26,7 +26,7 @@ func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services
 	}
 }
 
-func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
+func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 	var placeOrderInfo request.PlaceOrder
 	if err := c.Bind(&placeOrderInfo); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to read the request body", err.Error(), nil))

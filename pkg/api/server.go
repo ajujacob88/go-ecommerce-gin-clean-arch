@@ -16,6 +16,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 	adminHandler *handler.AdminHandler,
 	productHandler *handler.ProductHandler,
 	cartHandler *handler.CartHandler,
+	orderHandler *handler.OrderHandler,
 ) *ServerHTTP {
 
 	engine := gin.New()

@@ -12,7 +12,7 @@ type paymentUseCase struct {
 	paymentRepo interfaces.PaymentRepository
 }
 
-func NewPaymentUseCase(paymentRepo interfaces.PaymentRepository) services.PaymentUseCae {
+func NewPaymentUseCase(paymentRepo interfaces.PaymentRepository) services.PaymentUseCase {
 	return &paymentUseCase{
 		paymentRepo: paymentRepo,
 	}

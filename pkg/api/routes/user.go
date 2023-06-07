@@ -11,6 +11,7 @@ func UserRoutes(
 	userHandler *handler.UserHandler,
 	productHandler *handler.ProductHandler,
 	cartHandler *handler.CartHandler,
+	orderHandler *handler.OrderHandler,
 ) {
 
 	// User routes that don't require authentication
@@ -44,6 +45,7 @@ func UserRoutes(
 			home.PATCH("/addresses/edit/:address_id", userHandler.UpdateAddress)
 			home.DELETE("/addresses/:address_id", userHandler.DeleteAddress)
 			home.GET("/addresses", userHandler.ListAddress)
+			home.POST("/placeorder", orderHandler.PlaceOrderFromCart)
 
 			//cart routes
 			// cart := api.Group("/cart")
