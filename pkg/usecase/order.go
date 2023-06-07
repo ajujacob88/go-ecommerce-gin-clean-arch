@@ -71,4 +71,5 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 func (c *orderUseCase) SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {
 
 	createdOrder, err := c.orderRepo.SaveOrder(ctx, orderInfo, cartItems)
+	return createdOrder, err
 }

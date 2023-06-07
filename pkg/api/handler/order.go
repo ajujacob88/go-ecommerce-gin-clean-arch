@@ -68,5 +68,9 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 	}
 	// save the order details
 	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo, cartItems)
-
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully placed the order", createdOrder))
 }
