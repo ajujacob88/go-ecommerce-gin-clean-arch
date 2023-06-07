@@ -13,4 +13,7 @@ type CartRepository interface {
 	ViewCart(ctx context.Context, userId int) (response.ViewCart, error)
 
 	CheckCartIsValidForOrder(ctx context.Context, userID int) (response.ViewCart, error)
+	FindCartIDFromUserID(ctx context.Context, user_id int) (int, error)
+	FindCartItemsByCartID(ctx context.Context, cart_id int) ([]domain.CartItems, error)
+	FindCartItemsByUserID(ctx context.Context, user_id int) ([]domain.CartItems, error)
 }

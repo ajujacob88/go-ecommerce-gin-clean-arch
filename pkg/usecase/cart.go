@@ -35,3 +35,11 @@ func (c *cartUseCase) ViewCart(ctx context.Context, userId int) (response.ViewCa
 	return viewCart, err
 
 }
+
+func (c *cartUseCase) FindCartItemsByUserID(ctx context.Context, user_id int) ([]domain.CartItems, error) {
+	cartItems, err := c.cartRepo.FindCartItemsByUserID(ctx, user_id)
+	if err != nil {
+		return []domain.CartItems{}, err
+	}
+	return cartItems, nil
+}

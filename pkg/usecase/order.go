@@ -68,6 +68,7 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 }
 
 // save the order as pending, then after payment/cod verification change order status to order placed
-func (c *orderUseCase) SaveOrder(ctx context.Context, orderInfo domain.Order) (domain.Order, error) {
-	createdOrder, err := c.orderRepo.SaveOrder(ctx, orderInfo)
+func (c *orderUseCase) SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {
+
+	createdOrder, err := c.orderRepo.SaveOrder(ctx, orderInfo, cartItems)
 }

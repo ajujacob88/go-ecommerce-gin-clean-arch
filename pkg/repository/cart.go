@@ -321,3 +321,35 @@ func (c *cartDatabase) CheckCartIsValidForOrder(ctx context.Context, userID int)
 	return userCart, nil
 
 }
+
+func (c *cartDatabase) FindCartIDFromUserID(ctx context.Context, user_id int) (int, error) {
+	var cart_id int
+	err := c.DB.Raw("SELECT id FROM carts WHERE user_id = ?", user_id).Scan(&cart_id).Error
+	if err != nil {
+		return cart_id, err
+	}
+	return cart_id, nil
+}
+
+func (c *cartDatabase) FindCartItemsByCartID(ctx context.Context, cart_id int) ([]domain.CartItems, error) {
+	var cartItems []domain.CartItems
+	err := c.DB.Raw("SELECT * FROM cart_items WHERE cart_id = ?", cart_id).Scan(cartItems).Error
+	if err != nil {
+		return []domain.CartItems{}, err
+	}
+	return cartItems, nil
+}
+
+func (c *cartDatabase) FindCartItemsByUserID(ctx context.Context, user_id int) ([]domain.CartItems, error) {
+	var cart_id int
+	err := c.DB.Raw("SELECT id FROM carts WHERE user_id = ?", user_id).Scan(&cart_id).Error
+	if err != nil {
+		return []domain.CartItems{}, err
+	}
+	var cartItems []domain.CartItems
+	err = c.DB.Raw("SELECT * FROM cart_items WHERE cart_id = ?", cart_id).Scan(cartItems).Error
+	if err != nil {
+		return []domain.CartItems{}, err
+	}
+	return cartItems, nil
+}

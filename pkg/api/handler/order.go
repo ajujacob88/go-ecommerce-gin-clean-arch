@@ -15,12 +15,14 @@ import (
 type OrderHandler struct {
 	orderUseCase   services.OrderUseCase
 	paymentUseCase services.PaymentUseCase
+	cartUseCase    services.CartUseCase
 }
 
-func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services.PaymentUseCase) *OrderHandler {
+func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services.PaymentUseCase, cartUseCase services.CartUseCase) *OrderHandler {
 	return &OrderHandler{
 		orderUseCase:   orderusecase,
 		paymentUseCase: paymentusecase,
+		cartUseCase:    cartUseCase,
 	}
 }
 
@@ -44,6 +46,11 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 	// 	return
 	// }
 
+	cartItems, err := cr.cartUseCase.FindCartItemsByUserID(c.Request.Context(), userID)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the cart", err.Error(), nil))
+		return
+	}
 	placedOrderDetails, deliveryAddress, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userID, placeOrderInfo)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to place the order", err.Error(), nil))
@@ -60,6 +67,6 @@ func (cr *OrderHandler) PlaceOrderFromCartCOD(c *gin.Context) {
 		OrderStatusID:       1,
 	}
 	// save the order details
-	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo)
+	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo, cartItems)
 
 }

@@ -9,14 +9,18 @@ import (
 )
 
 type orderDatabase struct {
-	DB *gorm.DB
+	DB       *gorm.DB
+	cartRepo interfaces.CartRepository
 }
 
-func NewOrderRepository(DB *gorm.DB) interfaces.OrderRepository {
-	return &orderDatabase{DB}
+func NewOrderRepository(DB *gorm.DB, cartRepo interfaces.CartRepository) interfaces.OrderRepository {
+	return &orderDatabase{
+		DB:       DB,
+		cartRepo: cartRepo,
+	}
 }
 
-func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order) (domain.Order, error) {
+func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {
 	tx := c.DB.Begin()
 	var createdOrder domain.Order
 	createOrderQuery := `	INSERT INTO orders(user_id, order_date, payment_method_info_id, shipping_address_id, order_total_price, order_status_id)
@@ -57,6 +61,19 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order) (
 	orderLineEntryQuery := `	INSERT INTO order_lines(product_details_id, order_id, quantity, price)
 								VALUES ($1, $2, $3, $4);`
 
-	//before that fetch the product_details_id and fetch the product details including price from the cart_items
+	//before that fetch all the product_details_id in the cart and fetch the product details including price from the cart_items
+	// var cart_id int
+	// err = tx.Raw("SELECT id FROM carts WHERE user_id = ?", orderInfo.UserID).Scan(&cart_id).Error
+	// if err != nil {
+	// 	tx.Rollback()
+	// 	return domain.Order{}, err
+	// }
 
+	for i := range cartItems {
+		// check if product is in stock and fetch product
+		var productDetails struct {
+			QntyInStock int
+			Price       float64
+		}
+	}
 }

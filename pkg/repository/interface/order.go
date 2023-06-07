@@ -7,5 +7,5 @@ import (
 )
 
 type OrderRepository interface {
-	SaveOrder(ctx context.Context, orderInfo domain.Order) (domain.Order, error)
+	SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error)
 }
