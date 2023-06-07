@@ -26,6 +26,20 @@ func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services
 	}
 }
 
+//--------------PLACE ORDER FROM CART---------
+
+// PlaceOrderFromCart
+// @Summary Place the order from cart
+// @ID place-order-from-cart
+// @Description This endpoint allows a user to place the order from cart.
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param place_order_details body request.PlaceOrder true "Place Order details"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Router /cart/placeorder/ [post]
 func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 	var placeOrderInfo request.PlaceOrder
 	if err := c.Bind(&placeOrderInfo); err != nil {
