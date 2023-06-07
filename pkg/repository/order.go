@@ -115,8 +115,6 @@ func (c *orderDatabase) ViewOrderById(ctx context.Context, userID, orderID int) 
 
 	if err != nil {
 		return domain.Order{}, err
-	} else if order.ID == 0 { //if no order is found
-		return domain.Order{}, fmt.Errorf("no order found")
 	}
 
 	return order, err

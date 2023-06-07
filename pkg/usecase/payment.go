@@ -7,6 +7,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+	"github.com/razorpay/razorpay-go"
 )
 
 type paymentUseCase struct {
@@ -21,6 +22,12 @@ func NewPaymentUseCase(paymentRepo interfaces.PaymentRepository, orderRepo inter
 	}
 }
 
+// razor pay key downloaded from https://dashboard.razorpay.com/app/website-app-settings/api-keys
+const (
+	razorpayAPIKeyID     = "rzp_test_lbL1gwQH8QK6uq"
+	razorpayAPIKeySecret = "WXb29TEBAJ51qxt9cbYqkI8t"
+)
+
 func (c *paymentUseCase) GetPaymentMethodInfoByID(ctx context.Context, paymentMethodID int) (domain.PaymentMethodInfo, error) {
 	paymentMethodInfo, err := c.paymentRepo.GetPaymentMethodInfoByID(ctx, paymentMethodID)
 	return paymentMethodInfo, err
@@ -31,12 +38,35 @@ func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, userID, orderID i
 	paymentDetails, err := c.paymentRepo.FetchPaymentDetails(ctx, orderID)
 	if err != nil {
 		return domain.Order{}, "", err
-	}
-	if paymentDetails.PaymentStatusID == 2 {
+	} else if paymentDetails.PaymentStatusID == 2 {
 		return domain.Order{}, "", fmt.Errorf("Payment already completed")
 
 	}
 
 	// now fetch the order details
 	order, err := c.orderRepo.ViewOrderById(ctx, userID, orderID)
+	if err != nil {
+		return domain.Order{}, "", err
+	} else if order.ID == 0 { //if no order is found
+		return domain.Order{}, "", fmt.Errorf("no such order found")
+	}
+	//now integrate with razor pay (by using the code from razor pay)
+	//client := razorpay.NewClient("<YOUR_API_KEY>", "<YOUR_API_SECRET>")
+
+	client := razorpay.NewClient(razorpayAPIKeyID, razorpayAPIKeySecret)
+	data := map[string]interface{}{
+		"amount":   order.OrderTotalPrice * 100, //as per razor pay format, it includes paisa also... https://razorpay.com/docs/payments/server-integration/go/payment-gateway/build-integration/#api-sample-code
+		"currency": "INR",
+		"receipt":  "paymenttest_receipt_id",
+	}
+	body, err := client.Order.Create(data, nil)
+	if err != nil {
+		return domain.Order{}, "", err
+	}
+	razorpayOrderIDValue := body["id"]
+	razorpayOrderID, ok := razorpayOrderIDValue.(string) // type assertion from interface to string. This line assigns the value of razorpayOrderIDValue to the variable razorpayOrderID, assuming that the value is of type string.
+	if !ok {
+		return domain.Order{}, "", fmt.Errorf("failed to assert razorpayOrderIDValue as string")
+	}
+	return order, razorpayOrderID, err
 }

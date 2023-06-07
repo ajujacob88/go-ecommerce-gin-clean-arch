@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -33,6 +34,17 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
 		return
 	}
 
-	order, razorpayID, err := cr.paymentUseCase.RazorPayCheckout(c.Request.Context(), userID, orderID)
+	order, razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c.Request.Context(), userID, orderID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to complete the order", err.Error(), nil))
 
+	}
+	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", order.OrderTotalPrice)
+	c.HTML(200, "app.html", gin.H{ //gin.H is to fill the placeholders like this "amount": "{{.total}}"  in the html
+		"amount":   order.OrderTotalPrice,
+		"order_id": razorpayOrderID,
+		"name":     "smartstore name",
+		"email":    "smartstore@gmail.com",
+		"contact":  "7733333333",
+	})
 }
