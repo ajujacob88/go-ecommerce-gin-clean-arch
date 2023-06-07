@@ -53,11 +53,20 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
 
 	}
 	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", order.OrderTotalPrice)
-	c.HTML(200, "app.html", gin.H{ //gin.H is to fill the placeholders like this "amount": "{{.total}}"  in the html
-		"amount":   order.OrderTotalPrice,
-		"order_id": razorpayOrderID,
+	//c.HTML(200, "app.html", gin.H{ //gin.H is to fill the placeholders like this "amount": "{{.total}}"  in the html
+	// 	"amount":   order.OrderTotalPrice,
+	//"order_id": razorpayOrderID,
+	// 	"name":     "smartstore name",
+	// 	"email":    "smartstore@gmail.com",
+	// 	"contact":  "7733333333",
+	//})
+
+	c.HTML(200, "app.html", gin.H{
+		"total":    order.OrderTotalPrice,
+		"orderid":  razorpayOrderID,
 		"name":     "smartstore name",
 		"email":    "smartstore@gmail.com",
-		"contact":  "7733333333",
+		"phone_no": "7733333333",
 	})
+
 }

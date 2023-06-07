@@ -36,6 +36,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 }
 
 func (sh *ServerHTTP) Start() {
+	sh.engine.LoadHTMLGlob("views/*.html") //for loading the html page of razor pay
 	sh.engine.Run(":3000")
 }
 
