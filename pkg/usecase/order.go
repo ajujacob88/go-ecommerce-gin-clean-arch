@@ -57,10 +57,10 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 		return response.UserOrder{}, domain.UserAddress{}, errors.New("the payment method selected is not applicable for this order, cart value is higher than selected payment method maximum transaction limit")
 	}
 
-	if paymentMethodInfo.PaymentType == "CashOnDelivery" {
+	if paymentMethodInfo.PaymentType == "COD" {
 		return userOrder, deliveryAddress, nil
 	} else if paymentMethodInfo.PaymentType == "RazorPay" {
-		return userOrder, deliveryAddress, nil
+		return response.UserOrder{}, domain.UserAddress{}, errors.New("the payment method selected Razor Pay is not available ")
 	} else {
 		return response.UserOrder{}, domain.UserAddress{}, errors.New("the payment method selected is not available ")
 

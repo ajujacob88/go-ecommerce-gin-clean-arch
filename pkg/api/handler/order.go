@@ -39,7 +39,7 @@ func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Failure 422 {object} response.Response
-// @Router /cart/placeorder/ [post]
+// @Router /user/cart/placeorder/ [post]
 func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 	var placeOrderInfo request.PlaceOrder
 	if err := c.Bind(&placeOrderInfo); err != nil {
@@ -78,7 +78,7 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 		PaymentMethodInfoID: uint(placeOrderInfo.PaymentMethodID),
 		ShippingAddressID:   deliveryAddress.ID,
 		OrderTotalPrice:     placedOrderDetails.AmountToPay,
-		OrderStatusID:       1,
+		OrderStatusID:       2,
 	}
 	// save the order details
 	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo, cartItems)

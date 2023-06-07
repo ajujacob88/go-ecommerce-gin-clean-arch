@@ -22,7 +22,7 @@ func (c *paymentDatabase) GetPaymentMethodInfoByID(ctx context.Context, paymentM
 	InfoFetchQuery := `	SELECT *
 						FROM payment_method_infos
 						WHERE id = $1`
-	err := c.DB.Raw(InfoFetchQuery, paymentMethodID).Scan(paymentmethodInfo).Error
+	err := c.DB.Raw(InfoFetchQuery, paymentMethodID).Scan(&paymentmethodInfo).Error
 	if err != nil {
 		return domain.PaymentMethodInfo{}, fmt.Errorf("failed to fetch payment method infos by id %v \n%v", paymentMethodID, err.Error())
 	}

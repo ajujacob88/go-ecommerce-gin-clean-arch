@@ -27,7 +27,7 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, c
 	createOrderQuery := `	INSERT INTO orders(user_id, order_date, payment_method_info_id, shipping_address_id, order_total_price, order_status_id)
 							VALUES($1,$2,$3,$4,$5,$6)
 							RETURNING *;`
-	err := tx.Raw(createOrderQuery, orderInfo.UserID, orderInfo.OrderDate, orderInfo.PaymentMethodInfoID, orderInfo.ShippingAddressID, orderInfo.OrderTotalPrice, orderInfo.OrderStatusID).Scan(createdOrder).Error
+	err := tx.Raw(createOrderQuery, orderInfo.UserID, orderInfo.OrderDate, orderInfo.PaymentMethodInfoID, orderInfo.ShippingAddressID, orderInfo.OrderTotalPrice, orderInfo.OrderStatusID).Scan(&createdOrder).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.Order{}, err
@@ -57,13 +57,13 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, c
 	for i := range cartItems {
 		// check if product is in stock and fetch product
 		var productDetails struct {
-			QntyInStock int
-			Price       float64
+			QtyInStock int //give the names same as that of product details table, if any mismatch, then data wont scan correctly
+			Price      float64
 		}
 
 		prodctDetailFetchQuery := `	SELECT qty_in_stock, price 
 									FROM product_details
-									WHERE id = $1`
+									WHERE id = $1;`
 		err := tx.Raw(prodctDetailFetchQuery, cartItems[i].ProductDetailsID).Scan(&productDetails).Error
 		if err != nil {
 			tx.Rollback()
@@ -71,7 +71,7 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, c
 		}
 
 		// if product is out of stock
-		if productDetails.QntyInStock < int(cartItems[i].Quantity) {
+		if productDetails.QtyInStock < int(cartItems[i].Quantity) {
 			tx.Rollback()
 			return domain.Order{}, fmt.Errorf("product item out of stock for the id %v", cartItems[i].ProductDetailsID)
 		}
