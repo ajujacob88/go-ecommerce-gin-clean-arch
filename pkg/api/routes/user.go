@@ -12,6 +12,7 @@ func UserRoutes(
 	productHandler *handler.ProductHandler,
 	cartHandler *handler.CartHandler,
 	orderHandler *handler.OrderHandler,
+	paymentHandler *handler.PaymentHandler,
 ) {
 
 	// User routes that don't require authentication
@@ -46,7 +47,7 @@ func UserRoutes(
 			home.DELETE("/addresses/:address_id", userHandler.DeleteAddress)
 			home.GET("/addresses", userHandler.ListAddress)
 			home.POST("/cart/placeorder", orderHandler.PlaceOrderFromCart)
-
+			home.POST("/payments/razorpay/:order_id", paymentHandler.RazorpayCheckout)
 			//cart routes
 			// cart := api.Group("/cart")
 			// {

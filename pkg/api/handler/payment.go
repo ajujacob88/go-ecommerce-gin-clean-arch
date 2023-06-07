@@ -21,6 +21,19 @@ func NewPaymentHandler(paymentUseCase services.PaymentUseCase) *PaymentHandler {
 	}
 }
 
+// CreateRazorpayPayment
+// @Summary Users can make payment using razor pay checkout
+// @ID create-razorpay-payment
+// @Description Users can make payment via Razorpay after placing orders
+// @Tags Payment
+// @Accept json
+// @Produce json
+// @Param order_id path string true "Order id"
+// @Success 200 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /user/payments/razorpay/{order_id} [get]
 func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
 	paramsID := c.Param("order_id")
 	orderID, err := strconv.Atoi(paramsID)
