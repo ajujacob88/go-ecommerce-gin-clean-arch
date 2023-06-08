@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -39,4 +40,13 @@ func (c *paymentDatabase) FetchPaymentDetails(ctx context.Context, orderID int) 
 		return domain.PaymentDetails{}, fmt.Errorf("failed to fetch payment details \n %v", err.Error())
 	}
 	return paymentDetails, nil
+}
+
+func (c *paymentDatabase) UpdatePaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) (domain.PaymentDetails, error) {
+	var updatedPayment domain.PaymentDetails
+	updatePaymentQuery := `	UPDATE payment_details SET payment_method_info_id = 2, payment_status_id = 2, payment_ref = $1, updated_at = NOW()
+							WHERE order_id = $2 RETURNING *;`
+
+	err := c.DB.Raw(updatePaymentQuery, paymentRef, orderID).Scan(&updatedPayment).Error
+	return updatedPayment, err
 }

@@ -82,4 +82,9 @@ func (c *paymentUseCase) UpdatePaymentDetails(ctx context.Context, paymentVerifi
 	if paymentDetails.ID == 0 {
 		return fmt.Errorf("no order found")
 	}
+	if paymentDetails.OrderTotalPrice != paymentVerifier.Total {
+		return fmt.Errorf("payment amount and order amount does not match")
+	}
+
+	updatedPayment, err := c.paymentRepo.UpdatePaymentDetails(ctx, paymentVerifier)
 }
