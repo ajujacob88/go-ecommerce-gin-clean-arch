@@ -51,6 +51,34 @@ document.getElementById('rzp-button1').onclick = function(e){
     rzp1.open();
     e.preventDefault();
 }
+
+
+/*
+function verifyPayment(res, userid, orderid) {
+        $.ajax({
+
+            //passes details as url params
+            url: `/user/payments/success`,
+            method: 'GET',
+            data:{
+                user_id:userid,
+                payment_ref:res.razorpay_payment_id,
+                order_id:orderid,
+                signature:res.razorpay_signature,
+                addressid:param1,
+                paymentid:param2,
+            },
+            success: (response) => {
+                console.log(response)
+                if (response.data) {
+                    alert(response.message)
+                }else {
+                    alert(response.message)
+                }
+            }
+        })
+    }
+*/
 </script>
 
 

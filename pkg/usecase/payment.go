@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/razorpay/razorpay-go"
@@ -69,4 +70,16 @@ func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, userID, orderID i
 		return domain.Order{}, "", fmt.Errorf("failed to assert razorpayOrderIDValue as string")
 	}
 	return order, razorpayOrderID, err
+}
+
+func (c *paymentUseCase) UpdatePaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) error {
+
+	//fetch the payment details
+	paymentDetails, err := c.paymentRepo.FetchPaymentDetails(ctx, paymentVerifier.OrderID)
+	if err != nil {
+		return err
+	}
+	if paymentDetails.ID == 0 {
+		return fmt.Errorf("no order found")
+	}
 }

@@ -6,7 +6,9 @@ import (
 	"strconv"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
+
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
 )
@@ -68,5 +70,48 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
 		"email":    "smartstore@gmail.com",
 		"phone_no": "7733333333",
 	})
+
+}
+
+// Now razor pay verify/ payment success updations
+//Razorpay verify
+
+// @Param user_id path string true "provide the ID of the user to be fetched"
+
+func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
+	razorpayPaymentID := c.Param("razorpay_payment_id")
+	razorpayOrderID := c.Param("razorpay_order_id")
+	userorderID := c.Param("order_id")
+	orderID, err := strconv.Atoi(userorderID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "unable to fetch order id", err.Error(), nil))
+		return
+	}
+	razorpayOrderTotal := c.Param("order_total")
+	total, err := strconv.ParseFloat(razorpayOrderTotal, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		return
+	}
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		return
+	}
+
+	paymentVerifier := request.PaymentVerification{
+		UserID:          userID,
+		OrderID:         orderID,
+		RazorpayOrderID: razorpayOrderID,
+		PaymentRef:      razorpayPaymentID,
+		Total:           total,
+	}
+
+	err = cr.paymentUseCase.UpdatePaymentDetails(c.Request.Context(), paymentVerifier)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to update payment details", err.Error(), nil))
+
+	}
+	c.JSON(http.StatusAccepted, response.SuccessResponse(202, "payment success", err.Error(), true))
 
 }
