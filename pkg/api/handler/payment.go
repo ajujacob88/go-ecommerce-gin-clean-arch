@@ -81,25 +81,25 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
 // @Tags Payment
 // @Accept json
 // @Produce json
-// @Param razorpay_payment_id path string true "provide the razorpay_payment_id"
-// @Param razorpay_order_id path string true "provide the razorpay_order_id"
-// @Param order_id path string true "provide the order_id"
-// @Param order_total path string true "provide the order_total"
+// @Param razorpay_payment_id query string true "provide the razorpay_payment_id"
+// @Param razorpay_order_id query string true "provide the razorpay_order_id"
+// @Param order_id query string true "provide the order_id"
+// @Param order_total query string true "provide the order_total"
 // @Success 202 {object} response.Response
 // @Failure 401 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Router /user/payments/success/ [post]
 func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
-	razorpayPaymentID := c.Param("razorpay_payment_id")
-	razorpayOrderID := c.Param("razorpay_order_id")
-	userorderID := c.Param("order_id")
+	razorpayPaymentID := c.Query("razorpay_payment_id")
+	razorpayOrderID := c.Query("razorpay_order_id")
+	userorderID := c.Query("order_id")
 	orderID, err := strconv.Atoi(userorderID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "unable to fetch order id", err.Error(), nil))
 		return
 	}
-	razorpayOrderTotal := c.Param("order_total")
+	razorpayOrderTotal := c.Query("order_total")
 	total, err := strconv.ParseFloat(razorpayOrderTotal, 32)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
@@ -124,6 +124,6 @@ func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to update payment details", err.Error(), nil))
 
 	}
-	c.JSON(http.StatusAccepted, response.SuccessResponse(202, "payment success", err.Error(), true))
+	c.JSON(http.StatusAccepted, response.SuccessResponse(202, "payment success", nil))
 
 }

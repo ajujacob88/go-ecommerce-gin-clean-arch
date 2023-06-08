@@ -1138,6 +1138,55 @@ paths:
       summary: Users can make payment using razor pay checkout
       tags:
       - Payment
+  /user/payments/success/:
+    post:
+      consumes:
+      - application/json
+      description: updating payment details upon successful payment
+      operationId: payment-success
+      parameters:
+      - description: provide the razorpay_payment_id
+        in: query
+        name: razorpay_payment_id
+        required: true
+        type: string
+      - description: provide the razorpay_order_id
+        in: query
+        name: razorpay_order_id
+        required: true
+        type: string
+      - description: provide the order_id
+        in: query
+        name: order_id
+        required: true
+        type: string
+      - description: provide the order_total
+        in: query
+        name: order_total
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Handling successful payment
+      tags:
+      - Payment
   /user/products:
     get:
       consumes:

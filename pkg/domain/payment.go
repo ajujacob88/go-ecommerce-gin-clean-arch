@@ -18,6 +18,7 @@ type PaymentDetails struct {
 	PaymentMethodInfo   PaymentMethodInfo `gorm:"foreignKey: PaymentMethodInfoID" json:"-"`
 	PaymentStatusID     uint              `json:"payment_status_id"`
 	PaymentStatus       PaymentStatus     `gorm:"foreignKey:PaymentStatusID" json:"-"`
+	PaymentRef          string            `json:"payment_ref"`
 	UpdatedAt           time.Time         `json:"updated_at"`
 }
 
