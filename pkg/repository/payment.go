@@ -47,6 +47,6 @@ func (c *paymentDatabase) UpdatePaymentDetails(ctx context.Context, paymentVerif
 	updatePaymentQuery := `	UPDATE payment_details SET payment_method_info_id = 2, payment_status_id = 2, payment_ref = $1, updated_at = NOW()
 							WHERE order_id = $2 RETURNING *;`
 
-	err := c.DB.Raw(updatePaymentQuery, paymentRef, orderID).Scan(&updatedPayment).Error
+	err := c.DB.Raw(updatePaymentQuery, paymentVerifier.PaymentRef, paymentVerifier.OrderID).Scan(&updatedPayment).Error
 	return updatedPayment, err
 }

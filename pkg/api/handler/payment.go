@@ -74,10 +74,22 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
 }
 
 // Now razor pay verify/ payment success updations
-//Razorpay verify
-
-// @Param user_id path string true "provide the ID of the user to be fetched"
-
+// Razorpay verify
+// @Summary Handling successful payment
+// @ID payment-success
+// @Description updating payment details upon successful payment
+// @Tags Payment
+// @Accept json
+// @Produce json
+// @Param razorpay_payment_id path string true "provide the razorpay_payment_id"
+// @Param razorpay_order_id path string true "provide the razorpay_order_id"
+// @Param order_id path string true "provide the order_id"
+// @Param order_total path string true "provide the order_total"
+// @Success 202 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /user/payments/success/ [post]
 func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 	razorpayPaymentID := c.Param("razorpay_payment_id")
 	razorpayOrderID := c.Param("razorpay_order_id")
@@ -95,7 +107,7 @@ func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 	}
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(401, "unable to fetch user id from context", err.Error(), nil))
 		return
 	}
 

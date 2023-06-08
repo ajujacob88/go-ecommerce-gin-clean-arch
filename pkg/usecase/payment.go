@@ -87,4 +87,12 @@ func (c *paymentUseCase) UpdatePaymentDetails(ctx context.Context, paymentVerifi
 	}
 
 	updatedPayment, err := c.paymentRepo.UpdatePaymentDetails(ctx, paymentVerifier)
+	if err != nil {
+		return err
+	}
+
+	if updatedPayment.ID == 0 {
+		return fmt.Errorf("failed to update payment details")
+	}
+	return nil
 }
