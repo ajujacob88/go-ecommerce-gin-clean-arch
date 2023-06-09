@@ -24,6 +24,7 @@ func NewPaymentUseCase(paymentRepo interfaces.PaymentRepository, orderRepo inter
 }
 
 // razor pay key downloaded from https://dashboard.razorpay.com/app/website-app-settings/api-keys
+// better practice is to save it in env and use viper and get it using getconfig
 const (
 	razorpayAPIKeyID     = "rzp_test_lbL1gwQH8QK6uq"
 	razorpayAPIKeySecret = "WXb29TEBAJ51qxt9cbYqkI8t"
@@ -74,17 +75,19 @@ func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, userID, orderID i
 
 func (c *paymentUseCase) UpdatePaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) error {
 
-	//fetch the payment details
-	paymentDetails, err := c.paymentRepo.FetchPaymentDetails(ctx, paymentVerifier.OrderID)
-	if err != nil {
-		return err
-	}
-	if paymentDetails.ID == 0 {
-		return fmt.Errorf("no order found")
-	}
-	if paymentDetails.OrderTotalPrice != paymentVerifier.Total {
-		return fmt.Errorf("payment amount and order amount does not match")
-	}
+	/*
+		//fetch the payment details
+		paymentDetails, err := c.paymentRepo.FetchPaymentDetails(ctx, paymentVerifier.OrderID)
+		if err != nil {
+			return err
+		}
+		if paymentDetails.ID == 0 {
+			return fmt.Errorf("no order found")
+		}
+		if paymentDetails.OrderTotalPrice != paymentVerifier.Total {
+			return fmt.Errorf("payment amount and order amount does not match")
+		}
+	*/
 
 	updatedPayment, err := c.paymentRepo.UpdatePaymentDetails(ctx, paymentVerifier)
 	if err != nil {

@@ -1463,6 +1463,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "provide the razorpay_signature",
+                        "name": "razorpay_signature",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "provide the order_id",
                         "name": "order_id",
                         "in": "query",

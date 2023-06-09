@@ -1155,6 +1155,11 @@ paths:
         name: razorpay_order_id
         required: true
         type: string
+      - description: provide the razorpay_signature
+        in: query
+        name: razorpay_signature
+        required: true
+        type: string
       - description: provide the order_id
         in: query
         name: order_id

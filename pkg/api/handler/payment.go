@@ -8,6 +8,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/verify"
 
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
 	"github.com/gin-gonic/gin"
@@ -83,6 +84,7 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
 // @Produce json
 // @Param razorpay_payment_id query string true "provide the razorpay_payment_id"
 // @Param razorpay_order_id query string true "provide the razorpay_order_id"
+// @Param razorpay_signature query string true "provide the razorpay_signature"
 // @Param order_id query string true "provide the order_id"
 // @Param order_total query string true "provide the order_total"
 // @Success 202 {object} response.Response
@@ -93,6 +95,7 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
 func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 	razorpayPaymentID := c.Query("razorpay_payment_id")
 	razorpayOrderID := c.Query("razorpay_order_id")
+	razorpaySignature := c.Query("razorpay_signature")
 	userorderID := c.Query("order_id")
 	orderID, err := strconv.Atoi(userorderID)
 	if err != nil {
@@ -108,6 +111,14 @@ func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, response.ErrorResponse(401, "unable to fetch user id from context", err.Error(), nil))
+		return
+	}
+
+	// verify the razorpay payment (by using signature as described by https://razorpay.com/docs/payments/server-integration/go/payment-gateway/build-integration)
+	err = verify.VerifyRazorpayPayment(razorpayOrderID, razorpayPaymentID, razorpaySignature)
+	if err != nil {
+		response := response.ErrorResponse(400, "failed to verify razorpay payment", err.Error(), nil)
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
