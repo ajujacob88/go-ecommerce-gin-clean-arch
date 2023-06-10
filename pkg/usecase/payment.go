@@ -29,7 +29,7 @@ func NewPaymentUseCase(paymentRepo interfaces.PaymentRepository, orderRepo inter
 // const (
 // 	razorpayAPIKeyID     = "rzp_test_lbL1gwQH8QK6uq"
 // 	razorpayAPIKeySecret = "WXb29TEBAJ51qxt9cbYqkI8t"
-// )  no need imported from getconfig via viper
+// )  no need moved to env imported from env via getconfig via viper
 
 func (c *paymentUseCase) GetPaymentMethodInfoByID(ctx context.Context, paymentMethodID int) (domain.PaymentMethodInfo, error) {
 	paymentMethodInfo, err := c.paymentRepo.GetPaymentMethodInfoByID(ctx, paymentMethodID)
