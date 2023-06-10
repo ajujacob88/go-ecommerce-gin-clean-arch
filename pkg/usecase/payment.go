@@ -29,7 +29,7 @@ func NewPaymentUseCase(paymentRepo interfaces.PaymentRepository, orderRepo inter
 // const (
 // 	razorpayAPIKeyID     = "rzp_test_lbL1gwQH8QK6uq"
 // 	razorpayAPIKeySecret = "WXb29TEBAJ51qxt9cbYqkI8t"
-// )  imported from getconfig via viper
+// )  no need imported from getconfig via viper
 
 func (c *paymentUseCase) GetPaymentMethodInfoByID(ctx context.Context, paymentMethodID int) (domain.PaymentMethodInfo, error) {
 	paymentMethodInfo, err := c.paymentRepo.GetPaymentMethodInfoByID(ctx, paymentMethodID)
@@ -58,6 +58,8 @@ func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, userID, orderID i
 
 	razorpayAPIKeyID := config.GetConfig().RazorpayAPIKeyID
 	razorpayAPIKeySecret := config.GetConfig().RazorpayAPIKeySecret
+
+	fmt.Println("razor pay api key is", razorpayAPIKeyID, "razor pay key secret is", razorpayAPIKeySecret)
 
 	client := razorpay.NewClient(razorpayAPIKeyID, razorpayAPIKeySecret)
 	data := map[string]interface{}{
