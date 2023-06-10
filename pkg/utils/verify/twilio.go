@@ -3,6 +3,7 @@ package verify
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -78,18 +79,25 @@ func VerifyRazorpayPayment(razorpayOrderID, razorpayPaymentID, razorpaySignature
 	h := hmac.New(sha256.New, []byte(razorpayAPIKeySecret))
 	_, err := h.Write([]byte(signaturedata))
 	if err != nil {
-		fmt.Println("for debug check")
-		return errors.New("faild to veify signature")
+
+		return errors.New("failed to veify signature")
 
 	}
 	generated_signature := hex.EncodeToString(h.Sum(nil))
+
+	fmt.Println("razorpayOrderID is", razorpayOrderID)
+	fmt.Println("razor pay razorpayPaymentID is", razorpayPaymentID)
 
 	fmt.Println("generated signature is", generated_signature)
 	fmt.Println("razor pay signature is", razorpaySignature)
 
 	// Compare the generated signature with the received signature
-	if generated_signature != razorpaySignature {
-		return errors.New("Razorpay signature does not match")
+	// if generated_signature != razorpaySignature {
+	// 	return errors.New("Razorpay signature does not match")
+	// }
+
+	if subtle.ConstantTimeCompare([]byte(generated_signature), []byte(razorpaySignature)) != 1 {
+		return errors.New("razorpayy signature not match")
 	}
 
 	return nil
