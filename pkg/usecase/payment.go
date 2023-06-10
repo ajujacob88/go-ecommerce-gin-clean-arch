@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -25,10 +26,10 @@ func NewPaymentUseCase(paymentRepo interfaces.PaymentRepository, orderRepo inter
 
 // razor pay key downloaded from https://dashboard.razorpay.com/app/website-app-settings/api-keys
 // better practice is to save it in env and use viper and get it using getconfig
-const (
-	razorpayAPIKeyID     = "rzp_test_lbL1gwQH8QK6uq"
-	razorpayAPIKeySecret = "WXb29TEBAJ51qxt9cbYqkI8t"
-)
+// const (
+// 	razorpayAPIKeyID     = "rzp_test_lbL1gwQH8QK6uq"
+// 	razorpayAPIKeySecret = "WXb29TEBAJ51qxt9cbYqkI8t"
+// )  imported from getconfig via viper
 
 func (c *paymentUseCase) GetPaymentMethodInfoByID(ctx context.Context, paymentMethodID int) (domain.PaymentMethodInfo, error) {
 	paymentMethodInfo, err := c.paymentRepo.GetPaymentMethodInfoByID(ctx, paymentMethodID)
@@ -54,6 +55,9 @@ func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, userID, orderID i
 	}
 	//now integrate with razor pay (by using the code from razor pay)
 	//client := razorpay.NewClient("<YOUR_API_KEY>", "<YOUR_API_SECRET>")
+
+	razorpayAPIKeyID := config.GetConfig().RazorpayAPIKeyID
+	razorpayAPIKeySecret := config.GetConfig().RazorpayAPIKeySecret
 
 	client := razorpay.NewClient(razorpayAPIKeyID, razorpayAPIKeySecret)
 	data := map[string]interface{}{

@@ -68,9 +68,11 @@ func TwilioVerifyOTP(phoneNumber string, code string) error {
 
 func VerifyRazorpayPayment(razorpayOrderID, razorpayPaymentID, razorpaySignature string) error {
 
-	//move this to env lateron
+	//move this to env and import via getconfig lateron
 	//razorpayAPIKeyID := "rzp_test_lbL1gwQH8QK6uq"
-	razorpayAPIKeySecret := "WXb29TEBAJ51qxt9cbYqkI8t"
+	//razorpayAPIKeySecret := "WXb29TEBAJ51qxt9cbYqkI8t"
+
+	razorpayAPIKeySecret := config.GetConfig().RazorpayAPIKeySecret
 
 	//verify signature
 	//for that first create the signature.. appears to be a representation of the desired operation rather than actual Go code.

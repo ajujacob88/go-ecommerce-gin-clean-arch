@@ -19,6 +19,9 @@ type Config struct {
 	SERVICESID string `mapstructure:"TWILIO_SERVICE_SID"`
 
 	JWT string `mapstructure:"JWT_CODE"`
+
+	RazorpayAPIKeyID     string `mapstructure:"RAZORPAY_API_KEY_ID"`
+	RazorpayAPIKeySecret string `mapstructure:"RAZORPAY_API_KEY_SECRET"`
 }
 
 // to hold all names of env variables
@@ -26,6 +29,7 @@ var envs = []string{
 	"DB_HOST", "DB_NAME", "DB_USER", "DB_PORT", "DB_PASSWORD", // database
 	"JWT_CODE",                                                      //JWT
 	"TWILIO_AUTH_TOKEN", "TWILIO_ACCOUNT_SID", "TWILIO_SERVICE_SID", //twilio details
+	"RAZORPAY_API_KEY_ID", "RAZORPAY_API_KEY_SECRET", //razor pay
 }
 
 var config Config
