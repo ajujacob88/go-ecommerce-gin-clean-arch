@@ -23,8 +23,8 @@ func InitializeAPI(cfg config.Config) (*http.ServerHTTP, error) {
 		handler.NewAdminHandler,
 		handler.NewProductHandler,
 		handler.NewCartHandler,
-		handler.NewOrderHandler,
 		handler.NewPaymentHandler,
+		handler.NewOrderHandler,
 
 		//database queries
 		repository.NewUserRepository,

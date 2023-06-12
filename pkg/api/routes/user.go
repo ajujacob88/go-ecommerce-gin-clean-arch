@@ -47,7 +47,7 @@ func UserRoutes(
 			home.DELETE("/addresses/:address_id", userHandler.DeleteAddress)
 			home.GET("/addresses", userHandler.ListAddress)
 			home.POST("/cart/placeorder", orderHandler.PlaceOrderFromCart)
-			home.GET("/payments/razorpay/:order_id", paymentHandler.RazorpayCheckout)
+			//	home.GET("/payments/razorpay/:order_id", paymentHandler.RazorpayCheckout)
 			home.POST("/payments/success", paymentHandler.RazorpayVerify)
 			//cart routes
 			// cart := api.Group("/cart")

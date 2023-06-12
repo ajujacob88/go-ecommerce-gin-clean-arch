@@ -16,17 +16,15 @@ type OrderHandler struct {
 	orderUseCase   services.OrderUseCase
 	paymentUseCase services.PaymentUseCase
 	cartUseCase    services.CartUseCase
-
 	paymentHandler PaymentHandler
 }
 
-func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services.PaymentUseCase, cartUseCase services.CartUseCase, paymentHandler PaymentHandler) *OrderHandler {
+func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services.PaymentUseCase, cartUseCase services.CartUseCase) *OrderHandler {
 	return &OrderHandler{
 		orderUseCase:   orderusecase,
 		paymentUseCase: paymentusecase,
 		cartUseCase:    cartUseCase,
-
-		paymentHandler: paymentHandler,
+		//paymentHandler: paymentHandler,
 	}
 }
 
