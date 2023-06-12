@@ -80,13 +80,13 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 		PaymentMethodInfoID: uint(placeOrderInfo.PaymentMethodID),
 		ShippingAddressID:   deliveryAddress.ID,
 		OrderTotalPrice:     placedOrderDetails.AmountToPay,
-		OrderStatusID:       2, //orderplaced
+		//OrderStatusID:       2, //orderplaced
 	}
 	switch placeOrderInfo.PaymentMethodID {
 	case 1:
 		cr.OrderByCashOnDelivery(c, orderInfo, cartItems)
 	case 2:
-		orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
+		//orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
 		cr.paymentHandler.RazorpayCheckout(c, orderInfo, cartItems)
 
 	default:
@@ -98,6 +98,7 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 func (cr *OrderHandler) OrderByCashOnDelivery(c *gin.Context, orderInfo domain.Order, cartItems []domain.CartItems) {
 
 	// save the order details
+	orderInfo.OrderStatusID = 2
 	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo, cartItems)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))

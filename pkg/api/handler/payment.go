@@ -42,6 +42,8 @@ func NewPaymentHandler(paymentUseCase services.PaymentUseCase, orderUseCase serv
 // @Router /user/payments/razorpay/{order_id} [get]
 func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Order, cartItems []domain.CartItems) {
 
+	orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
+
 	razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c.Request.Context(), orderInfo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to complete the order", err.Error(), nil))
