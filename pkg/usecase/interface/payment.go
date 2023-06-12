@@ -10,7 +10,7 @@ import (
 type PaymentUseCase interface {
 	GetPaymentMethodInfoByID(ctx context.Context, paymentMethodID int) (domain.PaymentMethodInfo, error)
 
-	RazorPayCheckout(ctx context.Context, userID, orderID int) (domain.Order, string, error)
+	RazorPayCheckout(ctx context.Context, orderInfo domain.Order) (string, error)
 
 	UpdatePaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) error
 }

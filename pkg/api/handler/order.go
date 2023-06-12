@@ -82,17 +82,17 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 		PaymentMethodInfoID: uint(placeOrderInfo.PaymentMethodID),
 		ShippingAddressID:   deliveryAddress.ID,
 		OrderTotalPrice:     placedOrderDetails.AmountToPay,
-		OrderStatusID:       2,
+		OrderStatusID:       2, //orderplaced
 	}
 	switch placeOrderInfo.PaymentMethodID {
 	case 1:
 		cr.OrderByCashOnDelivery(c, orderInfo, cartItems)
 	case 2:
-
-		cr.paymentHandler.RazorpayCheckout(c)
+		orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
+		cr.paymentHandler.RazorpayCheckout(c, orderInfo, cartItems)
 
 	default:
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid action"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Payment method selected is invalid"})
 	}
 
 }

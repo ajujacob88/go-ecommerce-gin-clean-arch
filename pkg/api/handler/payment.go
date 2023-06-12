@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/verify"
@@ -16,11 +17,13 @@ import (
 
 type PaymentHandler struct {
 	paymentUseCase services.PaymentUseCase
+	orderUseCase   services.OrderUseCase
 }
 
-func NewPaymentHandler(paymentUseCase services.PaymentUseCase) *PaymentHandler {
+func NewPaymentHandler(paymentUseCase services.PaymentUseCase, orderUseCase services.OrderUseCase) *PaymentHandler {
 	return &PaymentHandler{
 		paymentUseCase: paymentUseCase,
+		orderUseCase:   orderUseCase,
 	}
 }
 
@@ -37,35 +40,23 @@ func NewPaymentHandler(paymentUseCase services.PaymentUseCase) *PaymentHandler {
 // @Failure 400 {object} response.Response
 // @Failure 500 {object} response.Response
 // @Router /user/payments/razorpay/{order_id} [get]
-func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
-	paramsID := c.Param("order_id")
-	orderID, err := strconv.Atoi(paramsID)
-	if err != nil {
-		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to read order id", err.Error(), nil))
+func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Order, cartItems []domain.CartItems) {
 
-	}
-	userID, err := handlerutil.GetUserIdFromContext(c)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the user ID", err.Error(), nil))
-		return
-	}
-
-	order, razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c.Request.Context(), userID, orderID)
+	razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c.Request.Context(), orderInfo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to complete the order", err.Error(), nil))
 
 	}
-	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", order.OrderTotalPrice)
-	//c.HTML(200, "app.html", gin.H{ //gin.H is to fill the placeholders like this "amount": "{{.total}}"  in the html
-	// 	"amount":   order.OrderTotalPrice,
-	//"order_id": razorpayOrderID,
-	// 	"name":     "smartstore name",
-	// 	"email":    "smartstore@gmail.com",
-	// 	"contact":  "7733333333",
-	//})
+	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", orderInfo.OrderTotalPrice)
 
-	c.HTML(200, "app.html", gin.H{
-		"total":    order.OrderTotalPrice,
+	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo, cartItems)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
+		return
+	}
+
+	c.HTML(200, "app.html", gin.H{ //gin.H is to fill the placeholders like this "amount": "{{.total}}"  in the html
+		"total":    createdOrder.OrderTotalPrice,
 		"orderid":  razorpayOrderID,
 		"name":     "smartstore name",
 		"email":    "smartstore@gmail.com",
@@ -138,3 +129,56 @@ func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 	c.JSON(http.StatusAccepted, response.SuccessResponse(202, "payment success", nil))
 
 }
+
+/*
+//no need of this code,, this is just backup before combining
+// CreateRazorpayPayment
+// @Summary Users can make payment using razor pay checkout
+// @ID create-razorpay-payment
+// @Description Users can make payment via Razorpay after placing orders
+// @Tags Payment
+// @Accept json
+// @Produce json
+// @Param order_id path string true "Order id"
+// @Success 200 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /user/payments/razorpay/{order_id} [get]
+func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context) {
+	paramsID := c.Param("order_id")
+	orderID, err := strconv.Atoi(paramsID)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to read order id", err.Error(), nil))
+
+	}
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the user ID", err.Error(), nil))
+		return
+	}
+
+	order, razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c.Request.Context(), userID, orderID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to complete the order", err.Error(), nil))
+
+	}
+	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", order.OrderTotalPrice)
+	//c.HTML(200, "app.html", gin.H{ //gin.H is to fill the placeholders like this "amount": "{{.total}}"  in the html
+	// 	"amount":   order.OrderTotalPrice,
+	//"order_id": razorpayOrderID,
+	// 	"name":     "smartstore name",
+	// 	"email":    "smartstore@gmail.com",
+	// 	"contact":  "7733333333",
+	//})
+
+	c.HTML(200, "app.html", gin.H{
+		"total":    order.OrderTotalPrice,
+		"orderid":  razorpayOrderID,
+		"name":     "smartstore name",
+		"email":    "smartstore@gmail.com",
+		"phone_no": "7733333333",
+	})
+
+}
+*/

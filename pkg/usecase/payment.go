@@ -36,6 +36,60 @@ func (c *paymentUseCase) GetPaymentMethodInfoByID(ctx context.Context, paymentMe
 	return paymentMethodInfo, err
 }
 
+func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, orderInfo domain.Order) (string, error) {
+	//now integrate with razor pay (by using the code from razor pay)
+	//client := razorpay.NewClient("<YOUR_API_KEY>", "<YOUR_API_SECRET>")
+
+	razorpayAPIKeyID := config.GetConfig().RazorpayAPIKeyID
+	razorpayAPIKeySecret := config.GetConfig().RazorpayAPIKeySecret
+
+	fmt.Println("razor pay api key is", razorpayAPIKeyID, "razor pay key secret is", razorpayAPIKeySecret)
+
+	client := razorpay.NewClient(razorpayAPIKeyID, razorpayAPIKeySecret)
+	data := map[string]interface{}{
+		"amount":   orderInfo.OrderTotalPrice * 100, //as per razor pay format, it includes paisa also... https://razorpay.com/docs/payments/server-integration/go/payment-gateway/build-integration/#api-sample-code
+		"currency": "INR",
+		"receipt":  "paymenttest_receipt_id",
+	}
+	body, err := client.Order.Create(data, nil)
+	if err != nil {
+		return "", err
+	}
+	razorpayOrderIDValue := body["id"]
+	razorpayOrderID, ok := razorpayOrderIDValue.(string) // type assertion from interface to string. This line assigns the value of razorpayOrderIDValue to the variable razorpayOrderID, assuming that the value is of type string.
+	if !ok {
+		return "", fmt.Errorf("failed to assert razorpayOrderIDValue as string")
+	}
+	return razorpayOrderID, err
+}
+
+func (c *paymentUseCase) UpdatePaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) error {
+
+	//fetch the payment details
+	paymentDetails, err := c.paymentRepo.FetchPaymentDetails(ctx, paymentVerifier.OrderID)
+	if err != nil {
+		return err
+	}
+	if paymentDetails.ID == 0 {
+		return fmt.Errorf("no order found")
+	}
+	if paymentDetails.OrderTotalPrice != paymentVerifier.Total {
+		return fmt.Errorf("payment amount and order amount does not match")
+	}
+
+	updatedPayment, err := c.paymentRepo.UpdatePaymentDetails(ctx, paymentVerifier)
+	if err != nil {
+		return err
+	}
+
+	if updatedPayment.ID == 0 {
+		return fmt.Errorf("failed to update payment details")
+	}
+	return nil
+}
+
+// no need,, just delet after razorpay handler merging
+/*
 func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, userID, orderID int) (domain.Order, string, error) {
 	// first check the payment status, if already paid, no need to proceed with payment and if not paid, then proceed with transaction.
 	paymentDetails, err := c.paymentRepo.FetchPaymentDetails(ctx, orderID)
@@ -78,28 +132,4 @@ func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, userID, orderID i
 	}
 	return order, razorpayOrderID, err
 }
-
-func (c *paymentUseCase) UpdatePaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) error {
-
-	//fetch the payment details
-	paymentDetails, err := c.paymentRepo.FetchPaymentDetails(ctx, paymentVerifier.OrderID)
-	if err != nil {
-		return err
-	}
-	if paymentDetails.ID == 0 {
-		return fmt.Errorf("no order found")
-	}
-	if paymentDetails.OrderTotalPrice != paymentVerifier.Total {
-		return fmt.Errorf("payment amount and order amount does not match")
-	}
-
-	updatedPayment, err := c.paymentRepo.UpdatePaymentDetails(ctx, paymentVerifier)
-	if err != nil {
-		return err
-	}
-
-	if updatedPayment.ID == 0 {
-		return fmt.Errorf("failed to update payment details")
-	}
-	return nil
-}
+*/
