@@ -21,6 +21,7 @@ type OrderRepository interface {
 	CreateOrder(ctx context.Context, orderInfo domain.Order) (domain.Order, error)
 	CreatePaymentEntry(ctx context.Context, createdOrder domain.Order, paymentStatusID int) error
 	OrderLineAndClearCart(ctx context.Context, createdOrder domain.Order, cartItems []domain.CartItems) error
+	UpdateOrderDetails(ctx context.Context, orderID int) (domain.Order, error)
 
 	ViewOrderById(ctx context.Context, userID, orderID int) (domain.Order, error)
 }

@@ -63,29 +63,34 @@ func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, orderInfo domain.
 	return razorpayOrderID, err
 }
 
-func (c *paymentUseCase) UpdatePaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) error {
+func (c *paymentUseCase) UpdateOrderAndPaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) (domain.Order, error) {
 
 	//fetch the payment details
 	paymentDetails, err := c.paymentRepo.FetchPaymentDetails(ctx, paymentVerifier.OrderID)
 	if err != nil {
-		return err
+		return domain.Order{}, err
 	}
 	if paymentDetails.ID == 0 {
-		return fmt.Errorf("no order found")
+		return domain.Order{}, fmt.Errorf("no order found")
 	}
 	if paymentDetails.OrderTotalPrice != paymentVerifier.Total {
-		return fmt.Errorf("payment amount and order amount does not match")
+		return domain.Order{}, fmt.Errorf("payment amount and order amount does not match")
+	}
+
+	updatedOrder, err := c.orderRepo.UpdateOrderDetails(ctx, int(paymentDetails.OrderID))
+	if err != nil {
+		return domain.Order{}, err
 	}
 
 	updatedPayment, err := c.paymentRepo.UpdatePaymentDetails(ctx, paymentVerifier)
 	if err != nil {
-		return err
+		return domain.Order{}, err
 	}
 
 	if updatedPayment.ID == 0 {
-		return fmt.Errorf("failed to update payment details")
+		return domain.Order{}, fmt.Errorf("failed to update payment details")
 	}
-	return nil
+	return updatedOrder, nil
 }
 
 // no need,, just delet after razorpay handler merging

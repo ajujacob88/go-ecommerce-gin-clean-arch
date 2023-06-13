@@ -153,6 +153,18 @@ func (c *orderDatabase) ViewOrderById(ctx context.Context, userID, orderID int) 
 	return order, err
 }
 
+func (c *orderDatabase) UpdateOrderDetails(ctx context.Context, orderID int) (domain.Order, error) {
+	var updatedOrder domain.Order
+	updateOrderQuery := `	UPDATE orders SET order_status_id = 2
+							WHERE id = $1 RETURNING *;`
+
+	err := c.DB.Raw(updateOrderQuery, orderID).Scan(&updatedOrder).Error
+	if err != nil {
+		return domain.Order{}, err
+	}
+	return updatedOrder, nil
+}
+
 /*
 // no need.. delete after handler merging
 func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {

@@ -12,5 +12,5 @@ type PaymentUseCase interface {
 
 	RazorPayCheckout(ctx context.Context, orderInfo domain.Order) (string, error)
 
-	UpdatePaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) error
+	UpdateOrderAndPaymentDetails(ctx context.Context, paymentVerifier request.PaymentVerification) (domain.Order, error)
 }

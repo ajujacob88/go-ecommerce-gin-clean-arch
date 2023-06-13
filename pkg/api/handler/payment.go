@@ -111,20 +111,19 @@ func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 		Total:           total,
 	}
 
-	err = cr.paymentUseCase.UpdatePaymentDetails(c.Request.Context(), paymentVerifier)
+	updatedOrder, err := cr.paymentUseCase.UpdateOrderAndPaymentDetails(c.Request.Context(), paymentVerifier)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to update payment details", err.Error(), nil))
 
 	}
 
-	//noe clear the cart and create orderline
-	/*
-		err = cr.orderUseCase.OrderLineAndClearCart(c.Request.Context(), createdOrder, cartItems)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the orderline and clear cart", err.Error(), nil))
-			return
-		}
-	*/
+	//now clear the cart and create orderline
+
+	err = cr.orderUseCase.OrderLineAndClearCart(c.Request.Context(), updatedOrder, cartItems)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the orderline and clear cart", err.Error(), nil))
+		return
+	}
 
 	c.JSON(http.StatusAccepted, response.SuccessResponse(202, "payment success", nil))
 
