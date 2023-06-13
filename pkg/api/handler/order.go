@@ -104,6 +104,12 @@ func (cr *OrderHandler) OrderByCashOnDelivery(c *gin.Context, orderInfo domain.O
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
 		return
 	}
+
+	err = cr.orderUseCase.OrderLineAndClearCart(c.Request.Context(), createdOrder, cartItems)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the orderline and clear cart", err.Error(), nil))
+		return
+	}
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully placed the order", createdOrder))
 }
 

@@ -73,3 +73,8 @@ func (c *orderUseCase) SaveOrder(ctx context.Context, orderInfo domain.Order, ca
 	createdOrder, err := c.orderRepo.SaveOrder(ctx, orderInfo, cartItems)
 	return createdOrder, err
 }
+
+func (c *orderUseCase) OrderLineAndClearCart(ctx context.Context, createdOrder domain.Order, cartItems []domain.CartItems) error {
+	err := c.orderRepo.OrderLineAndClearCart(ctx, createdOrder, cartItems)
+	return err
+}

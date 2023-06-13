@@ -8,5 +8,7 @@ import (
 
 type OrderRepository interface {
 	SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error)
+	OrderLineAndClearCart(ctx context.Context, createdOrder domain.Order, cartItems []domain.CartItems) error
+
 	ViewOrderById(ctx context.Context, userID, orderID int) (domain.Order, error)
 }
