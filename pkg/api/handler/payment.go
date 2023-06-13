@@ -18,12 +18,14 @@ import (
 type PaymentHandler struct {
 	paymentUseCase services.PaymentUseCase
 	orderUseCase   services.OrderUseCase
+	cartUseCase    services.CartUseCase
 }
 
-func NewPaymentHandler(paymentUseCase services.PaymentUseCase, orderUseCase services.OrderUseCase) *PaymentHandler {
+func NewPaymentHandler(paymentUseCase services.PaymentUseCase, orderUseCase services.OrderUseCase, cartUseCase services.CartUseCase) *PaymentHandler {
 	return &PaymentHandler{
 		paymentUseCase: paymentUseCase,
 		orderUseCase:   orderUseCase,
+		cartUseCase:    cartUseCase,
 	}
 }
 
@@ -118,6 +120,11 @@ func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 	}
 
 	//now clear the cart and create orderline
+	cartItems, err := cr.cartUseCase.FindCartItemsByUserID(c.Request.Context(), userID)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the cart", err.Error(), nil))
+		return
+	}
 
 	err = cr.orderUseCase.OrderLineAndClearCart(c.Request.Context(), updatedOrder, cartItems)
 	if err != nil {
