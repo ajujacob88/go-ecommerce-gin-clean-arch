@@ -7,7 +7,8 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
-	_ "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+
+	//	_ "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils/verify"
@@ -33,7 +34,7 @@ func NewPaymentHandler(paymentUseCase services.PaymentUseCase, orderUseCase serv
 func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Order) {
 
 	fmt.Println("debug checkpoint0")
-	orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
+	//orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
 
 	fmt.Println("orderinfo is", orderInfo, "\norderinfo.orderstatusid is", orderInfo.OrderStatusID)
 	razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c, orderInfo)
