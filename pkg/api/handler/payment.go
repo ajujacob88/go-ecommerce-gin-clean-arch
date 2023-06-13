@@ -39,7 +39,7 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Orde
 	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", orderInfo.OrderTotalPrice)
 
 	// create the order as order pending, cart clearing and orderline only adter razor pay verification
-	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo, cartItems)
+	createdOrder, err := cr.orderUseCase.SaveOrderAndPayment(c.Request.Context(), orderInfo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
 		return

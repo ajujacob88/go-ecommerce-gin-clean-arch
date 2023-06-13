@@ -68,16 +68,26 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 }
 
 // save the order as pending, then after payment/cod verification change order status to order placed
-func (c *orderUseCase) SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {
-	//begin the transaction... inititate from usecase instead of repo
-	tx := c.orderRepo.BeginTransaction() // Begin the transaction
+func (c *orderUseCase) SaveOrderAndPayment(ctx context.Context, orderInfo domain.Order) (domain.Order, error) {
+
+	// Begin the transaction  -- begin the transaction from usecase
+	err := c.orderRepo.BeginTransaction(ctx)
+	if err != nil {
+		return domain.Order{}, err
+	}
+
+	// Defer the rollback function
 	defer func() {
 		if r := recover(); r != nil {
-			tx.Rollback() // Rollback the transaction on panic
+			c.orderRepo.Rollback(ctx) // Rollback the transaction on panic
 		}
 	}()
 
-	createdOrder, err := c.orderRepo.SaveOrder(ctx, orderInfo)
+	createdOrder, err := c.orderRepo.CreateOrder(ctx, orderInfo)
+	if err != nil {
+		c.orderRepo.Rollback(ctx) // Rollback the transaction on error
+		return domain.Order{}, err
+	}
 
 	//create an entry in the payment_details table - payment status id = 6 for cod & payment status id =1/pending for razor pay
 	var paymentStatusID int
@@ -88,11 +98,22 @@ func (c *orderUseCase) SaveOrder(ctx context.Context, orderInfo domain.Order, ca
 	}
 
 	err = c.orderRepo.CreatePaymentEntry(ctx, createdOrder, paymentStatusID)
+	if err != nil {
+		c.orderRepo.Rollback(ctx) // Rollback the transaction on error
+		return domain.Order{}, err
+	}
 
+	// Commit the transaction if everything is successful
+	err = c.orderRepo.Commit(ctx)
+	if err != nil {
+		return domain.Order{}, err
+	}
 	return createdOrder, err
 }
 
 func (c *orderUseCase) OrderLineAndClearCart(ctx context.Context, createdOrder domain.Order, cartItems []domain.CartItems) error {
+	//actually the transactions should begin from usecase instead of repo.. so convert and do like that lateron
+
 	err := c.orderRepo.OrderLineAndClearCart(ctx, createdOrder, cartItems)
 	return err
 }

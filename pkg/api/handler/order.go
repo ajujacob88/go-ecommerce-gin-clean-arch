@@ -100,7 +100,7 @@ func (cr *OrderHandler) OrderByCashOnDelivery(c *gin.Context, orderInfo domain.O
 
 	// save the order details
 	orderInfo.OrderStatusID = 2
-	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo, cartItems)
+	createdOrder, err := cr.orderUseCase.SaveOrderAndPayment(c.Request.Context(), orderInfo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
 		return

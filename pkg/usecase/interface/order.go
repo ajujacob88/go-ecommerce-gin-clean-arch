@@ -10,6 +10,6 @@ import (
 
 type OrderUseCase interface {
 	GetOrderDetails(ctx context.Context, userId int, placeOrderInfo request.PlaceOrder) (response.UserOrder, domain.UserAddress, error)
-	SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error)
+	SaveOrderAndPayment(ctx context.Context, orderInfo domain.Order) (domain.Order, error)
 	OrderLineAndClearCart(ctx context.Context, createdOrder domain.Order, cartItems []domain.CartItems) error
 }

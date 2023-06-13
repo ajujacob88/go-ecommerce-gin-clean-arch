@@ -12,6 +12,7 @@ import (
 type orderDatabase struct {
 	DB       *gorm.DB
 	cartRepo interfaces.CartRepository
+	tx       *gorm.DB // Add a field to store the transaction - for transaction inititated from usecase
 }
 
 func NewOrderRepository(DB *gorm.DB, cartRepo interfaces.CartRepository) interfaces.OrderRepository {
@@ -21,7 +22,32 @@ func NewOrderRepository(DB *gorm.DB, cartRepo interfaces.CartRepository) interfa
 	}
 }
 
-func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order) (domain.Order, error) {
+//below 3 methods are for the transactions inititated from usecase
+
+func (c *orderDatabase) BeginTransaction(ctx context.Context) error {
+	c.tx = c.DB.Begin()
+	return c.tx.Error
+}
+
+func (c *orderDatabase) Commit(ctx context.Context) error {
+	if c.tx == nil {
+		return fmt.Errorf("transaction not found")
+	}
+	err := c.tx.Commit().Error
+	c.tx = nil
+	return err
+}
+
+func (c *orderDatabase) Rollback(ctx context.Context) error {
+	if c.tx == nil {
+		return fmt.Errorf("transaction not found")
+	}
+	err := c.tx.Rollback().Error
+	c.tx = nil
+	return err
+}
+
+func (c *orderDatabase) CreateOrder(ctx context.Context, orderInfo domain.Order) (domain.Order, error) {
 
 	var createdOrder domain.Order
 	createOrderQuery := `	INSERT INTO orders(user_id, order_date, payment_method_info_id, shipping_address_id, order_total_price, order_status_id)
