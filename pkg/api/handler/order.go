@@ -16,15 +16,15 @@ type OrderHandler struct {
 	orderUseCase   services.OrderUseCase
 	paymentUseCase services.PaymentUseCase
 	cartUseCase    services.CartUseCase
-	paymentHandler PaymentHandler
+	paymentHandler *PaymentHandler
 }
 
-func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services.PaymentUseCase, cartUseCase services.CartUseCase) *OrderHandler {
+func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services.PaymentUseCase, cartUseCase services.CartUseCase, paymentHandler *PaymentHandler) *OrderHandler {
 	return &OrderHandler{
 		orderUseCase:   orderusecase,
 		paymentUseCase: paymentusecase,
 		cartUseCase:    cartUseCase,
-		//paymentHandler: paymentHandler,
+		paymentHandler: paymentHandler,
 	}
 }
 
@@ -90,7 +90,6 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 	case 2:
 		//orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
 		cr.paymentHandler.RazorpayCheckout(c, orderInfo)
-		//cr.RazorpayCheckout(c, orderInfo)
 
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Payment method selected is invalid"})

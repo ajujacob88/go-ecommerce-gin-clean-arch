@@ -34,10 +34,9 @@ func NewPaymentHandler(paymentUseCase services.PaymentUseCase, orderUseCase serv
 func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Order) {
 
 	fmt.Println("debug checkpoint0")
-	//orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
+	orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
 
-	fmt.Println("orderinfo is", orderInfo, "\norderinfo.orderstatusid is", orderInfo.OrderStatusID)
-	razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c, orderInfo)
+	razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c.Request.Context(), orderInfo)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to complete the order", err.Error(), nil))
 
