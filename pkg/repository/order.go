@@ -21,31 +21,29 @@ func NewOrderRepository(DB *gorm.DB, cartRepo interfaces.CartRepository) interfa
 	}
 }
 
-func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {
-	tx := c.DB.Begin()
+func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order) (domain.Order, error) {
+
 	var createdOrder domain.Order
 	createOrderQuery := `	INSERT INTO orders(user_id, order_date, payment_method_info_id, shipping_address_id, order_total_price, order_status_id)
 							VALUES($1,$2,$3,$4,$5,$6)
 							RETURNING *;`
-	err := tx.Raw(createOrderQuery, orderInfo.UserID, orderInfo.OrderDate, orderInfo.PaymentMethodInfoID, orderInfo.ShippingAddressID, orderInfo.OrderTotalPrice, orderInfo.OrderStatusID).Scan(&createdOrder).Error
+	err := c.DB.Raw(createOrderQuery, orderInfo.UserID, orderInfo.OrderDate, orderInfo.PaymentMethodInfoID, orderInfo.ShippingAddressID, orderInfo.OrderTotalPrice, orderInfo.OrderStatusID).Scan(&createdOrder).Error
 	if err != nil {
-		tx.Rollback()
 		return domain.Order{}, err
 	}
-
-func (c *orderDatabase) CreatePaymentEntry(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {
-
-	//create an entry in the payment_details table - payment status id = 6 for cod & payment status id =1/pending for razor pay
-	
-	paymentEntryQuery := `	INSERT INTO payment_details(order_id, order_total_price, payment_method_info_id, payment_status_id, updated_at)
-							VALUES ($1, $2, $3, 1, NOW());`
-	err = tx.Exec(paymentEntryQuery, createdOrder.ID, createdOrder.OrderTotalPrice, createdOrder.PaymentMethodInfoID).Error
-	if err != nil {
-		tx.Rollback()
-		return domain.Order{}, err
-	}
-	tx.Commit()
 	return createdOrder, nil
+}
+
+func (c *orderDatabase) CreatePaymentEntry(ctx context.Context, createdOrder domain.Order, paymentStatusID int) error {
+
+	paymentEntryQuery := `	INSERT INTO payment_details(order_id, order_total_price, payment_method_info_id, payment_status_id, updated_at)
+							VALUES ($1, $2, $3, $4, NOW());`
+	err := c.DB.Exec(paymentEntryQuery, createdOrder.ID, createdOrder.OrderTotalPrice, createdOrder.PaymentMethodInfoID, paymentStatusID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *orderDatabase) OrderLineAndClearCart(ctx context.Context, createdOrder domain.Order, cartItems []domain.CartItems) error {

@@ -69,8 +69,26 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 
 // save the order as pending, then after payment/cod verification change order status to order placed
 func (c *orderUseCase) SaveOrder(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {
+	//begin the transaction... inititate from usecase instead of repo
+	tx := c.orderRepo.BeginTransaction() // Begin the transaction
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback() // Rollback the transaction on panic
+		}
+	}()
 
-	createdOrder, err := c.orderRepo.SaveOrder(ctx, orderInfo, cartItems)
+	createdOrder, err := c.orderRepo.SaveOrder(ctx, orderInfo)
+
+	//create an entry in the payment_details table - payment status id = 6 for cod & payment status id =1/pending for razor pay
+	var paymentStatusID int
+	if orderInfo.PaymentMethodInfoID == 1 {
+		paymentStatusID = 6
+	} else {
+		paymentStatusID = 1
+	}
+
+	err = c.orderRepo.CreatePaymentEntry(ctx, createdOrder, paymentStatusID)
+
 	return createdOrder, err
 }
 
