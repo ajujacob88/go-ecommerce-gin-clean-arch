@@ -80,6 +80,7 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 		PaymentMethodInfoID: uint(placeOrderInfo.PaymentMethodID),
 		ShippingAddressID:   deliveryAddress.ID,
 		OrderTotalPrice:     placedOrderDetails.AmountToPay,
+
 		//OrderStatusID:       2, //orderplaced
 	}
 	switch placeOrderInfo.PaymentMethodID {

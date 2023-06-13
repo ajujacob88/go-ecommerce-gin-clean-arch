@@ -33,7 +33,10 @@ func (c *orderDatabase) SaveOrder(ctx context.Context, orderInfo domain.Order, c
 		return domain.Order{}, err
 	}
 
-	//create an entry in the payment_details table
+func (c *orderDatabase) CreatePaymentEntry(ctx context.Context, orderInfo domain.Order, cartItems []domain.CartItems) (domain.Order, error) {
+
+	//create an entry in the payment_details table - payment status id = 6 for cod & payment status id =1/pending for razor pay
+	
 	paymentEntryQuery := `	INSERT INTO payment_details(order_id, order_total_price, payment_method_info_id, payment_status_id, updated_at)
 							VALUES ($1, $2, $3, 1, NOW());`
 	err = tx.Exec(paymentEntryQuery, createdOrder.ID, createdOrder.OrderTotalPrice, createdOrder.PaymentMethodInfoID).Error
