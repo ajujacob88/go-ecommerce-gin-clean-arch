@@ -88,7 +88,8 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 		cr.OrderByCashOnDelivery(c, orderInfo, cartItems)
 	case 2:
 		//orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
-		cr.paymentHandler.RazorpayCheckout(c, orderInfo, cartItems)
+		cr.paymentHandler.RazorpayCheckout(c, orderInfo)
+		//cr.RazorpayCheckout(c, orderInfo)
 
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Payment method selected is invalid"})
@@ -113,6 +114,38 @@ func (cr *OrderHandler) OrderByCashOnDelivery(c *gin.Context, orderInfo domain.O
 	}
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully placed the order", createdOrder))
 }
+
+/*
+func (cr *OrderHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Order) {
+
+	fmt.Println("debug checkpoint0")
+	orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
+
+	fmt.Println("orderinfo is", orderInfo, "\norderinfo.orderstatusid is", orderInfo.OrderStatusID)
+	razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c, orderInfo)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to complete the order", err.Error(), nil))
+
+	}
+	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", orderInfo.OrderTotalPrice)
+
+	// create the order as order pending, cart clearing and orderline only adter razor pay verification
+	createdOrder, err := cr.orderUseCase.SaveOrderAndPayment(c.Request.Context(), orderInfo)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
+		return
+	}
+
+	c.HTML(200, "app.html", gin.H{ //gin.H is to fill the placeholders like this "amount": "{{.total}}"  in the html
+		"total":    createdOrder.OrderTotalPrice,
+		"orderid":  razorpayOrderID,
+		"name":     "smartstore name",
+		"email":    "smartstore@gmail.com",
+		"phone_no": "7733333333",
+	})
+
+}
+*/
 
 /*
 // backup before splitting, delete after splitting

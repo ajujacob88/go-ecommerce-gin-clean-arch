@@ -39,6 +39,7 @@ func (c *paymentUseCase) GetPaymentMethodInfoByID(ctx context.Context, paymentMe
 func (c *paymentUseCase) RazorPayCheckout(ctx context.Context, orderInfo domain.Order) (string, error) {
 	//now integrate with razor pay (by using the code from razor pay)
 	//client := razorpay.NewClient("<YOUR_API_KEY>", "<YOUR_API_SECRET>")
+	fmt.Println("debug checkpoint2")
 
 	razorpayAPIKeyID := config.GetConfig().RazorpayAPIKeyID
 	razorpayAPIKeySecret := config.GetConfig().RazorpayAPIKeySecret
