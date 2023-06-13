@@ -60,9 +60,9 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 	if paymentMethodInfo.PaymentType == "COD" {
 		return userOrder, deliveryAddress, nil
 	} else if paymentMethodInfo.PaymentType == "RazorPay" {
-		return response.UserOrder{}, domain.UserAddress{}, errors.New("the payment method selected Razor Pay is not available ")
+		return userOrder, deliveryAddress, nil
 	} else {
-		return response.UserOrder{}, domain.UserAddress{}, errors.New("the payment method selected is not available ")
+		return response.UserOrder{}, domain.UserAddress{}, errors.New("the payment method selected is not available / ")
 
 	}
 }
