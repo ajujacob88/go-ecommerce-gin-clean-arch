@@ -48,6 +48,10 @@ func ConnectDatabase(cfg config.Config) (*gorm.DB, error) {
 		&domain.PaymentMethodInfo{},
 		&domain.PaymentDetails{},
 		&domain.PaymentStatus{},
+
+		//coupon table
+		&domain.Coupon{},
+		domain.CouponUsed{},
 	)
 
 	if err != nil {
