@@ -1164,6 +1164,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/cart/applycoupon/": {
+            "patch": {
+                "description": "This endpoint allows a user to add coupon to the cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Apply coupon to the cart",
+                "operationId": "apply-coupon-to-cart",
+                "parameters": [
+                    {
+                        "description": "Coupon Code",
+                        "name": "coupon_code",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ApplyCoupon"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/cart/placeorder/": {
             "post": {
                 "description": "This endpoint allows a user to place the order from cart.",
@@ -1716,6 +1769,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.ApplyCoupon": {
+            "type": "object",
+            "required": [
+                "coupon_code"
+            ],
+            "properties": {
+                "coupon_code": {
                     "type": "string"
                 }
             }

@@ -42,6 +42,13 @@ definitions:
     - email
     - password
     type: object
+  request.ApplyCoupon:
+    properties:
+      coupon_code:
+        type: string
+    required:
+    - coupon_code
+    type: object
   request.BlockUser:
     properties:
       reason:
@@ -958,6 +965,41 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: User can add a productto the cart
+      tags:
+      - Cart
+  /user/cart/applycoupon/:
+    patch:
+      consumes:
+      - application/json
+      description: This endpoint allows a user to add coupon to the cart.
+      operationId: apply-coupon-to-cart
+      parameters:
+      - description: Coupon Code
+        in: body
+        name: coupon_code
+        required: true
+        schema:
+          $ref: '#/definitions/request.ApplyCoupon'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Apply coupon to the cart
       tags:
       - Cart
   /user/cart/placeorder/:
