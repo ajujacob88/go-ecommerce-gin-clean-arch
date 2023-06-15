@@ -21,16 +21,35 @@ func NewCouponHandler(couponUseCase services.CouponUseCase) *CouponHandler {
 	}
 }
 
-//------------- ADD COUPON TO DB BY ADMIN--------
-
+// ------------- ADD COUPON TO DB BY ADMIN--------
+// AddCouponToDatabase
+// @Summary API for admin to add the coupon
+// @ID add-coupon-by-admin
+// @Description This endpoint allows an admin to add coupon to the database.
+// @Tags Admin Coupon
+// @Accept json
+// @Produce json
+// @Param coupon_details body domain.Coupon true "Coupon Details"
+// @Success 202 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /user/cart/applycoupon/ [patch]
 func (cr CouponHandler) AddCoupon(c *gin.Context) {
-	var body domain.Coupon
-	if err := c.ShouldBindJSON(&body); err != nil {
+	var couponDetails domain.Coupon
+	if err := c.ShouldBindJSON(&couponDetails); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to bind coupon", err.Error(), nil))
 		return
 	}
 
-	err := cr.couponUseCase.AddCoupon(ctx, body)
+	addedCoupon, err := cr.couponUseCase.AddCoupon(c.Request.Context(), couponDetails)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(500, "failed to add the coupon", err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusAccepted, response.SuccessResponse(202, "Successfully added the coupon", addedCoupon))
+
 }
 
 //--------------APPLY COUPON TO CART BY USER---------
