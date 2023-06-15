@@ -895,6 +895,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/coupons/add/": {
+            "post": {
+                "description": "This endpoint allows an admin to add coupon to the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Coupon"
+                ],
+                "summary": "API for admin to add the coupon",
+                "operationId": "add-coupon-by-admin",
+                "parameters": [
+                    {
+                        "description": "Coupon Details",
+                        "name": "coupon_details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Coupon"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/addresses": {
             "get": {
                 "description": "list all address",
@@ -1708,6 +1755,9 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Coupon": {
+            "type": "object"
+        },
         "domain.Product": {
             "type": "object",
             "required": [

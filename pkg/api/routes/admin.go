@@ -10,6 +10,7 @@ func AdminRoutes(
 	api *gin.RouterGroup,
 	adminHandler *handler.AdminHandler,
 	productHandler *handler.ProductHandler,
+	couponHandler *handler.CouponHandler,
 
 ) {
 
@@ -66,6 +67,12 @@ func AdminRoutes(
 		{
 			productDetails.POST("/", productHandler.AddProductDetails)
 
+		}
+
+		//coupon routes
+		couponRoutes := api.Group("/coupons")
+		{
+			couponRoutes.POST("/add", couponHandler.AddCoupon)
 		}
 
 	}

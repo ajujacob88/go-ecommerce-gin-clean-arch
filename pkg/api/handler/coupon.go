@@ -31,10 +31,9 @@ func NewCouponHandler(couponUseCase services.CouponUseCase) *CouponHandler {
 // @Produce json
 // @Param coupon_details body domain.Coupon true "Coupon Details"
 // @Success 202 {object} response.Response
-// @Failure 400 {object} response.Response
 // @Failure 422 {object} response.Response
 // @Failure 500 {object} response.Response
-// @Router /user/cart/applycoupon/ [patch]
+// @Router /coupons/add/ [post]
 func (cr CouponHandler) AddCoupon(c *gin.Context) {
 	var couponDetails domain.Coupon
 	if err := c.ShouldBindJSON(&couponDetails); err != nil {
