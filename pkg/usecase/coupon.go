@@ -67,7 +67,7 @@ func (c *couponUseCase) ApplyCouponToCart(ctx context.Context, userID int, coupo
 	if err != nil {
 		return response.ViewCart{}, err
 	} else if coupon.ID == 0 {
-		return response.ViewCart{}, fmt.Errorf("invalid coupon_id %s", couponCode)
+		return response.ViewCart{}, fmt.Errorf("invalid coupon_code %s", couponCode)
 	}
 
 	// now check the coupon is already used by the user

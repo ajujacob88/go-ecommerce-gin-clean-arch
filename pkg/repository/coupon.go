@@ -58,11 +58,26 @@ func (c *couponDatabase) FindCouponByCouponName(ctx context.Context, couponName 
 
 func (c *couponDatabase) AddCoupon(ctx context.Context, couponDetails request.Coupon) (domain.Coupon, error) {
 	var addedCoupon domain.Coupon
-	addCouponQuery := `	INSERT INTO coupons(coupon_name,coupon_code,min_order_value,discount_percent,discount_max_amount,valid_till,description)
-						VALUES ($1,$2,$3,$4,$5,$6,$7)`
-	err := c.DB.Raw(addCouponQuery, couponDetails.CouponName, couponDetails.CouponCode, couponDetails.MinOrderValue, couponDetails.DiscountPercent, couponDetails.DiscountMaxAmount, couponDetails.ValidTill, couponDetails.Description).Scan(&addedCoupon).Error
-	if err != nil {
-		return domain.Coupon{}, fmt.Errorf("failed to add coupon to the database %w", err)
+	// addCouponQuery := `	INSERT INTO coupons(coupon_name,coupon_code,min_order_value,discount_percent,discount_max_amount,valid_till,description)
+	// 					VALUES ($1,$2,$3,$4,$5,$6,$7)`
+	// err := c.DB.Exec(addCouponQuery, couponDetails.CouponName, couponDetails.CouponCode, couponDetails.MinOrderValue, couponDetails.DiscountPercent, couponDetails.DiscountMaxAmount, couponDetails.ValidTill, couponDetails.Description).Error // since this is an insert query, scanning wont work..since you're performing an INSERT operation, there is no result set to scan from. The Scan function is typically used for SELECT queries to populate a struct with the retrieved data.
+	// if err != nil {
+	// 	return domain.Coupon{}, fmt.Errorf("failed to add coupon to the database %w", err)
+	// }
+
+	newCoupon := domain.Coupon{
+		CouponName:        couponDetails.CouponName,
+		CouponCode:        couponDetails.CouponCode,
+		MinOrderValue:     couponDetails.MinOrderValue,
+		DiscountPercent:   couponDetails.DiscountPercent,
+		DiscountMaxAmount: couponDetails.DiscountMaxAmount,
+		ValidTill:         couponDetails.ValidTill,
+		Description:       couponDetails.Description,
 	}
+	err := c.DB.Create(&newCoupon).Error
+	if err != nil {
+		return domain.Coupon{}, fmt.Errorf("failed to add coupon to the database: %w", err)
+	}
+	fmt.Println(addedCoupon)
 	return addedCoupon, nil
 }
