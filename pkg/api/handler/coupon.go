@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
@@ -20,7 +21,19 @@ func NewCouponHandler(couponUseCase services.CouponUseCase) *CouponHandler {
 	}
 }
 
-//--------------APPLY COUPON TO CART---------
+//------------- ADD COUPON TO DB BY ADMIN--------
+
+func (cr CouponHandler) AddCoupon(c *gin.Context) {
+	var body domain.Coupon
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to bind coupon", err.Error(), nil))
+		return
+	}
+
+	err := cr.couponUseCase.AddCoupon(ctx, body)
+}
+
+//--------------APPLY COUPON TO CART BY USER---------
 
 // ApplyCouponToCart
 // @Summary Apply coupon to the cart
@@ -40,7 +53,7 @@ func (cr *CouponHandler) ApplyCouponToCart(c *gin.Context) {
 	//The PATCH method is used to partially update the resource at the given URL. HTTP method should be PUT or PATCH to indicate that you are updating an existing resource (the cart) with the provided coupon ID. If you write POST instead of PUT for the HTTP method in the code, it would indicate that you are creating a new resource with the provided coupon ID, rather than updating an existing resource.
 	var body request.ApplyCoupon
 	if err := c.ShouldBindJSON(&body); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to fetch coupon id", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to bind coupon code", err.Error(), nil))
 		return
 	}
 

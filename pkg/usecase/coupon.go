@@ -6,9 +6,11 @@ import (
 	"log"
 	"time"
 
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils"
 )
 
 type couponUseCase struct {
@@ -21,6 +23,40 @@ func NewCouponUseCase(couponRepo interfaces.CouponRepository, cartRepo interface
 		couponRepo: couponRepo,
 		cartRepo:   cartRepo,
 	}
+}
+
+func (c *couponUseCase) AddCoupon(ctx context.Context, couponDetails domain.Coupon) (domain.Coupon, error) {
+	/* no need, since coupon is generating randomly
+	// first check if this coupon code already exists
+	checkCouponByCode, err := c.couponRepo.FetchCouponByCouponCode(ctx, couponDetails.CouponCode)
+	if err != nil {
+		return domain.Coupon{}, err
+	} else if checkCouponByCode.ID != 0 {
+		return domain.Coupon{}, fmt.Errorf("already a coupon code with the same name exists %s", couponDetails.CouponCode)
+	}
+	*/
+
+	checkCouponByCouponName, err := c.couponRepo.FindCouponByCouponName(ctx, couponDetails.CouponName)
+	if err != nil {
+		return domain.Coupon{}, err
+	} else if checkCouponByCouponName.ID != 0 {
+		return domain.Coupon{}, fmt.Errorf("already a name with the same coupon name exists %s", couponDetails.CouponName)
+	}
+
+	//validate the coupon expiration time
+	if time.Since(couponDetails.ValidTill) > 0 {
+		return domain.Coupon{}, fmt.Errorf("given expire date is already over %v", couponDetails.ValidTill)
+	}
+
+	//generate coupon codes with the first 3 letters the same for all codes, the next 3 characters randomly generated, and the last 3 characters as generated numbers
+	couponDetails.CouponCode = utils.GenerateCouponCode()
+
+	// Now save this coupon entry
+	addedCoupon, err := c.couponRepo.AddCoupon(ctx, couponDetails)
+	if err != nil {
+		return domain.Coupon{}, err
+	}
+	return addedCoupon, nil
 }
 
 func (c *couponUseCase) ApplyCouponToCart(ctx context.Context, userID int, couponCode string) (response.ViewCart, error) {
