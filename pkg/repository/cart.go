@@ -353,3 +353,26 @@ func (c *cartDatabase) FindCartItemsByUserID(ctx context.Context, user_id int) (
 	}
 	return cartItems, nil
 }
+
+func (c *cartDatabase) FindCartByUserID(ctx context.Context, userID int) (domain.Carts, error) {
+	var cart domain.Carts
+	err := c.DB.Raw(`SELECT * FROM carts WHERE user_id = ?`, userID).Scan(&cart).Error
+	if err != nil {
+		return domain.Carts{}, err
+	}
+	return cart, nil
+}
+
+func (c *cartDatabase) UpdateCart(ctx context.Context, cartID, couponID uint, discountAmount, totalPrice float64) error {
+
+	updateCartQuery := `"	UPDATE carts
+							SET appled_coupon_id = $1, discount_amount = $2, total_price = $3
+							WHERE id = $4`
+
+	err := c.DB.Exec(updateCartQuery, couponID, discountAmount, totalPrice, cartID).Error
+	if err != nil {
+		return fmt.Errorf("failed to update the cart with discount price, %w", err)
+	}
+	return nil
+
+}

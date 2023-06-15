@@ -1,13 +1,13 @@
 package domain
 
 type Carts struct {
-	ID       uint    `gorm:"primaryKey,uniqueIndex" json:"id"`
-	UserID   uint    `gorm:"not null" json:"user_id" validate:"required"`
-	Users    Users   `gorm:"foreignKey:UserID" json:"-"`
-	SubTotal float64 `gorm:"not null" json:"sub_total"`
-	//CouponID
-	//DiscountAmount
-	//TotalPrice
+	ID              uint    `gorm:"primaryKey,uniqueIndex" json:"id"`
+	UserID          uint    `gorm:"not null" json:"user_id" validate:"required"`
+	Users           Users   `gorm:"foreignKey:UserID" json:"-"`
+	SubTotal        float64 `gorm:"not null" json:"sub_total"`
+	AppliedCouponID uint    `json:"appled_coupon_id"`
+	DiscountAmount  float64 `json:"discount_amount"`
+	TotalPrice      float64 `json:"total_price"`
 }
 
 type CartItems struct {

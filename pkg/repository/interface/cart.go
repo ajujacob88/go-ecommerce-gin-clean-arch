@@ -16,4 +16,7 @@ type CartRepository interface {
 	FindCartIDFromUserID(ctx context.Context, user_id int) (int, error)
 	FindCartItemsByCartID(ctx context.Context, cart_id int) ([]domain.CartItems, error)
 	FindCartItemsByUserID(ctx context.Context, user_id int) ([]domain.CartItems, error)
+	FindCartByUserID(ctx context.Context, userID int) (domain.Carts, error)
+
+	UpdateCart(ctx context.Context, cartID, couponID uint, discountAmount, totalPrice float64) error
 }

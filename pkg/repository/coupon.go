@@ -31,7 +31,7 @@ func (c *couponDatabase) FetchCouponByCouponCode(ctx context.Context, couponCode
 
 }
 
-func (c *couponDatabase) FindCouponUsedByUserID(ctx context.Context, userID int, couponID uint) (domain.CouponUsed, error) {
+func (c *couponDatabase) FindCouponUsedByUserIDAndCouponID(ctx context.Context, userID int, couponID uint) (domain.CouponUsed, error) {
 	var couponUsed domain.CouponUsed
 	couponUsedQuery := `SELECT * FROM coupon_used
 						WHERE user_id = $1 AND coupon_id = $2 `

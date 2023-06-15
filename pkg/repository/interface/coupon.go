@@ -8,5 +8,5 @@ import (
 
 type CouponRepository interface {
 	FetchCouponByCouponCode(ctx context.Context, couponCode string) (domain.Coupon, error)
-	FindCouponUsedByUserID(ctx context.Context, userID int, couponID uint) (domain.CouponUsed, error)
+	FindCouponUsedByUserIDAndCouponID(ctx context.Context, userID int, couponID uint) (domain.CouponUsed, error)
 }
