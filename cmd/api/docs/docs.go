@@ -320,6 +320,53 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/coupons/add": {
+            "post": {
+                "description": "This endpoint allows an admin to add coupon to the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Coupon"
+                ],
+                "summary": "API for admin to add the coupon",
+                "operationId": "add-coupon-by-admin",
+                "parameters": [
+                    {
+                        "description": "Coupon Details",
+                        "name": "coupon_details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Coupon"
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/login": {
             "post": {
                 "description": "Admin Login",
@@ -876,53 +923,6 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/coupons/add/": {
-            "post": {
-                "description": "This endpoint allows an admin to add coupon to the database.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin Coupon"
-                ],
-                "summary": "API for admin to add the coupon",
-                "operationId": "add-coupon-by-admin",
-                "parameters": [
-                    {
-                        "description": "Coupon Details",
-                        "name": "coupon_details",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.Coupon"
-                        }
-                    }
-                ],
-                "responses": {
-                    "202": {
-                        "description": "Accepted",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -1755,9 +1755,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Coupon": {
-            "type": "object"
-        },
         "domain.Product": {
             "type": "object",
             "required": [
@@ -1842,6 +1839,29 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "request.Coupon": {
+            "type": "object",
+            "properties": {
+                "coupon_name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "discount_max_amount": {
+                    "type": "number"
+                },
+                "discount_percent": {
+                    "type": "number"
+                },
+                "min_order_value": {
+                    "type": "number"
+                },
+                "valid_till": {
+                    "type": "string"
                 }
             }
         },

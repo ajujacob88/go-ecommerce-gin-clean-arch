@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -45,7 +46,7 @@ func (c *couponDatabase) FindCouponUsedByUserIDAndCouponID(ctx context.Context, 
 
 func (c *couponDatabase) FindCouponByCouponName(ctx context.Context, couponName string) (domain.Coupon, error) {
 	var coupon domain.Coupon
-	fetchCouponQuery := `SELECT * FROM coupons WHERE coupon_namee = $1`
+	fetchCouponQuery := `SELECT * FROM coupons WHERE coupon_name = $1`
 	err := c.DB.Raw(fetchCouponQuery, couponName).Scan(&coupon).Error
 	if err != nil {
 		return domain.Coupon{}, fmt.Errorf("faild to fetch coupon with coupon name %v", couponName)
@@ -55,7 +56,7 @@ func (c *couponDatabase) FindCouponByCouponName(ctx context.Context, couponName 
 
 }
 
-func (c *couponDatabase) AddCoupon(ctx context.Context, couponDetails domain.Coupon) (domain.Coupon, error) {
+func (c *couponDatabase) AddCoupon(ctx context.Context, couponDetails request.Coupon) (domain.Coupon, error) {
 	var addedCoupon domain.Coupon
 	addCouponQuery := `	INSERT INTO coupons(coupon_name,coupon_code,min_order_value,discount_percent,discount_max_amount,valid_till,description)
 						VALUES ($1,$2,$3,$4,$5,$6,$7)`

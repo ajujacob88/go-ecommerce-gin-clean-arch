@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// remember When using struct embedding, such as embedding gorm.Model in a struct, the fields from the embedded struct are not explicitly defined within the struct itself. As a result, these fields may not be included in the Swagger documentation because the Swagger annotations are typically based on the struct tags.
 type Coupon struct {
 	gorm.Model
 	CouponName        string    `gorm:"unique" json:"coupon_name,omitempty"`

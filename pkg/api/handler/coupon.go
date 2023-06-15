@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
-	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
@@ -29,13 +28,13 @@ func NewCouponHandler(couponUseCase services.CouponUseCase) *CouponHandler {
 // @Tags Admin Coupon
 // @Accept json
 // @Produce json
-// @Param coupon_details body domain.Coupon true "Coupon Details"
+// @Param coupon_details body request.Coupon true "Coupon Details"
 // @Success 202 {object} response.Response
 // @Failure 422 {object} response.Response
 // @Failure 500 {object} response.Response
-// @Router /coupons/add/ [post]
+// @Router /admin/coupons/add [post]
 func (cr CouponHandler) AddCoupon(c *gin.Context) {
-	var couponDetails domain.Coupon
+	var couponDetails request.Coupon
 	if err := c.ShouldBindJSON(&couponDetails); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to bind coupon", err.Error(), nil))
 		return

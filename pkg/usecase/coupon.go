@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
@@ -25,7 +26,7 @@ func NewCouponUseCase(couponRepo interfaces.CouponRepository, cartRepo interface
 	}
 }
 
-func (c *couponUseCase) AddCoupon(ctx context.Context, couponDetails domain.Coupon) (domain.Coupon, error) {
+func (c *couponUseCase) AddCoupon(ctx context.Context, couponDetails request.Coupon) (domain.Coupon, error) {
 	/* no need, since coupon is generating randomly
 	// first check if this coupon code already exists
 	checkCouponByCode, err := c.couponRepo.FetchCouponByCouponCode(ctx, couponDetails.CouponCode)
