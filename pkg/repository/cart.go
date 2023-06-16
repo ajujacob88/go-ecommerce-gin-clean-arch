@@ -124,7 +124,7 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 	// add the price of the new product to the current subtotal and update it in the cart
 	newSubTotal := currentSubTotal + itemPrice
 
-	err = tx.Exec("UPDATE carts SET sub_total = $1 WHERE user_id = $2", newSubTotal, userID).Error
+	err = tx.Exec("UPDATE carts SET sub_total = $1, total_price = $2 WHERE user_id = $3", newSubTotal, newSubTotal, userID).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.CartItems{}, err
@@ -223,7 +223,7 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 
 	//var updatedSubTotal float64
 	subTotalPriceQuery := `	UPDATE carts
-							SET sub_total = sub_total - $1
+							SET sub_total = sub_total - $1, total_price = total_price - $1
 							WHERE id = $2;`
 
 	err = tx.Exec(subTotalPriceQuery, itemPrice, cartID).Error
