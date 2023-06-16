@@ -246,7 +246,7 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) (response.ViewC
 	//find the cart_id from the carts table
 	var cartDetails response.CartDetails
 
-	err := tx.Raw("SELECT id, sub_total FROM carts WHERE user_id = $1", userId).Scan(&cartDetails).Error
+	err := tx.Raw("SELECT id, sub_total, applied_coupon_id, discount_amount, total_price FROM carts WHERE user_id = $1", userId).Scan(&cartDetails).Error
 	if err != nil {
 		tx.Rollback()
 		return response.ViewCart{}, err
@@ -290,7 +290,7 @@ func (c *cartDatabase) ViewCart(ctx context.Context, userId int) (response.ViewC
 
 	var viewCart response.ViewCart
 	viewCart.CartItemsAll = cartItems
-	viewCart.SubTotal = cartDetails.SubTotal
+	viewCart.CartDetails = cartDetails
 	return viewCart, err
 
 }

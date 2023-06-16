@@ -15,11 +15,19 @@ type CartItems struct {
 
 type ViewCart struct {
 	CartItemsAll []CartItems
-	SubTotal     float64
+	// SubTotal        float64
+	// AppliedCouponID uint
+	// DiscountAmount  float64
+	// TotalPrice      float64
+	CartDetails // used struct embedding,instead of creating the above fields again,
+
 }
 
 // this is for view cart from cart repo viewcart function
 type CartDetails struct {
-	ID       int
-	SubTotal float64
+	ID              int `json:"-"`
+	SubTotal        float64
+	AppliedCouponID uint
+	DiscountAmount  float64
+	TotalPrice      float64
 }
