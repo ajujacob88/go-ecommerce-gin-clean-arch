@@ -12,6 +12,6 @@ type Coupon struct {
 	MinOrderValue     float64   `json:"min_order_value"`
 	DiscountPercent   float64   `json:"discount_percent"`
 	DiscountMaxAmount float64   `json:"discount_max_amount"`
-	ValidTill         time.Time `json:"valid_till"`
+	ValidTill         time.Time `json:"valid_till"` //Here's an example of how you can provide the ValidTill value in the Indian time zone: "2023-06-30T23:30:00+05:30"
 	Description       string    `json:"description"`
 }

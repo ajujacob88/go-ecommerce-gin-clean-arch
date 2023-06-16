@@ -365,9 +365,9 @@ func (c *cartDatabase) FindCartByUserID(ctx context.Context, userID int) (domain
 
 func (c *cartDatabase) UpdateCart(ctx context.Context, cartID, couponID uint, discountAmount, totalPrice float64) error {
 
-	updateCartQuery := `"	UPDATE carts
-							SET appled_coupon_id = $1, discount_amount = $2, total_price = $3
-							WHERE id = $4`
+	updateCartQuery := `	UPDATE carts
+							SET applied_coupon_id = $1, discount_amount = $2, total_price = $3
+							WHERE id = $4;`
 
 	err := c.DB.Exec(updateCartQuery, couponID, discountAmount, totalPrice, cartID).Error
 	if err != nil {

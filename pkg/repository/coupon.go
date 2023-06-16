@@ -34,7 +34,7 @@ func (c *couponDatabase) FetchCouponByCouponCode(ctx context.Context, couponCode
 
 func (c *couponDatabase) FindCouponUsedByUserIDAndCouponID(ctx context.Context, userID int, couponID uint) (domain.CouponUsed, error) {
 	var couponUsed domain.CouponUsed
-	couponUsedQuery := `SELECT * FROM coupon_used
+	couponUsedQuery := `SELECT * FROM coupon_useds
 						WHERE user_id = $1 AND coupon_id = $2 `
 	err := c.DB.Raw(couponUsedQuery, userID, couponID).Scan(&couponUsed).Error
 	if err != nil {
@@ -57,13 +57,19 @@ func (c *couponDatabase) FindCouponByCouponName(ctx context.Context, couponName 
 }
 
 func (c *couponDatabase) AddCoupon(ctx context.Context, couponDetails request.Coupon) (domain.Coupon, error) {
-	var addedCoupon domain.Coupon
+	//var addedCoupon domain.Coupon
+
+	// since this is an insert query, scanning wont work..since you're performing an INSERT operation, there is no result set to scan from. The Scan function is typically used for SELECT queries to populate a struct with the retrieved data.
+
+	// In your code, it seems that you're using the Raw method of gorm.DB to execute the INSERT query. This bypasses the automatic handling of GORM hooks and lifecycle callbacks, which include updating the created_at and updated_at fields. So its better to use the orm models and methods instead of raw query.
 	// addCouponQuery := `	INSERT INTO coupons(coupon_name,coupon_code,min_order_value,discount_percent,discount_max_amount,valid_till,description)
 	// 					VALUES ($1,$2,$3,$4,$5,$6,$7)`
-	// err := c.DB.Exec(addCouponQuery, couponDetails.CouponName, couponDetails.CouponCode, couponDetails.MinOrderValue, couponDetails.DiscountPercent, couponDetails.DiscountMaxAmount, couponDetails.ValidTill, couponDetails.Description).Error // since this is an insert query, scanning wont work..since you're performing an INSERT operation, there is no result set to scan from. The Scan function is typically used for SELECT queries to populate a struct with the retrieved data.
+	// err := c.DB.Exec(addCouponQuery, couponDetails.CouponName, couponDetails.CouponCode, couponDetails.MinOrderValue, couponDetails.DiscountPercent, couponDetails.DiscountMaxAmount, couponDetails.ValidTill, couponDetails.Description).Error
 	// if err != nil {
 	// 	return domain.Coupon{}, fmt.Errorf("failed to add coupon to the database %w", err)
 	// }
+
+	// since this is an insert query, scanning wont work..since you're performing an INSERT operation, there is no result set to scan from. The Scan function is typically used for SELECT queries to populate a struct with the retrieved data.
 
 	newCoupon := domain.Coupon{
 		CouponName:        couponDetails.CouponName,
@@ -78,6 +84,6 @@ func (c *couponDatabase) AddCoupon(ctx context.Context, couponDetails request.Co
 	if err != nil {
 		return domain.Coupon{}, fmt.Errorf("failed to add coupon to the database: %w", err)
 	}
-	fmt.Println(addedCoupon)
-	return addedCoupon, nil
+
+	return newCoupon, nil
 }
