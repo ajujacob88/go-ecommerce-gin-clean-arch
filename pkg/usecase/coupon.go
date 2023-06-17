@@ -102,6 +102,9 @@ func (c *couponUseCase) ApplyCouponToCart(ctx context.Context, userID int, coupo
 
 	// now calculate the discount for cart
 	discountAmount := (cart.SubTotal * coupon.DiscountPercent) / 100
+	if discountAmount > coupon.DiscountMaxAmount {
+		discountAmount = coupon.DiscountMaxAmount
+	}
 
 	// now cart total price will be
 	totalPrice := cart.SubTotal - discountAmount

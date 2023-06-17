@@ -89,14 +89,14 @@ func (cr *CartHandler) RemoveFromCart(c *gin.Context) {
 		return
 	}
 
-	err = cr.cartUseCase.RemoveFromCart(c.Request.Context(), productDetailsID, userId)
+	viewCart, err := cr.cartUseCase.RemoveFromCart(c.Request.Context(), productDetailsID, userId)
 	fmt.Println("debug checkpoint2")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to remove products from the cart", err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessResponse(200, "Successfully removed product from the cart", nil))
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "Successfully removed product from the cart", viewCart))
 
 }
 

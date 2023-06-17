@@ -24,9 +24,17 @@ func (c *cartUseCase) AddToCart(ctx context.Context, productDetailsID int, userI
 	return addedProduct, err
 }
 
-func (c *cartUseCase) RemoveFromCart(ctx context.Context, productDetailsID int, userId int) error {
+func (c *cartUseCase) RemoveFromCart(ctx context.Context, productDetailsID int, userId int) (response.ViewCart, error) {
 	err := c.cartRepo.RemoveFromCart(ctx, productDetailsID, userId)
-	return err
+	if err != nil {
+		return response.ViewCart{}, err
+	}
+
+	viewCart, err := c.cartRepo.ViewCart(ctx, userId)
+	if err != nil {
+		return response.ViewCart{}, err
+	}
+	return viewCart, err
 
 }
 
