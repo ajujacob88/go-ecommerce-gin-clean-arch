@@ -145,7 +145,7 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 	if couponID != 0 {
 		//now fetch the coupon details
 		var couponInfo domain.Coupon
-		if err := tx.Raw("SELECT * FROM coupons WHERE id = ?", couponID).Scan(couponInfo).Error; err != nil {
+		if err := tx.Raw("SELECT * FROM coupons WHERE id = $1", couponID).Scan(&couponInfo).Error; err != nil {
 			tx.Rollback()
 			return domain.CartItems{}, err
 		}
@@ -241,12 +241,21 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 	}
 	fmt.Println("debug check, item price is", itemPrice)
 
-	var newSubTotal float64
 	updatePriceQuery := `	UPDATE carts
 							SET sub_total = sub_total - $1, total_price = total_price - $1
 							WHERE id = $2;`
 
-	err = tx.Raw(updatePriceQuery, itemPrice, cartID).Scan(&newSubTotal).Error
+	err = tx.Exec(updatePriceQuery, itemPrice, cartID).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Retrieve the new sub_total value
+	var newSubTotal float64
+
+	getSubTotalQuery := `SELECT sub_total FROM carts WHERE id = $1;`
+	err = tx.Raw(getSubTotalQuery, cartID).Scan(&newSubTotal).Error
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -265,13 +274,16 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 	if couponID != 0 {
 		//now fetch the coupon details
 		var couponInfo domain.Coupon
-		if err := tx.Raw("SELECT * FROM coupons WHERE id = ?", couponID).Scan(couponInfo).Error; err != nil {
+		if err := tx.Raw("SELECT * FROM coupons WHERE id = ?", couponID).Scan(&couponInfo).Error; err != nil {
 			tx.Rollback()
 			return err
 		}
 
 		var totalPrice, discountAmount float64
 		// check the minimum order value criteria for coupon is still fulfilled
+
+		fmt.Println("new sub ttotal is", newSubTotal, "min order value is", couponInfo.MinOrderValue)
+
 		if newSubTotal < couponInfo.MinOrderValue {
 			discountAmount = 0
 			totalPrice = newSubTotal
