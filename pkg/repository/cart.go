@@ -150,14 +150,14 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 			return domain.CartItems{}, err
 		}
 
-		discount := (newSubTotal * couponInfo.DiscountPercent) / 100
-		if discount > couponInfo.DiscountMaxAmount {
-			discount = couponInfo.DiscountMaxAmount
+		discountAmount := (newSubTotal * couponInfo.DiscountPercent) / 100
+		if discountAmount > couponInfo.DiscountMaxAmount {
+			discountAmount = couponInfo.DiscountMaxAmount
 		}
-		updatedTotal := newTotalPrice - discount
+		updatedTotal := newTotalPrice - discountAmount
 
 		//now update the cart table
-		if err := tx.Exec("UPDATE carts SET discount_amount = $1, total_price = $2 WHERE user_id = $3", discount, updatedTotal, userID).Error; err != nil {
+		if err := tx.Exec("UPDATE carts SET discount_amount = $1, total_price = $2 WHERE user_id = $3", discountAmount, updatedTotal, userID).Error; err != nil {
 			tx.Rollback()
 			return domain.CartItems{}, err
 		}
@@ -241,22 +241,62 @@ func (c *cartDatabase) RemoveFromCart(ctx context.Context, productDetailsID int,
 	}
 	fmt.Println("debug check, item price is", itemPrice)
 
-	//var updatedSubTotal float64
-	subTotalPriceQuery := `	UPDATE carts
+	var newSubTotal float64
+	updatePriceQuery := `	UPDATE carts
 							SET sub_total = sub_total - $1, total_price = total_price - $1
 							WHERE id = $2;`
 
-	err = tx.Exec(subTotalPriceQuery, itemPrice, cartID).Error
+	err = tx.Raw(updatePriceQuery, itemPrice, cartID).Scan(&newSubTotal).Error
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
+
+	// now check the cart has applied a coupon
+	var couponID uint
+	//If the coupon_id is NULL, it uses the COALESCE function to replace it with 0.
+	err = tx.Raw("SELECT COALESCE(applied_coupon_id,0) FROM carts WHERE user_id = ?", userId).Scan(&couponID).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	//If cart has a valid coupon
+	if couponID != 0 {
+		//now fetch the coupon details
+		var couponInfo domain.Coupon
+		if err := tx.Raw("SELECT * FROM coupons WHERE id = ?", couponID).Scan(couponInfo).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+
+		var totalPrice, discountAmount float64
+		// check the minimum order value criteria for coupon is still fulfilled
+		if newSubTotal < couponInfo.MinOrderValue {
+			discountAmount = 0
+			totalPrice = newSubTotal
+			couponID = 0
+		} else {
+			discountAmount = (newSubTotal * couponInfo.DiscountPercent) / 100
+			if discountAmount > couponInfo.DiscountMaxAmount {
+				discountAmount = couponInfo.DiscountMaxAmount
+			}
+			totalPrice = newSubTotal - discountAmount
+		}
+
+		//now update the cart table
+		if err := tx.Exec("UPDATE carts SET applied_coupon_id = $1, discount_amount = $2, total_price = $3 WHERE user_id = $4", couponID, discountAmount, totalPrice, userId).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
 	// Now commit the transaction
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
 		return err
 	}
-	return err
+	return nil
 }
 
 //----VIEW CART
