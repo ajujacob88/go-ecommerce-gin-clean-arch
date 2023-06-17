@@ -107,15 +107,16 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 	// product_details_id , qauntity and cart_id is known.
 	// Now fetch the price from the product_details table
 
-	var currentSubTotal, itemPrice float64
+	var currentSubTotal, totalPrice, itemPrice float64
 	err = tx.Raw("SELECT price FROM product_details WHERE id = $1", productDetailsID).Scan(&itemPrice).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.CartItems{}, err
 	}
 
-	// fetch the current subtotal from the cart table
+	// fetch the current subtotal and total price from the cart table
 	err = tx.Raw("SELECT sub_total FROM carts WHERE id = $1", cartItem.CartID).Scan(&currentSubTotal).Error
+	err = tx.Raw("SELECT total_price FROM carts WHERE id = $1", cartItem.CartID).Scan(&totalPrice).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.CartItems{}, err
@@ -123,25 +124,44 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 
 	// add the price of the new product to the current subtotal and update it in the cart
 	newSubTotal := currentSubTotal + itemPrice
+	newTotalPrice := totalPrice + itemPrice
 
-	err = tx.Exec("UPDATE carts SET sub_total = $1, total_price = $2 WHERE user_id = $3", newSubTotal, newSubTotal, userID).Error
+	err = tx.Exec("UPDATE carts SET sub_total = $1, total_price = $2 WHERE user_id = $3", newSubTotal, newTotalPrice, userID).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.CartItems{}, err
 	}
 
-	// this is for while placing the order, done by myself
-	/* No need to reduce the qty_in_stock here..., need to reduce only while placing the order
-	// Now reduce the qty_in_stock in product details table
-	updateCartQuery := `	UPDATE product_details
-								SET qty_in_stock = $1
-								WHERE id = $2;`
-	err = tx.Exec(updateCartQuery, qty_in_stock-1, productDetailsID).Error //qty_in_stock already retrieved in the beginnning part of this function
+	// check if the cart has applied a coupon
+	var couponID uint
+	//If the coupon_id is NULL, it uses the COALESCE function to replace it with 0.
+	err = tx.Raw("SELECT COALESCE(applied_coupon_id,0) FROM carts WHERE user_id = ?", userID).Scan(&couponID).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.CartItems{}, err
 	}
-	*/
+
+	//If cart has a valid coupon
+	if couponID != 0 {
+		//now fetch the coupon details
+		var couponInfo domain.Coupon
+		if err := tx.Raw("SELECT * FROM coupons WHERE id = ?", couponID).Scan(couponInfo).Error; err != nil {
+			tx.Rollback()
+			return domain.CartItems{}, err
+		}
+
+		discount := (newSubTotal * couponInfo.DiscountPercent) / 100
+		if discount > couponInfo.DiscountMaxAmount {
+			discount = couponInfo.DiscountMaxAmount
+		}
+		updatedTotal := newTotalPrice - discount
+
+		//now update the cart table
+		if err := tx.Exec("UPDATE carts SET discount_amount = $1, total_price = $2 WHERE user_id = $3", discount, updatedTotal, userID).Error; err != nil {
+			tx.Rollback()
+			return domain.CartItems{}, err
+		}
+	}
 
 	// Now commit the transaction
 	if err := tx.Commit().Error; err != nil {
