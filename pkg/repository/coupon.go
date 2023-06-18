@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
@@ -86,4 +87,11 @@ func (c *couponDatabase) AddCoupon(ctx context.Context, couponDetails request.Co
 	}
 
 	return newCoupon, nil
+}
+
+func (c *couponDatabase) UpdateCouponUsed(ctx context.Context, couponUsed domain.CouponUsed) error {
+	updateCouponUsedQuery := `INSERT INTO coupon_useds ( user_id, coupon_id, used_at) VALUES ($1, $2, $3)`
+	err := c.DB.Exec(updateCouponUsedQuery, couponUsed.UserID, couponUsed.CouponID, time.Now()).Error
+	return err
+
 }

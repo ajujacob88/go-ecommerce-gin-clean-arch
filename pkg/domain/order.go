@@ -14,6 +14,7 @@ type Order struct {
 	OrderTotalPrice     float64           `json:"order_total_price"`
 	OrderStatusID       uint              `json:"order_status_id"`
 	OrderStatus         OrderStatus       `gorm:"foreignKey: OrderStatusID" json:"-"`
+	AppliedCouponID     uint              `json:"applied_coupon_id"`
 	DeliveryStatusID    uint              `json:"delivery_status_id"`
 	DeliveryStatus      DeliveryStatus    `gorm:"foreignKey: DeliveryStatusID" json:"-"`
 	DeliveredAt         time.Time         `json:"delivered_at"`

@@ -13,4 +13,6 @@ type CouponRepository interface {
 
 	FindCouponByCouponName(ctx context.Context, couponName string) (domain.Coupon, error)
 	AddCoupon(ctx context.Context, couponDetails request.Coupon) (domain.Coupon, error)
+
+	UpdateCouponUsed(ctx context.Context, couponUsed domain.CouponUsed) error
 }

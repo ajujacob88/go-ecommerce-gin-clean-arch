@@ -17,14 +17,16 @@ type orderUseCase struct {
 	paymentUseCase services.PaymentUseCase
 	userRepo       interfaces.UserRepository
 	cartRepo       interfaces.CartRepository
+	couponRepo     interfaces.CouponRepository
 }
 
-func NewOrderUseCase(orderRepo interfaces.OrderRepository, paymentUseCase services.PaymentUseCase, userRepo interfaces.UserRepository, cartRepo interfaces.CartRepository) services.OrderUseCase {
+func NewOrderUseCase(orderRepo interfaces.OrderRepository, paymentUseCase services.PaymentUseCase, userRepo interfaces.UserRepository, cartRepo interfaces.CartRepository, couponRepo interfaces.CouponRepository) services.OrderUseCase {
 	return &orderUseCase{
 		orderRepo:      orderRepo,
 		paymentUseCase: paymentUseCase,
 		userRepo:       userRepo,
 		cartRepo:       cartRepo,
+		couponRepo:     couponRepo,
 	}
 }
 
@@ -52,7 +54,8 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 	}
 	var userOrder response.UserOrder
 
-	userOrder.AmountToPay = userCart.SubTotal
+	userOrder.AmountToPay = userCart.TotalPrice
+	userOrder.AppliedCouponID = userCart.AppliedCouponID
 	if paymentMethodInfo.MaxAmountLimit < uint(userOrder.AmountToPay) {
 		return response.UserOrder{}, domain.UserAddress{}, errors.New("the payment method selected is not applicable for this order, cart value is higher than selected payment method maximum transaction limit")
 	}
@@ -115,5 +118,25 @@ func (c *orderUseCase) OrderLineAndClearCart(ctx context.Context, createdOrder d
 	//actually the transactions should begin from usecase instead of repo.. so convert and do like that lateron
 
 	err := c.orderRepo.OrderLineAndClearCart(ctx, createdOrder, cartItems)
-	return err
+	if err != nil {
+		return err
+	}
+
+	//update the coupon status - make entry into the couponUsed table
+	// updateCouponUsed := domain.CouponUsed{
+	// 	UserID: createdOrder.UserID,
+	// 	CouponID: createdOrder.AppliedCouponID,
+	// }
+
+	if createdOrder.AppliedCouponID != 0 {
+		err := c.couponRepo.UpdateCouponUsed(ctx, domain.CouponUsed{
+			UserID:   createdOrder.UserID,
+			CouponID: createdOrder.AppliedCouponID,
+		})
+		if err != nil {
+			return fmt.Errorf("faild to update couponUsed  for user \nerror:%v", err.Error())
+		}
+	}
+
+	return nil
 }
