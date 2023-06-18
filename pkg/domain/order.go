@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type Order struct {
 	ID                  uint              `json:"id" gorm:"primaryKey"`
@@ -38,4 +42,17 @@ type OrderLine struct {
 	Order            Order          `gorm:"ForeignKey: OrderID" json:"-"`
 	Quantity         int            `json:"quantity"`
 	Price            float64        `json:"price"`
+}
+
+type OrderReturn struct {
+	*gorm.DB
+	OrderID      uint    `json:"order_id"`
+	Order        Order   `gorm:"ForeignKey: OrderID" json:"-"`
+	ReturnReason string  `json:"return_reason" gorm:"not null"`
+	RefundAmount float64 `json:"refund_amount" gorm:"not null"`
+
+	IsApproved   bool      `json:"is_approved"`
+	ApprovalDate time.Time `json:"approval_date"`
+	ReturnDate   time.Time `json:"return_date"`
+	AdminComment string    `json:"admin_comment"`
 }

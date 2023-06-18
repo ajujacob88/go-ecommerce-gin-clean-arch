@@ -116,87 +116,38 @@ func (cr *OrderHandler) OrderByCashOnDelivery(c *gin.Context, orderInfo domain.O
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully placed the order", createdOrder))
 }
 
-/*
-func (cr *OrderHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Order) {
+//--------------SUBMIT RETURN REQUEST---------
 
-	fmt.Println("debug checkpoint0")
-	orderInfo.OrderStatusID = 1 //order pending ... first order pending , then after razor pay verifcation, set order status to placed
-
-	fmt.Println("orderinfo is", orderInfo, "\norderinfo.orderstatusid is", orderInfo.OrderStatusID)
-	razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c, orderInfo)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to complete the order", err.Error(), nil))
-
-	}
-	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", orderInfo.OrderTotalPrice)
-
-	// create the order as order pending, cart clearing and orderline only adter razor pay verification
-	createdOrder, err := cr.orderUseCase.SaveOrderAndPayment(c.Request.Context(), orderInfo)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
-		return
-	}
-
-	c.HTML(200, "app.html", gin.H{ //gin.H is to fill the placeholders like this "amount": "{{.total}}"  in the html
-		"total":    createdOrder.OrderTotalPrice,
-		"orderid":  razorpayOrderID,
-		"name":     "smartstore name",
-		"email":    "smartstore@gmail.com",
-		"phone_no": "7733333333",
-	})
-
-}
-*/
-
-/*
-// backup before splitting, delete after splitting
-func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
-	var placeOrderInfo request.PlaceOrder
-	if err := c.Bind(&placeOrderInfo); err != nil {
-		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
+// Submit return request by user
+// @Summary user can return a delivered order
+// @ID return-request
+// @Description User can request for returning the products within 10 days after delivery
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param return_req_details body request.ReturnRequest true "Return request details"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Router /user/orders/return/ [post]
+func (cr *OrderHandler) ReturnRequest(c *gin.Context) {
+	var returnReqDetails request.ReturnRequest
+	if err := c.ShouldBindJSON(&returnReqDetails); err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to read request body", err.Error(), nil))
 		return
 	}
 
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the user ID", err.Error(), nil))
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(401, "failed to fetch userid from context", err.Error(), nil))
 		return
 	}
 
-	// paymentMethodInfo, err := cr.paymentUseCase.GetPaymentMethodInfoByID(c.Request.Context(), placeOrderInfo.PaymentMethodID)
-
-	// if err != nil {
-	// 	c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to place the order", err.Error(), nil))
-	// 	return
-	// }
-
-	cartItems, err := cr.cartUseCase.FindCartItemsByUserID(c.Request.Context(), userID)
+	err = cr.orderUseCase.SubmitReturnRequest(c, userID, returnReqDetails)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the cart", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to place return request", err.Error(), nil))
 		return
 	}
-	placedOrderDetails, deliveryAddress, err := cr.orderUseCase.GetOrderDetails(c.Request.Context(), userID, placeOrderInfo)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to place the order", err.Error(), nil))
-		return
-	}
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully placed the return request", nil))
 
-	//now make and save the Order
-	orderInfo := domain.Order{
-		UserID:              uint(userID),
-		OrderDate:           time.Now(),
-		PaymentMethodInfoID: uint(placeOrderInfo.PaymentMethodID),
-		ShippingAddressID:   deliveryAddress.ID,
-		OrderTotalPrice:     placedOrderDetails.AmountToPay,
-		OrderStatusID:       2,
-	}
-
-	// save the order details
-	createdOrder, err := cr.orderUseCase.SaveOrder(c.Request.Context(), orderInfo, cartItems)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
-		return
-	}
-	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully placed the order", createdOrder))
 }
-*/

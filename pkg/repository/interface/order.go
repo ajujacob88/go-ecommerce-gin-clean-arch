@@ -24,4 +24,7 @@ type OrderRepository interface {
 	UpdateOrderDetails(ctx context.Context, orderID int) (domain.Order, error)
 
 	ViewOrderById(ctx context.Context, userID, orderID int) (domain.Order, error)
+
+	SaveOrderReturn(ctx context.Context, orderReturn domain.OrderReturn) error
+	UpdateOrdersOrderStatus(ctx context.Context, orderID, returnRequestedStatusID uint) error
 }

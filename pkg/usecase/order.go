@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
@@ -139,4 +141,65 @@ func (c *orderUseCase) OrderLineAndClearCart(ctx context.Context, createdOrder d
 	}
 
 	return nil
+}
+
+func (c *orderUseCase) SubmitReturnRequest(ctx context.Context, userID int, returnReqDetails request.ReturnRequest) error {
+	orderDetails, err := c.orderRepo.ViewOrderById(ctx, userID, int(returnReqDetails.OrderID))
+	if err != nil {
+		return err
+	} else if orderDetails.ID == 0 {
+		return errors.New("invalid order id")
+	}
+
+	if orderDetails.OrderStatusID != 6 {
+		return fmt.Errorf("cannot return as order is undelivered")
+	}
+
+	if orderDetails.DeliveredAt.Sub(time.Now()) > time.Hour*24*15 {
+		return fmt.Errorf("failed to place the return request as it is more than 10 days after which the order is delivered. Return period over")
+	}
+
+	// Begin the transaction  -- begin the transaction from usecase
+	err = c.orderRepo.BeginTransaction(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Defer the rollback function
+	defer func() {
+		if r := recover(); r != nil {
+			c.orderRepo.Rollback(ctx) // Rollback the transaction on panic
+		}
+	}()
+
+	orderReturn := domain.OrderReturn{
+		OrderID:      returnReqDetails.OrderID,
+		ReturnReason: returnReqDetails.ReturnReason,
+		RefundAmount: orderDetails.OrderTotalPrice,
+		IsApproved:   false,
+	}
+
+	err = c.orderRepo.SaveOrderReturn(ctx, orderReturn)
+	if err != nil {
+		c.orderRepo.Rollback(ctx) // Rollback the transaction on error
+		return err
+	}
+
+	//for Return Requested, the order_statuses id is 8, so change the order stauts id from 6 to 8
+	returnRequestedStatusID := 8
+	err = c.orderRepo.UpdateOrdersOrderStatus(ctx, orderDetails.ID, uint(returnRequestedStatusID))
+	if err != nil {
+		c.orderRepo.Rollback(ctx) // Rollback the transaction on error
+		return err
+	}
+
+	// Commit the transaction if everything is successful
+	err = c.orderRepo.Commit(ctx)
+	if err != nil {
+		return fmt.Errorf("faild to submit the return request \n error:%v", err)
+	}
+
+	log.Println("successfully submitted the order return request")
+	return nil
+
 }

@@ -55,6 +55,8 @@ func UserRoutes(
 			//	home.GET("/payments/razorpay/:order_id", paymentHandler.RazorpayCheckout)
 			home.POST("/payments/success", paymentHandler.RazorpayVerify)
 
+			home.POST("/orders/return", orderHandler.ReturnRequest)
+
 			//cart routes
 			// cart := api.Group("/cart")
 			// {
