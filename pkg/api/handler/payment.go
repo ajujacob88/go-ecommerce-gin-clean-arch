@@ -91,7 +91,7 @@ func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 	razorpayOrderTotal := c.Query("order_total")
 	total, err := strconv.ParseFloat(razorpayOrderTotal, 32)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "unable to fetch user id from context", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "unable to fetch order total", err.Error(), nil))
 		return
 	}
 	userID, err := handlerutil.GetUserIdFromContext(c)

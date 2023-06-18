@@ -50,10 +50,10 @@ func (c *orderDatabase) Rollback(ctx context.Context) error {
 func (c *orderDatabase) CreateOrder(ctx context.Context, orderInfo domain.Order) (domain.Order, error) {
 
 	var createdOrder domain.Order
-	createOrderQuery := `	INSERT INTO orders(user_id, order_date, payment_method_info_id, shipping_address_id, order_total_price, order_status_id)
-							VALUES($1,$2,$3,$4,$5,$6)
+	createOrderQuery := `	INSERT INTO orders(user_id, order_date, payment_method_info_id, shipping_address_id, order_total_price, order_status_id, applied_coupon_id)
+							VALUES($1,$2,$3,$4,$5,$6, $7)
 							RETURNING *;`
-	err := c.DB.Raw(createOrderQuery, orderInfo.UserID, orderInfo.OrderDate, orderInfo.PaymentMethodInfoID, orderInfo.ShippingAddressID, orderInfo.OrderTotalPrice, orderInfo.OrderStatusID).Scan(&createdOrder).Error
+	err := c.DB.Raw(createOrderQuery, orderInfo.UserID, orderInfo.OrderDate, orderInfo.PaymentMethodInfoID, orderInfo.ShippingAddressID, orderInfo.OrderTotalPrice, orderInfo.OrderStatusID, orderInfo.AppliedCouponID).Scan(&createdOrder).Error
 	if err != nil {
 		return domain.Order{}, err
 	}

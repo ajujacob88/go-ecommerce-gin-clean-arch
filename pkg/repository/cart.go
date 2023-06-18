@@ -107,7 +107,7 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 	// product_details_id , qauntity and cart_id is known.
 	// Now fetch the price from the product_details table
 
-	var currentSubTotal, totalPrice, itemPrice float64
+	var currentSubTotal, itemPrice float64
 	err = tx.Raw("SELECT price FROM product_details WHERE id = $1", productDetailsID).Scan(&itemPrice).Error
 	if err != nil {
 		tx.Rollback()
@@ -116,7 +116,7 @@ func (c *cartDatabase) AddToCart(ctx context.Context, productDetailsID int, user
 
 	// fetch the current subtotal and total price from the cart table
 	err = tx.Raw("SELECT sub_total FROM carts WHERE id = $1", cartItem.CartID).Scan(&currentSubTotal).Error
-	err = tx.Raw("SELECT total_price FROM carts WHERE id = $1", cartItem.CartID).Scan(&totalPrice).Error
+	//	err = tx.Raw("SELECT total_price FROM carts WHERE id = $1", cartItem.CartID).Scan(&totalPrice).Error
 	if err != nil {
 		tx.Rollback()
 		return domain.CartItems{}, err
