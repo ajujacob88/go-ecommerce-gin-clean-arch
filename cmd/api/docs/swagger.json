@@ -442,6 +442,53 @@
                 }
             }
         },
+        "/admin/orders/update": {
+            "patch": {
+                "description": "Endpoint for updating order statuses by admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "Admin can update order status of any order using order_id",
+                "operationId": "update-order",
+                "parameters": [
+                    {
+                        "description": "Details of the order to be updated",
+                        "name": "order_details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateOrderStatuses"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/product-details/": {
             "post": {
                 "description": "This endpoint allows an admin user to add the product details.",
@@ -1473,6 +1520,59 @@
                 }
             }
         },
+        "/user/orders/return/": {
+            "post": {
+                "description": "User can request for returning the products within 10 days after delivery",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Order"
+                ],
+                "summary": "user can return a delivered order",
+                "operationId": "return-request",
+                "parameters": [
+                    {
+                        "description": "Return request details",
+                        "name": "return_req_details",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.ReturnRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/payments/success/": {
             "post": {
                 "description": "updating payment details upon successful payment",
@@ -1853,6 +1953,7 @@
                     "type": "number"
                 },
                 "valid_till": {
+                    "description": "Here's an example of how you can provide the ValidTill value in the Indian time zone: \"2023-06-30T23:30:00+05:30\"",
                     "type": "string"
                 }
             }
@@ -2001,6 +2102,31 @@
                     "type": "integer"
                 },
                 "payment_method_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "request.ReturnRequest": {
+            "type": "object",
+            "properties": {
+                "order_id": {
+                    "type": "integer"
+                },
+                "resturn_reason": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateOrderStatuses": {
+            "type": "object",
+            "properties": {
+                "delivery_status_id": {
+                    "type": "integer"
+                },
+                "order_id": {
+                    "type": "integer"
+                },
+                "order_status_id": {
                     "type": "integer"
                 }
             }

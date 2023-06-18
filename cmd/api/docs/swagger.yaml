@@ -69,6 +69,8 @@ definitions:
       min_order_value:
         type: number
       valid_till:
+        description: 'Here''s an example of how you can provide the ValidTill value
+          in the Indian time zone: "2023-06-30T23:30:00+05:30"'
         type: string
     type: object
   request.NewAdminInfo:
@@ -176,6 +178,22 @@ definitions:
     required:
     - address_id
     - payment_method_id
+    type: object
+  request.ReturnRequest:
+    properties:
+      order_id:
+        type: integer
+      resturn_reason:
+        type: string
+    type: object
+  request.UpdateOrderStatuses:
+    properties:
+      delivery_status_id:
+        type: integer
+      order_id:
+        type: integer
+      order_status_id:
+        type: integer
     type: object
   request.UserAddressInput:
     properties:
@@ -508,6 +526,37 @@ paths:
       summary: Admin_Logout
       tags:
       - Admin
+  /admin/orders/update:
+    patch:
+      consumes:
+      - application/json
+      description: Endpoint for updating order statuses by admin
+      operationId: update-order
+      parameters:
+      - description: Details of the order to be updated
+        in: body
+        name: order_details
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateOrderStatuses'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin can update order status of any order using order_id
+      tags:
+      - Order
   /admin/product-details/:
     post:
       consumes:
@@ -1192,6 +1241,42 @@ paths:
       summary: User_Logout
       tags:
       - user
+  /user/orders/return/:
+    post:
+      consumes:
+      - application/json
+      description: User can request for returning the products within 10 days after
+        delivery
+      operationId: return-request
+      parameters:
+      - description: Return request details
+        in: body
+        name: return_req_details
+        required: true
+        schema:
+          $ref: '#/definitions/request.ReturnRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: user can return a delivered order
+      tags:
+      - Order
   /user/payments/success/:
     post:
       consumes:

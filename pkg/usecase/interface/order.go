@@ -13,5 +13,6 @@ type OrderUseCase interface {
 	SaveOrderAndPayment(ctx context.Context, orderInfo domain.Order) (domain.Order, error)
 	OrderLineAndClearCart(ctx context.Context, createdOrder domain.Order, cartItems []domain.CartItems) error
 
+	UpdateOrderStatuses(ctx context.Context, orderStatuses request.UpdateOrderStatuses) (domain.Order, error)
 	SubmitReturnRequest(ctx context.Context, userID int, returnReqDetails request.ReturnRequest) error
 }

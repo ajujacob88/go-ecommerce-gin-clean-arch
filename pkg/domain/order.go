@@ -45,7 +45,7 @@ type OrderLine struct {
 }
 
 type OrderReturn struct {
-	*gorm.DB
+	gorm.Model
 	OrderID      uint    `json:"order_id"`
 	Order        Order   `gorm:"ForeignKey: OrderID" json:"-"`
 	ReturnReason string  `json:"return_reason" gorm:"not null"`

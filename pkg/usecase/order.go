@@ -143,6 +143,15 @@ func (c *orderUseCase) OrderLineAndClearCart(ctx context.Context, createdOrder d
 	return nil
 }
 
+func (c *orderUseCase) UpdateOrderStatuses(ctx context.Context, orderStatuses request.UpdateOrderStatuses) (domain.Order, error) {
+	updatedOrder, err := c.orderRepo.UpdateOrderStatuses(ctx, orderStatuses)
+	if err != nil {
+		return domain.Order{}, err
+	}
+	return updatedOrder, nil
+
+}
+
 func (c *orderUseCase) SubmitReturnRequest(ctx context.Context, userID int, returnReqDetails request.ReturnRequest) error {
 	orderDetails, err := c.orderRepo.ViewOrderById(ctx, userID, int(returnReqDetails.OrderID))
 	if err != nil {
@@ -151,7 +160,7 @@ func (c *orderUseCase) SubmitReturnRequest(ctx context.Context, userID int, retu
 		return errors.New("invalid order id")
 	}
 
-	if orderDetails.OrderStatusID != 6 {
+	if orderDetails.OrderStatusID != 6 || orderDetails.DeliveryStatusID != 3 {
 		return fmt.Errorf("cannot return as order is undelivered")
 	}
 

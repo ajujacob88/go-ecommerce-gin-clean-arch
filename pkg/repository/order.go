@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -180,6 +181,44 @@ func (c *orderDatabase) SaveOrderReturn(ctx context.Context, orderReturn domain.
 	}
 
 	return nil
+}
+
+func (c *orderDatabase) UpdateOrderStatuses(ctx context.Context, orderStatuses request.UpdateOrderStatuses) (domain.Order, error) {
+	var updatedOrder domain.Order
+
+	updateOrderStatusQuery := `UPDATE orders SET order_status_id = $1, delivery_status_id = $2, delivered_at = NOW() WHERE id = $3 RETURNING *`
+	err := c.DB.Raw(updateOrderStatusQuery, orderStatuses.OrderStatusID, orderStatuses.DeliveryStatusID, orderStatuses.OrderID).Scan(&updatedOrder).Error
+	if err != nil {
+		return domain.Order{}, err
+	} else if updatedOrder.ID == 0 {
+		return domain.Order{}, fmt.Errorf("no order found")
+	}
+
+	return updatedOrder, nil
+
+	//below is its equvalent code using gorm methods
+	/*// Retrieve the order by ID
+	var updatedOrder domain.Order
+	err := c.First(&updatedOrder, orderID).Error
+	if err != nil {
+		return err
+	}
+
+	// Update the order status fields
+	updateValues := map[string]interface{}{
+		"OrderStatusID":    orderStatuses.OrderStatusID,
+		"DeliveryStatusID": orderStatuses.DeliveryStatusID,
+		"DeliveredAt":      time.Now(),
+	}
+
+	err = c.Model(&updatedOrder).Updates(updateValues).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+	*/
+
 }
 
 func (c *orderDatabase) UpdateOrdersOrderStatus(ctx context.Context, orderID, returnRequestedStatusID uint) error {

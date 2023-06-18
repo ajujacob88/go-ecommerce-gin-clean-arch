@@ -11,6 +11,7 @@ func AdminRoutes(
 	adminHandler *handler.AdminHandler,
 	productHandler *handler.ProductHandler,
 	couponHandler *handler.CouponHandler,
+	orderHandler *handler.OrderHandler,
 
 ) {
 
@@ -73,6 +74,12 @@ func AdminRoutes(
 		couponRoutes := api.Group("/coupons")
 		{
 			couponRoutes.POST("/add", couponHandler.AddCoupon)
+		}
+
+		//order routes
+		orderRoutes := api.Group("/orders")
+		{
+			orderRoutes.PATCH("/update", orderHandler.UpdateOrderStatuses)
 		}
 
 	}

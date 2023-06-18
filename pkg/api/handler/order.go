@@ -116,6 +116,34 @@ func (cr *OrderHandler) OrderByCashOnDelivery(c *gin.Context, orderInfo domain.O
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully placed the order", createdOrder))
 }
 
+// ------UPDATE ORDER STATUSES BY ADMIN----
+// this end point allows admins to update order statuses
+// @Summary Admin can update order status of any order using order_id
+// @ID update-order
+// @Description Endpoint for updating order statuses by admin
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param order_details body request.UpdateOrderStatuses true "Details of the order to be updated"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Router /admin/orders/update [patch]
+func (cr *OrderHandler) UpdateOrderStatuses(c *gin.Context) {
+	var orderStatuses request.UpdateOrderStatuses
+	if err := c.ShouldBindJSON(&orderStatuses); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to read request body", err.Error(), nil))
+		return
+	}
+	updatedOrder, err := cr.orderUseCase.UpdateOrderStatuses(c.Request.Context(), orderStatuses)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to update the order statuses", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully updated the order statuses", updatedOrder))
+
+}
+
 //--------------SUBMIT RETURN REQUEST---------
 
 // Submit return request by user
@@ -129,11 +157,12 @@ func (cr *OrderHandler) OrderByCashOnDelivery(c *gin.Context, orderInfo domain.O
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
 // @Failure 401 {object} response.Response
+// @Failure 422 {object} response.Response
 // @Router /user/orders/return/ [post]
 func (cr *OrderHandler) ReturnRequest(c *gin.Context) {
 	var returnReqDetails request.ReturnRequest
 	if err := c.ShouldBindJSON(&returnReqDetails); err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to read request body", err.Error(), nil))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to read request body", err.Error(), nil))
 		return
 	}
 

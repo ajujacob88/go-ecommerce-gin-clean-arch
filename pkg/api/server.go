@@ -32,7 +32,7 @@ func NewServerHTTP(userHandler *handler.UserHandler,
 
 	//setup routes
 	routes.UserRoutes(engine.Group("/"), userHandler, productHandler, cartHandler, orderHandler, paymentHandler, couponHandler)
-	routes.AdminRoutes(engine.Group("/admin"), adminHandler, productHandler, couponHandler)
+	routes.AdminRoutes(engine.Group("/admin"), adminHandler, productHandler, couponHandler, orderHandler)
 
 	return &ServerHTTP{engine: engine}
 }

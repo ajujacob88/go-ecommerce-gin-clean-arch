@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 )
 
 type OrderRepository interface {
@@ -26,5 +27,7 @@ type OrderRepository interface {
 	ViewOrderById(ctx context.Context, userID, orderID int) (domain.Order, error)
 
 	SaveOrderReturn(ctx context.Context, orderReturn domain.OrderReturn) error
+
+	UpdateOrderStatuses(ctx context.Context, orderStatuses request.UpdateOrderStatuses) (domain.Order, error)
 	UpdateOrdersOrderStatus(ctx context.Context, orderID, returnRequestedStatusID uint) error
 }
