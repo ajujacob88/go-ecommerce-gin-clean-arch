@@ -1241,6 +1241,39 @@ paths:
       summary: User_Logout
       tags:
       - user
+  /user/orders/:
+    get:
+      consumes:
+      - application/json
+      description: User can can view all the orders he made
+      operationId: view-all-orders
+      parameters:
+      - description: Enter the page no to display
+        in: query
+        name: page
+        type: integer
+      - description: Number of items to retrieve per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Retrieves all orders of the currently logged in user
+      tags:
+      - Order
   /user/orders/cancel/{order_id}:
     patch:
       consumes:

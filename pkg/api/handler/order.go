@@ -7,6 +7,7 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
@@ -216,5 +217,39 @@ func (cr *OrderHandler) CancellOrder(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully cancelled the order", cancelledOrder))
+
+}
+
+// ---------VIEW ALL ORDERS OF USER-----
+// VIew all orders by user
+// @Summary Retrieves all orders of the currently logged in user
+// @ID view-all-orders
+// @Description User can can view all the orders he made
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param page query int false "Enter the page no to display"
+// @Param limit query int false "Number of items to retrieve per page"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Router /user/orders/ [get]
+func (cr *OrderHandler) ViewAllOrders(c *gin.Context) {
+	var queryParams common.QueryParams
+
+	queryParams.Page, _ = strconv.Atoi(c.Query("page"))
+	queryParams.Limit, _ = strconv.Atoi(c.Query("limit"))
+
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(401, "failed to fetch userid from context", err.Error(), nil))
+		return
+	}
+	orders, err := cr.orderUseCase.ViewAllOrders(c.Request.Context(), userID, queryParams)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the order", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully fetched the order", orders))
 
 }

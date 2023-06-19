@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"gorm.io/gorm"
@@ -258,4 +259,50 @@ func (c *orderDatabase) UpdateStockWhenOrderCancelled(ctx context.Context, order
 	}
 
 	return nil
+}
+
+func (c *orderDatabase) ViewAllOrders(ctx context.Context, userID int, queryParams common.QueryParams) ([]domain.Order, error) {
+
+	findQuery := "SELECT * FROM orders WHERE user_id = $1"
+	params := []interface{}{userID} // Add the userID as the first parameter
+
+	fmt.Println("queryparams is", queryParams)
+
+	//default values of pagination
+	defaultLimit := 5 // Default limit value
+	defaultPage := 1  // Default page value
+
+	// Check if either Limit or Page is zero
+	if queryParams.Limit == 0 || queryParams.Page == 0 {
+		// Assign default values if either is zero
+		if queryParams.Limit == 0 {
+			queryParams.Limit = defaultLimit
+		}
+		if queryParams.Page == 0 {
+			queryParams.Page = defaultPage
+		}
+	}
+
+	if queryParams.Limit != 0 && queryParams.Page != 0 {
+		findQuery = fmt.Sprintf("%s LIMIT $%d OFFSET $%d", findQuery, len(params)+1, len(params)+2)
+		params = append(params, queryParams.Limit, (queryParams.Page-1)*queryParams.Limit)
+	}
+
+	var orders []domain.Order
+	err := c.DB.Raw(findQuery, params...).Scan(&orders).Error
+	if err != nil {
+		return []domain.Order{}, err
+	}
+	return orders, nil
+
+	/*
+		var orders []domain.Order
+		viewAllOrdersQuery := `SELECT * FROM orders WHERE user_id = $1`
+		err := c.DB.Raw(viewAllOrdersQuery, userID).Scan(&orders).Error
+		if err != nil {
+			return []domain.Order{}, err
+		}
+
+		return orders, nil
+	*/
 }

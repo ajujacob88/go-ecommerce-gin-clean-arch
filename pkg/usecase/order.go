@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
@@ -263,4 +264,9 @@ func (c *orderUseCase) CancelOrder(ctx context.Context, orderID, userID int) (do
 	log.Printf("successfully cancelled the order for order id %v", order.ID)
 	return order, nil
 
+}
+
+func (c *orderUseCase) ViewAllOrders(ctx context.Context, userID int, queryParams common.QueryParams) ([]domain.Order, error) {
+	orders, err := c.orderRepo.ViewAllOrders(ctx, userID, queryParams)
+	return orders, err
 }
