@@ -57,6 +57,7 @@ func UserRoutes(
 
 			home.POST("/orders/return", orderHandler.ReturnRequest)
 
+			home.PATCH("/orders/cancel/:order_id", orderHandler.CancellOrder)
 			//cart routes
 			// cart := api.Group("/cart")
 			// {

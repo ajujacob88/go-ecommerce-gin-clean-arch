@@ -221,20 +221,40 @@ func (c *orderDatabase) UpdateOrderStatuses(ctx context.Context, orderStatuses r
 
 }
 
-func (c *orderDatabase) UpdateOrdersOrderStatus(ctx context.Context, orderID, returnRequestedStatusID uint) error {
+func (c *orderDatabase) UpdateOrdersOrderStatus(ctx context.Context, orderID, newStatusID uint) error {
 	// query := `UPDATE shop_orders SET order_status_id = ? WHERE id = ?`
 	// err := c.DB.Exec(query, returnRequestedStatusID, orderID).Error
 
 	//instead of row query, used gotm methods.
 	shopOrder := domain.Order{
 		ID:            orderID,
-		OrderStatusID: returnRequestedStatusID,
+		OrderStatusID: newStatusID,
 	}
 
-	err := c.DB.Model(&shopOrder).Update("OrderStatusID", returnRequestedStatusID).Error
+	err := c.DB.Model(&shopOrder).Update("OrderStatusID", newStatusID).Error
 	if err != nil {
 		return fmt.Errorf("faild to update order status \n error:%v", err)
 
+	}
+
+	return nil
+}
+
+func (c *orderDatabase) UpdateStockWhenOrderCancelled(ctx context.Context, orderID uint) error {
+	//increase the quantity in product details table
+	var orderLineItems []domain.OrderLine
+	findOrderLineQuery := `SELECT * FROM order_lines WHERE order_id = $1;`
+	err := c.DB.Raw(findOrderLineQuery, orderID).Scan(&orderLineItems).Error
+	if err != nil {
+		return err
+	}
+
+	qntyUpdateQuery := `UPDATE product_details SET qnty_in_stock = qnty_in_stock + $1 WHERE id = $2`
+	for i := range orderLineItems {
+		err := c.DB.Exec(qntyUpdateQuery, orderLineItems[i].Quantity, orderLineItems[i].ProductDetailsID).Error
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

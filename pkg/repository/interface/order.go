@@ -29,5 +29,6 @@ type OrderRepository interface {
 	SaveOrderReturn(ctx context.Context, orderReturn domain.OrderReturn) error
 
 	UpdateOrderStatuses(ctx context.Context, orderStatuses request.UpdateOrderStatuses) (domain.Order, error)
-	UpdateOrdersOrderStatus(ctx context.Context, orderID, returnRequestedStatusID uint) error
+	UpdateOrdersOrderStatus(ctx context.Context, orderID, newStatusID uint) error
+	UpdateStockWhenOrderCancelled(ctx context.Context, orderID uint) error
 }

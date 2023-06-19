@@ -15,4 +15,6 @@ type OrderUseCase interface {
 
 	UpdateOrderStatuses(ctx context.Context, orderStatuses request.UpdateOrderStatuses) (domain.Order, error)
 	SubmitReturnRequest(ctx context.Context, userID int, returnReqDetails request.ReturnRequest) error
+
+	CancelOrder(ctx context.Context, orderID, userID int) (domain.Order, error)
 }

@@ -212,3 +212,34 @@ func (c *orderUseCase) SubmitReturnRequest(ctx context.Context, userID int, retu
 	return nil
 
 }
+
+func (c *orderUseCase) CancelOrder(ctx context.Context, orderID, userID int) (domain.Order, error) {
+	order, err := c.orderRepo.ViewOrderById(ctx, userID, orderID)
+	if err != nil {
+		return domain.Order{}, err
+	} else if order.ID == 0 {
+		return domain.Order{}, errors.New("Invalid orderID")
+	}
+
+	if order.OrderStatusID != 1 && order.OrderStatusID != 2 && order.OrderStatusID != 3 && order.OrderStatusID != 4 {
+		return domain.Order{}, errors.New("Can't cancell the order - order is delivered/out for delivery - Please return, if applicable")
+	}
+
+	// if orderstatus id is 1 or 2 or 3 or 4
+	orderCancelledStatusID := 7
+	err = c.orderRepo.UpdateOrdersOrderStatus(ctx, order.ID, uint(orderCancelledStatusID))
+	if err != nil {
+		return domain.Order{}, err
+	}
+
+	// now increase the product quantity in product_details table
+	err = c.orderRepo.UpdateStockWhenOrderCancelled(ctx, order.ID)
+	if err != nil {
+		return domain.Order{}, err
+	}
+
+	order.OrderStatusID = 7 //this is to return order and inorder to avoid a database call, i just assigned value here
+	log.Printf("successfully cancelled the order for order id %v", order.ID)
+	return order, nil
+
+}

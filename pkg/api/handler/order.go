@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/api/handlerutil"
@@ -178,5 +179,42 @@ func (cr *OrderHandler) ReturnRequest(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully placed the return request", nil))
+
+}
+
+// ----------CANCEL ORDER--------------
+// Cancel the order by user
+// @Summary user can cancel an undelivered order
+// @ID cancel-order
+// @Description User can can cancel the order before delivery/out for delivery
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param order_id path int true "orderID of the order to be cancelled"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Router /user/orders/cancel/{order_id} [patch]
+func (cr *OrderHandler) CancellOrder(c *gin.Context) {
+	paramsID := c.Param("order_id")
+	orderID, err := strconv.Atoi(paramsID)
+	if err != nil {
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "failed to read order id from path", err.Error(), nil))
+		return
+	}
+
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(401, "failed to fetch userid from context", err.Error(), nil))
+		return
+	}
+
+	cancelledOrder, err := cr.orderUseCase.CancelOrder(c.Request.Context(), orderID, userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to cancel the order", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "succesfully cancelled the order", cancelledOrder))
 
 }
