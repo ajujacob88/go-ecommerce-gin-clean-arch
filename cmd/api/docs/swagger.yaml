@@ -1241,6 +1241,40 @@ paths:
       summary: User_Logout
       tags:
       - user
+  /user/orders/cancel/{order_id}:
+    patch:
+      consumes:
+      - application/json
+      description: User can can cancel the order before delivery/out for delivery
+      operationId: cancel-order
+      parameters:
+      - description: orderID of the order to be cancelled
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: user can cancel an undelivered order
+      tags:
+      - Order
   /user/orders/return/:
     post:
       consumes:

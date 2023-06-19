@@ -225,17 +225,38 @@ func (c *orderUseCase) CancelOrder(ctx context.Context, orderID, userID int) (do
 		return domain.Order{}, errors.New("Can't cancell the order - order is delivered/out for delivery - Please return, if applicable")
 	}
 
+	// Begin the transaction  -- begin the transaction from usecase
+	err = c.orderRepo.BeginTransaction(ctx)
+	if err != nil {
+		return domain.Order{}, err
+	}
+
+	// Defer the rollback function
+	defer func() {
+		if r := recover(); r != nil {
+			c.orderRepo.Rollback(ctx) // Rollback the transaction on panic
+		}
+	}()
+
 	// if orderstatus id is 1 or 2 or 3 or 4
 	orderCancelledStatusID := 7
 	err = c.orderRepo.UpdateOrdersOrderStatus(ctx, order.ID, uint(orderCancelledStatusID))
 	if err != nil {
+		c.orderRepo.Rollback(ctx) // Rollback the transaction on error
 		return domain.Order{}, err
 	}
 
 	// now increase the product quantity in product_details table
 	err = c.orderRepo.UpdateStockWhenOrderCancelled(ctx, order.ID)
 	if err != nil {
+		c.orderRepo.Rollback(ctx) // Rollback the transaction on error
 		return domain.Order{}, err
+	}
+
+	// Commit the transaction if everything is successful
+	err = c.orderRepo.Commit(ctx)
+	if err != nil {
+		return domain.Order{}, fmt.Errorf("faild to cancel the order \n error:%v", err)
 	}
 
 	order.OrderStatusID = 7 //this is to return order and inorder to avoid a database call, i just assigned value here

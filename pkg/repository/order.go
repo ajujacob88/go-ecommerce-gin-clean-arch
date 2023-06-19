@@ -249,7 +249,7 @@ func (c *orderDatabase) UpdateStockWhenOrderCancelled(ctx context.Context, order
 		return err
 	}
 
-	qntyUpdateQuery := `UPDATE product_details SET qnty_in_stock = qnty_in_stock + $1 WHERE id = $2`
+	qntyUpdateQuery := `UPDATE product_details SET qty_in_stock = qty_in_stock + $1 WHERE id = $2`
 	for i := range orderLineItems {
 		err := c.DB.Exec(qntyUpdateQuery, orderLineItems[i].Quantity, orderLineItems[i].ProductDetailsID).Error
 		if err != nil {
