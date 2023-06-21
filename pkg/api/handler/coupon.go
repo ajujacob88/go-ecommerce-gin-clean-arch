@@ -96,3 +96,13 @@ func (cr *CouponHandler) ApplyCouponToCart(c *gin.Context) {
 	c.JSON(http.StatusAccepted, response.SuccessResponse(202, "Successfully applied the coupon", cart))
 
 }
+
+/*
+func (cr CouponHandler) viewCoupon(c *gin.Context) {
+	userID, err := handlerutil.GetUserIdFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch userid from context", err.Error(), nil))
+		return
+	}
+}
+*/
