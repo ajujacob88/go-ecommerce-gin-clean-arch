@@ -231,7 +231,7 @@ definitions:
       status_code:
         type: integer
     type: object
-host: localhost:3000
+host: esmartstore.shop
 info:
   contact: {}
   description: Ecommerce REST API built using Go, PSQL, REST API following Clean Architecture.

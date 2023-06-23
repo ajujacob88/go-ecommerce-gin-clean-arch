@@ -42,7 +42,8 @@ func NewUserHandler(usecase services.UserUseCase, otpusecase services.OTPUseCase
 // name: MIT
 // url: https://opensource.org/licenses/MIT
 
-// @host localhost:3000
+//  host localhost:3000     ---- select this if running locally
+// @host esmartstore.shop
 
 // @Basepath /
 // @Accept json
