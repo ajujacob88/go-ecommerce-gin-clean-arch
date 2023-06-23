@@ -40,7 +40,7 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 	var newAdminInfo request.NewAdminInfo
 	if err := c.Bind(&newAdminInfo); err != nil {
 		//The 422 status code is often used in API scenarios where clients submit data that fails validation, such as missing required fields, invalid data formats, or conflicting information.
-		response := response.ErrorResponse(422, "unable to read the requestt body", err.Error(), nil)
+		response := response.ErrorResponse(422, "unable to read the request body", err.Error(), nil)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
