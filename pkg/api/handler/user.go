@@ -42,8 +42,13 @@ func NewUserHandler(usecase services.UserUseCase, otpusecase services.OTPUseCase
 // name: MIT
 // url: https://opensource.org/licenses/MIT
 
-//  host localhost:3000     ---- select this if running locally
-// @host esmartstore.shop
+//  If the @host is not specified in Swagger/OpenAPI documentation, it is assumed to be the same host where the API documentation is being served. In this case, if you access the Swagger UI from esmartstore.shop/swagger/index.html or www.esmartstore.shop/swagger/index.html, the API calls will be made to the same host by default.
+// So, if you don't specify the @host, it will work fine as long as the Swagger UI and the API server are hosted on the same domain. The requests will be sent to the current host where the Swagger UI is being served from.
+// read it  https://swagger.io/docs/specification/2-0/api-host-and-base-path/
+
+// host localhost:3000    ----no need
+// host esmartstore.shop     ----no need
+// host www.esmartstore.shop   ----no need
 
 // @Basepath /
 // @Accept json
