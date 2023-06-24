@@ -6,6 +6,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 )
 
 type AdminRepository interface {
@@ -17,4 +18,6 @@ type AdminRepository interface {
 	FindUserByID(ctx context.Context, userID int) (domain.Users, error)
 	BlockUser(ctx context.Context, blockInfo request.BlockUser, adminID int) (domain.UserInfo, error)
 	UnblockUser(ctx context.Context, userID int) (domain.UserInfo, error)
+
+	AdminDashboard(ctx context.Context) (response.AdminDashboard, error)
 }

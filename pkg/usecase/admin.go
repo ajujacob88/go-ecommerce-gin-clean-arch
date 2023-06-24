@@ -106,3 +106,11 @@ func (c *adminUseCase) UnblockUser(ctx context.Context, userID int) (domain.User
 	unblockedUser, err := c.adminRepo.UnblockUser(ctx, userID)
 	return unblockedUser, err
 }
+
+func (c *adminUseCase) AdminDashboard(ctx context.Context) (response.AdminDashboard, error) {
+	adminDashboard, err := c.adminRepo.AdminDashboard(ctx)
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+	return adminDashboard, nil
+}

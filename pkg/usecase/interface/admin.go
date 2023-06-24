@@ -17,4 +17,6 @@ type AdminUseCase interface {
 	FindUserByID(ctx context.Context, userID int) (domain.Users, error)
 	BlockUser(ctx context.Context, blockInfo request.BlockUser, adminID int) (domain.UserInfo, error)
 	UnblockUser(ctx context.Context, userID int) (domain.UserInfo, error)
+
+	AdminDashboard(ctx context.Context) (response.AdminDashboard, error)
 }

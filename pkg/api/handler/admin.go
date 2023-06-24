@@ -254,3 +254,13 @@ func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "successfully unblocked the user", unBlockedUser))
 }
+
+func (cr *AdminHandler) AdminDashboard(c *gin.Context) {
+	adminDashboard, err := cr.adminUseCase.AdminDashboard(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to fetch admindashboard", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, response.SuccessResponse(200, "successfully fetched the admin dashboard", adminDashboard))
+
+}
