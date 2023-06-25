@@ -8,6 +8,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -115,7 +116,7 @@ func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.P
 	return createdProduct, err
 }
 
-func (c *productDatabase) ListAllProducts(ctx context.Context, viewProductsQueryParam common.QueryParams) ([]domain.Product, error) {
+func (c *productDatabase) ListAllProducts(ctx context.Context, viewProductsQueryParam common.QueryParams) ([]response.ViewProduct, error) {
 
 	//findQuery := "SELECT * FROM products"
 	findQuery := `	SELECT pd.id AS product_details_id, p.name, pb.brand_name, pd.model_no,pd.price, p.description,  p.product_image
@@ -137,7 +138,7 @@ func (c *productDatabase) ListAllProducts(ctx context.Context, viewProductsQuery
 		params = append(params, viewProductsQueryParam.Limit, (viewProductsQueryParam.Page-1)*viewProductsQueryParam.Limit)
 	}
 
-	var allProducts []domain.Product
+	var allProducts []response.ViewProduct
 	err := c.DB.Raw(findQuery, params...).Scan(&allProducts).Error
 
 	return allProducts, err

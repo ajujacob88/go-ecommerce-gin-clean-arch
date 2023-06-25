@@ -6,6 +6,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 )
 
 type ProductUseCase interface {
@@ -16,7 +17,7 @@ type ProductUseCase interface {
 	DeleteCategory(ctx context.Context, categoryID int) (domain.ProductCategory, error)
 
 	CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error)
-	ListAllProducts(ctx context.Context, viewProductsQueryParam common.QueryParams) ([]domain.Product, error)
+	ListAllProducts(ctx context.Context, viewProductsQueryParam common.QueryParams) ([]response.ViewProduct, error)
 	FindProductByID(ctx context.Context, productID int) (domain.Product, error)
 	UpdateProduct(ctx context.Context, updateProductInfo domain.Product) (domain.Product, error)
 	DeleteProduct(ctx context.Context, productID int) error
