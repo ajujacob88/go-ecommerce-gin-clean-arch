@@ -78,13 +78,13 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 
 	//now make and save the Order
 	orderInfo := domain.Order{
-		UserID:              uint(userID),
-		OrderDate:           time.Now(),
-		PaymentMethodInfoID: uint(placeOrderInfo.PaymentMethodID),
-		ShippingAddressID:   deliveryAddress.ID,
-		OrderTotalPrice:     placedOrderDetails.AmountToPay,
-		AppliedCouponID:     placedOrderDetails.AppliedCouponID,
-
+		UserID:                uint(userID),
+		OrderDate:             time.Now(),
+		PaymentMethodInfoID:   uint(placeOrderInfo.PaymentMethodID),
+		ShippingAddressID:     deliveryAddress.ID,
+		OrderTotalPrice:       placedOrderDetails.AmountToPay,
+		AppliedCouponID:       placedOrderDetails.AppliedCouponID,
+		AppliedCouponDiscount: placedOrderDetails.AppliedCouponDiscount,
 		//OrderStatusID:       2, //orderplaced
 	}
 	switch placeOrderInfo.PaymentMethodID {

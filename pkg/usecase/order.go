@@ -59,6 +59,7 @@ func (c *orderUseCase) GetOrderDetails(ctx context.Context, userID int, placeOrd
 
 	userOrder.AmountToPay = userCart.TotalPrice
 	userOrder.AppliedCouponID = userCart.AppliedCouponID
+	userOrder.AppliedCouponDiscount = userCart.DiscountAmount
 	if paymentMethodInfo.MaxAmountLimit < uint(userOrder.AmountToPay) {
 		return response.UserOrder{}, domain.UserAddress{}, errors.New("the payment method selected is not applicable for this order, cart value is higher than selected payment method maximum transaction limit")
 	}
