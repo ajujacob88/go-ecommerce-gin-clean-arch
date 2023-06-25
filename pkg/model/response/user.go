@@ -14,6 +14,7 @@ type ShowAddress struct {
 	// FullName    string `json:"full_name"`
 	// Email       string `json:"email"`
 	// Phone       string `json:"phone"`
+	ID          uint   `json:"address_id"`
 	HouseNumber string `json:"house_number"`
 	Street      string `json:"street"`
 	City        string `json:"city"`

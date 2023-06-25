@@ -212,7 +212,7 @@ func (c *userDatabase) DeleteAddress(ctx context.Context, userID, addressID int)
 func (c *userDatabase) ListAddress(ctx context.Context, userID int) ([]response.ShowAddress, error) {
 	var allAddress []response.ShowAddress
 
-	listAddressQuery := `	SELECT house_number,street,city,district,state,pincode,landmark  
+	listAddressQuery := `	SELECT id,house_number,street,city,district,state,pincode,landmark  
 							FROM user_addresses							
 							WHERE user_id = $1; `
 
