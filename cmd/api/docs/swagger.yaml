@@ -470,6 +470,27 @@ paths:
       summary: API for admin to add the coupon
       tags:
       - Admin Coupon
+  /admin/dashboard:
+    get:
+      consumes:
+      - application/json
+      description: Admins dashboard will give summary regarding orders, users, products,
+        etc.
+      operationId: admin-dashboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Admin Dashboard
+      tags:
+      - Admin
   /admin/login:
     post:
       consumes:

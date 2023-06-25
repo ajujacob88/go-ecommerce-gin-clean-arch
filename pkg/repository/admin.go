@@ -172,7 +172,7 @@ func (c *adminDatabase) FetchTotalOrderedItems(ctx context.Context) (int, error)
 	totalOrderedItemsQuery := `	SELECT
 								COUNT(id) AS total_order_items
 								FROM order_lines;`
-	err := c.DB.Raw(totalOrderedItemsQuery).Scan(totalOrderedItems).Error
+	err := c.DB.Raw(totalOrderedItemsQuery).Scan(&totalOrderedItems).Error
 	if err != nil {
 		return 0, err
 	}
@@ -206,43 +206,3 @@ func (c *adminDatabase) FetchUsersCount(ctx context.Context, adminDashboardData 
 
 	return adminDashboardData, nil
 }
-
-/*
-func (c *adminDatabase) AdminDashboard(ctx context.Context) (response.AdminDashboard, error) {
-	var adminDashboard response.AdminDashboard
-	orderSummaryFetchQuery := ` 	SELECT
-									COUNT(CASE WHEN order_status_id = 11 THEN id END) AS completed_orders,
-									COUNT(CASE WHEN order_status_id = 1 OR order_status_id = 2 OR order_status_id = 3 OR order_status_id = 4 OR order_status_id = 5 THEN id END) AS pending_orders,
-									COUNT(CASE WHEN order_status_id = 7 OR order_status_id = 8 THEN id END) AS cancelled_orders,
-									COUNT(id) AS total_orders,
-									SUM (CASE WHEN order_status_id != 7 AND order_status_id != 8 THEN order_total_price ELSE 0 END) AS order_value,
-									COUNT(DISTINCT user_id) AS ordered_users
-									FROM orders;`
-
-	err := c.DB.Raw(orderSummaryFetchQuery).Scan(&adminDashboard).Error
-	if err != nil {
-		return response.AdminDashboard{}, err
-	}
-
-	totalOrderedItemsQuery := `	SELECT
-								COUNT(id) AS total_order_items
-								FROM order_lines;`
-	err = c.DB.Raw(totalOrderedItemsQuery).Scan(&adminDashboard.TotalOrderedItems).Error
-	if err != nil {
-		return response.AdminDashboard{}, err
-	}
-
-
-	creditedAmountQuery := `SELECT
-							sum(order_total_price) AS credited_amount
-							FROM payment_details WHERE payment_status_id = 2;`
-
-	err = c.DB.Raw(creditedAmountQuery).Scan(&adminDashboard.CreditedAmount).Error
-	if err != nil {
-		return response.AdminDashboard{}, err
-	}
-
-
-	return adminDashboard, nil
-}
-*/

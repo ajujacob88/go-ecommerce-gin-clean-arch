@@ -274,3 +274,7 @@ func (cr *AdminHandler) AdminDashboard(c *gin.Context) {
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "successfully fetched the admin dashboard", adminDashboard))
 
 }
+
+func (cr *AdminHandler) FullSalesReport(c *gin.Context) {
+
+}
