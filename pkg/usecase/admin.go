@@ -108,9 +108,29 @@ func (c *adminUseCase) UnblockUser(ctx context.Context, userID int) (domain.User
 }
 
 func (c *adminUseCase) AdminDashboard(ctx context.Context) (response.AdminDashboard, error) {
-	adminDashboard, err := c.adminRepo.AdminDashboard(ctx)
+	var adminDashboardData response.AdminDashboard
+
+	adminDashboardData, err := c.adminRepo.FetchOrdersSummaryData(ctx)
 	if err != nil {
 		return response.AdminDashboard{}, err
 	}
-	return adminDashboard, nil
+
+	totalOrderedItems, err := c.adminRepo.FetchTotalOrderedItems(ctx)
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+	adminDashboardData.TotalOrderedItems = totalOrderedItems
+
+	totalCreditedAmount, err := c.adminRepo.FetchTotalCreditedAmount(ctx)
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+	adminDashboardData.CreditedAmount = totalCreditedAmount
+	adminDashboardData.PendingAmount = adminDashboardData.OrderValue - totalCreditedAmount
+
+	adminDashboardData, err = c.adminRepo.FetchUsersCount(ctx, adminDashboardData)
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+	return adminDashboardData, nil
 }

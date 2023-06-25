@@ -19,5 +19,8 @@ type AdminRepository interface {
 	BlockUser(ctx context.Context, blockInfo request.BlockUser, adminID int) (domain.UserInfo, error)
 	UnblockUser(ctx context.Context, userID int) (domain.UserInfo, error)
 
-	AdminDashboard(ctx context.Context) (response.AdminDashboard, error)
+	FetchOrdersSummaryData(ctx context.Context) (response.AdminDashboard, error)
+	FetchTotalOrderedItems(ctx context.Context) (int, error)
+	FetchTotalCreditedAmount(ctx context.Context) (float64, error)
+	FetchUsersCount(ctx context.Context, adminDashboardData response.AdminDashboard) (response.AdminDashboard, error)
 }

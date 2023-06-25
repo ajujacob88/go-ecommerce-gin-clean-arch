@@ -255,6 +255,16 @@ func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "successfully unblocked the user", unBlockedUser))
 }
 
+// AdminDashboard
+// @Summary Admin Dashboard
+// @ID admin-dashboard
+// @Description Admins dashboard will give summary regarding orders, users, products, etc.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/dashboard [get]
 func (cr *AdminHandler) AdminDashboard(c *gin.Context) {
 	adminDashboard, err := cr.adminUseCase.AdminDashboard(c.Request.Context())
 	if err != nil {

@@ -8,6 +8,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/common"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 
 	"gorm.io/gorm"
@@ -146,3 +147,102 @@ func (c *adminDatabase) UnblockUser(ctx context.Context, userID int) (domain.Use
 	}
 	return userInfo, err
 }
+
+func (c *adminDatabase) FetchOrdersSummaryData(ctx context.Context) (response.AdminDashboard, error) {
+	var adminDashboard response.AdminDashboard
+	orderSummaryFetchQuery := ` 	SELECT 
+									COUNT(CASE WHEN order_status_id = 11 THEN id END) AS completed_orders,
+									COUNT(CASE WHEN order_status_id = 1 OR order_status_id = 2 OR order_status_id = 3 OR order_status_id = 4 OR order_status_id = 5 THEN id END) AS pending_orders, 
+									COUNT(CASE WHEN order_status_id = 7 OR order_status_id = 8 THEN id END) AS cancelled_orders,
+									COUNT(id) AS total_orders,
+									SUM (CASE WHEN order_status_id != 7 AND order_status_id != 8 THEN order_total_price ELSE 0 END) AS order_value,
+									COUNT(DISTINCT user_id) AS ordered_users
+									FROM orders;`
+
+	err := c.DB.Raw(orderSummaryFetchQuery).Scan(&adminDashboard).Error
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+
+	return adminDashboard, nil
+}
+
+func (c *adminDatabase) FetchTotalOrderedItems(ctx context.Context) (int, error) {
+	var totalOrderedItems int
+	totalOrderedItemsQuery := `	SELECT
+								COUNT(id) AS total_order_items
+								FROM order_lines;`
+	err := c.DB.Raw(totalOrderedItemsQuery).Scan(totalOrderedItems).Error
+	if err != nil {
+		return 0, err
+	}
+	return totalOrderedItems, nil
+}
+
+func (c *adminDatabase) FetchTotalCreditedAmount(ctx context.Context) (float64, error) {
+	var totalCreditedAmount float64
+	creditedAmountQuery := `SELECT
+							sum(order_total_price) AS credited_amount
+							FROM payment_details WHERE payment_status_id = 2;`
+
+	err := c.DB.Raw(creditedAmountQuery).Scan(&totalCreditedAmount).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return totalCreditedAmount, nil
+}
+
+func (c *adminDatabase) FetchUsersCount(ctx context.Context, adminDashboardData response.AdminDashboard) (response.AdminDashboard, error) {
+	userCountQuery := `	SELECT 
+						COUNT(*) AS total_users, 
+						COUNT(CASE WHEN is_verified = true THEN 1 END) AS verified_users
+  						FROM user_infos;`
+
+	err := c.DB.Raw(userCountQuery).Scan(&adminDashboardData).Error
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+
+	return adminDashboardData, nil
+}
+
+/*
+func (c *adminDatabase) AdminDashboard(ctx context.Context) (response.AdminDashboard, error) {
+	var adminDashboard response.AdminDashboard
+	orderSummaryFetchQuery := ` 	SELECT
+									COUNT(CASE WHEN order_status_id = 11 THEN id END) AS completed_orders,
+									COUNT(CASE WHEN order_status_id = 1 OR order_status_id = 2 OR order_status_id = 3 OR order_status_id = 4 OR order_status_id = 5 THEN id END) AS pending_orders,
+									COUNT(CASE WHEN order_status_id = 7 OR order_status_id = 8 THEN id END) AS cancelled_orders,
+									COUNT(id) AS total_orders,
+									SUM (CASE WHEN order_status_id != 7 AND order_status_id != 8 THEN order_total_price ELSE 0 END) AS order_value,
+									COUNT(DISTINCT user_id) AS ordered_users
+									FROM orders;`
+
+	err := c.DB.Raw(orderSummaryFetchQuery).Scan(&adminDashboard).Error
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+
+	totalOrderedItemsQuery := `	SELECT
+								COUNT(id) AS total_order_items
+								FROM order_lines;`
+	err = c.DB.Raw(totalOrderedItemsQuery).Scan(&adminDashboard.TotalOrderedItems).Error
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+
+
+	creditedAmountQuery := `SELECT
+							sum(order_total_price) AS credited_amount
+							FROM payment_details WHERE payment_status_id = 2;`
+
+	err = c.DB.Raw(creditedAmountQuery).Scan(&adminDashboard.CreditedAmount).Error
+	if err != nil {
+		return response.AdminDashboard{}, err
+	}
+
+
+	return adminDashboard, nil
+}
+*/
