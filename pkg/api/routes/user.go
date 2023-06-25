@@ -61,6 +61,8 @@ func UserRoutes(
 
 			home.GET("/orders", orderHandler.ViewAllOrders)
 
+			home.GET("/coupons", couponHandler.ViewAllCoupons)
+
 			//cart routes
 			// cart := api.Group("/cart")
 			// {

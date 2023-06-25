@@ -124,3 +124,11 @@ func (c *couponUseCase) ApplyCouponToCart(ctx context.Context, userID int, coupo
 	log.Printf("successfully updated the cart total with discount price %f", discountAmount)
 	return viewCart, nil
 }
+
+func (c *couponUseCase) FetchAllCoupons(ctx context.Context, userID int) ([]response.ViewCoupons, error) {
+	allCoupons, err := c.couponRepo.FetchAllCoupons(ctx, userID)
+	if err != nil {
+		return []response.ViewCoupons{}, err
+	}
+	return allCoupons, nil
+}

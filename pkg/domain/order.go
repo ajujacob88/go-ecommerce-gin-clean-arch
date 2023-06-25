@@ -22,7 +22,7 @@ type Order struct {
 	AppliedCouponDiscount float64           `json:"applied_coupon_discount"`
 	DeliveryStatusID      uint              `json:"delivery_status_id"`
 	DeliveryStatus        DeliveryStatus    `gorm:"foreignKey: DeliveryStatusID" json:"-"`
-	DeliveredAt           time.Time         `json:"delivered_at"`
+	DeliveredAt           *time.Time        `json:"delivered_at"` //By using a nullable time type like *time.Time, the used_at field will be correctly mapped as null when it is not present in the database, rather than being assigned a default value. It can be useful in scenarios where the field can have a nullable value.
 }
 
 type OrderStatus struct {

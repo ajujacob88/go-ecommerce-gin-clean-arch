@@ -11,4 +11,5 @@ import (
 type CouponUseCase interface {
 	ApplyCouponToCart(ctx context.Context, userID int, couponCode string) (response.ViewCart, error)
 	AddCoupon(ctx context.Context, couponDetails request.Coupon) (domain.Coupon, error)
+	FetchAllCoupons(ctx context.Context, userID int) ([]response.ViewCoupons, error)
 }

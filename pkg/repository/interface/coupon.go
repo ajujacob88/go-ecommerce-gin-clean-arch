@@ -5,6 +5,7 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 )
 
 type CouponRepository interface {
@@ -15,4 +16,6 @@ type CouponRepository interface {
 	AddCoupon(ctx context.Context, couponDetails request.Coupon) (domain.Coupon, error)
 
 	UpdateCouponUsed(ctx context.Context, couponUsed domain.CouponUsed) error
+
+	FetchAllCoupons(ctx context.Context, userID int) ([]response.ViewCoupons, error)
 }

@@ -336,7 +336,7 @@ const docTemplate = `{
                 "operationId": "add-coupon-by-admin",
                 "parameters": [
                     {
-                        "description": "Coupon Details",
+                        "description": "Coupon Details - valid till format:- 2023-06-30T23:30:00+05:30",
                         "name": "coupon_details",
                         "in": "body",
                         "required": true,
@@ -831,7 +831,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Start Date - Format - 2023-Jun-01",
+                        "description": "Start Date - Format - 2023-Mar-01",
                         "name": "start_date",
                         "in": "query"
                     },
@@ -1494,6 +1494,42 @@ const docTemplate = `{
                     },
                     "422": {
                         "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/coupons/": {
+            "get": {
+                "description": "This endpoint allows a user to fetch all the coupons.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "View All Coupon Details",
+                "operationId": "view-all-coupons",
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }

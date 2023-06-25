@@ -28,7 +28,7 @@ func NewCouponHandler(couponUseCase services.CouponUseCase) *CouponHandler {
 // @Tags Admin Coupon
 // @Accept json
 // @Produce json
-// @Param coupon_details body request.Coupon true "Coupon Details"
+// @Param coupon_details body request.Coupon true "Coupon Details - valid till format:- 2023-06-30T23:30:00+05:30"
 // @Success 202 {object} response.Response
 // @Failure 422 {object} response.Response
 // @Failure 500 {object} response.Response
@@ -97,12 +97,29 @@ func (cr *CouponHandler) ApplyCouponToCart(c *gin.Context) {
 
 }
 
-/*
-func (cr CouponHandler) viewCoupon(c *gin.Context) {
+//--------------FETCH COUPON DETAILS BY USER---------
+
+// FetchCouponDetails
+// @Summary View All Coupon Details
+// @ID view-all-coupons
+// @Description This endpoint allows a user to fetch all the coupons.
+// @Tags Cart
+// @Accept json
+// @Produce json
+// @Success 202 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /user/coupons/ [get]
+func (cr CouponHandler) ViewAllCoupons(c *gin.Context) {
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, response.ErrorResponse(400, "unable to fetch userid from context", err.Error(), nil))
 		return
 	}
+	allCoupons, err := cr.couponUseCase.FetchAllCoupons(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "unable to fetch the coupons", err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusAccepted, response.SuccessResponse(202, "Successfully fetched all the coupons", allCoupons))
 }
-*/

@@ -7,6 +7,7 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	interfaces "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/repository/interface"
 	"gorm.io/gorm"
 )
@@ -94,4 +95,17 @@ func (c *couponDatabase) UpdateCouponUsed(ctx context.Context, couponUsed domain
 	err := c.DB.Exec(updateCouponUsedQuery, couponUsed.UserID, couponUsed.CouponID, time.Now()).Error
 	return err
 
+}
+
+func (c *couponDatabase) FetchAllCoupons(ctx context.Context, userID int) ([]response.ViewCoupons, error) {
+	var allCoupons []response.ViewCoupons
+	fetchQuery := `	SELECT c.coupon_name,c.coupon_code, c.min_order_value, c.discount_percent, 
+					c.discount_max_amount, c.valid_till, c.Description, COALESCE(cu.used_at, NULL) AS used_at
+					FROM coupons c
+					LEFT JOIN coupon_useds AS cu ON cu.coupon_id = c.id AND cu.user_id = $1;`
+
+	if err := c.DB.Raw(fetchQuery, userID).Scan(&allCoupons).Error; err != nil {
+		return []response.ViewCoupons{}, err
+	}
+	return allCoupons, nil
 }

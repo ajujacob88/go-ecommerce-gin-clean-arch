@@ -446,7 +446,7 @@ paths:
       description: This endpoint allows an admin to add coupon to the database.
       operationId: add-coupon-by-admin
       parameters:
-      - description: Coupon Details
+      - description: Coupon Details - valid till format:- 2023-06-30T23:30:00+05:30
         in: body
         name: coupon_details
         required: true
@@ -774,7 +774,7 @@ paths:
       description: Admin can download sales report in .csv format
       operationId: sales-report
       parameters:
-      - description: Start Date - Format - 2023-Jun-01
+      - description: Start Date - Format - 2023-Mar-01
         in: query
         name: start_date
         type: string
@@ -1221,6 +1221,30 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: User can remove a product from the cart
+      tags:
+      - Cart
+  /user/coupons/:
+    get:
+      consumes:
+      - application/json
+      description: This endpoint allows a user to fetch all the coupons.
+      operationId: view-all-coupons
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: View All Coupon Details
       tags:
       - Cart
   /user/home:
