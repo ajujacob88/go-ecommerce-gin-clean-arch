@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -48,4 +49,16 @@ func GenerateCouponCode() string {
 	couponCode := prefix + string(randomCode) + string(numberCode)
 
 	return couponCode
+}
+
+func StringToTime(timeString string) (time.Time, error) {
+
+	// parse the string time to time
+	const shortForm = "2006-Jan-02"
+	timeValue, err := time.Parse(shortForm, timeString)
+
+	if err != nil {
+		return timeValue, fmt.Errorf("faild to parse given time %v to time variable \n invalid input", timeString)
+	}
+	return timeValue, err
 }

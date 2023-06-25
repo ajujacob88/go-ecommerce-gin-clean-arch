@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -276,5 +278,37 @@ func (cr *AdminHandler) AdminDashboard(c *gin.Context) {
 }
 
 func (cr *AdminHandler) FullSalesReport(c *gin.Context) {
+	// time range to fetch details
+	startDate, err1 := utils.StringToTime(c.Query("start_date"))
+	endDate, err2 := utils.StringToTime(c.Query("end_date"))
 
+	//pages
+	count, err3 := strconv.Atoi(c.Query("count"))
+	pageNo, err4 := strconv.Atoi(c.Query("page_no"))
+
+	//join all errors and check error
+	err := errors.Join(err1, err2, err3, err4)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "invalid inputs", err.Error(), nil))
+		return
+	}
+
+	reqReportRange := common.SalesReportDateRange{
+		StartDate: startDate,
+		EndDate:   endDate,
+		Pagination: common.Pagination{
+			Count:      count,
+			PageNumber: pageNo,
+		},
+	}
+
+	salesReport, err := cr.adminUseCase.FetchFullSalesReport(c.Request.Context(), reqReportRange)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to create sales report", err.Error(), nil))
+		return
+	}
+	if salesReport == nil {
+		c.JSON(http.StatusOK, response.SuccessResponse(200, "there is no sales report this period", nil))
+		return
+	}
 }

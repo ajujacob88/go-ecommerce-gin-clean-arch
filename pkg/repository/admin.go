@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -205,4 +206,30 @@ func (c *adminDatabase) FetchUsersCount(ctx context.Context, adminDashboardData 
 	}
 
 	return adminDashboardData, nil
+}
+
+func (c *adminDatabase) FetchFullSalesReport(ctx context.Context, reqReportRange common.SalesReportDateRange) ([]response.SalesReport, error) {
+	var fullSalesReport []response.SalesReport
+
+	limit := reqReportRange.Pagination.Count
+	offset := (reqReportRange.Pagination.PageNumber - 1) * limit
+
+	reportQuery := ` 	SELECT o.user_id,u.first_name, u.email, o.id AS order_id, o.order_total_price, 
+						c.coupon_code AS applied_coupon_code,o.applied_coupon_discount, 
+						os.status AS order_status, ds.status AS delivery_status, pm.payment_type, o.order_date  
+						FROM orders o
+						INNER JOIN order_statuses os ON o.order_status_id = os.id 
+						INNER JOIN payment_method_infos pm ON o.payment_method_info_id = pm.id 
+						INNER JOIN users u ON o.user_id = u.id 
+ 						LEFT JOIN coupons c ON o.applied_coupon_id = c.id
+						LEFT JOIN delivery_statuses ds ON o.delivery_status_id = ds.id
+						WHERE order_date >= $1 AND order_date <= $2
+						ORDER BY o.order_date 
+						LIMIT  $3 OFFSET $4`
+
+	if c.DB.Raw(reportQuery, reqReportRange.StartDate, reqReportRange.EndDate, limit, offset).Scan(&fullSalesReport).Error != nil {
+		return []response.SalesReport{}, errors.New("failed to collect the data to create the sales report")
+	}
+
+	return fullSalesReport, nil
 }

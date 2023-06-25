@@ -23,4 +23,6 @@ type AdminRepository interface {
 	FetchTotalOrderedItems(ctx context.Context) (int, error)
 	FetchTotalCreditedAmount(ctx context.Context) (float64, error)
 	FetchUsersCount(ctx context.Context, adminDashboardData response.AdminDashboard) (response.AdminDashboard, error)
+
+	FetchFullSalesReport(ctx context.Context, reqReportRange common.SalesReportDateRange) ([]response.SalesReport, error)
 }

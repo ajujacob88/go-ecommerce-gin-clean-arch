@@ -19,4 +19,6 @@ type AdminUseCase interface {
 	UnblockUser(ctx context.Context, userID int) (domain.UserInfo, error)
 
 	AdminDashboard(ctx context.Context) (response.AdminDashboard, error)
+
+	FetchFullSalesReport(ctx context.Context, reqReportRange common.SalesReportDateRange) ([]response.SalesReport, error)
 }

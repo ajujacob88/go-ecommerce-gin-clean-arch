@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/config"
@@ -133,4 +134,15 @@ func (c *adminUseCase) AdminDashboard(ctx context.Context) (response.AdminDashbo
 		return response.AdminDashboard{}, err
 	}
 	return adminDashboardData, nil
+}
+
+func (c *adminUseCase) FetchFullSalesReport(ctx context.Context, reqReportRange common.SalesReportDateRange) ([]response.SalesReport, error) {
+	fullSalesReport, err := c.adminRepo.FetchFullSalesReport(ctx, reqReportRange)
+	if err != nil {
+		return []response.SalesReport{}, err
+	}
+	log.Printf("successfully got sales report from %v to %v of limit %v",
+		reqReportRange.StartDate, reqReportRange.EndDate, reqReportRange.Pagination.Count)
+
+	return fullSalesReport, nil
 }

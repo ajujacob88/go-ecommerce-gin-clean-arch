@@ -1,5 +1,7 @@
 package response
 
+import "time"
+
 //model structs used to output data
 
 type AdminDataOutput struct {
@@ -22,4 +24,18 @@ type AdminDashboard struct {
 	TotalUsers        int     `json:"total_users"`
 	VerifiedUsers     int     `json:"verified_users"`
 	OrderedUsers      int     `json:"ordered_users"`
+}
+
+type SalesReport struct {
+	UserID                uint      `json:"user_id"`
+	FirstName             string    `json:"first_name"`
+	Email                 string    `json:"email"`
+	OrderID               uint      `json:"order_id"`
+	OrderTotalPrice       uint      `json:"order_total_price"`
+	OrderDate             time.Time `json:"order_date"`
+	OrderStatus           string    `json:"order_status"`
+	AppliedCouponCode     string    `json:"applied_coupon_code"`
+	AppliedCouponDiscount float64   `json:"applied_coupon_discount"`
+	DeliveryStatus        string    `json:"delivery_status"`
+	PaymentType           string    `json:"payment_type"`
 }
