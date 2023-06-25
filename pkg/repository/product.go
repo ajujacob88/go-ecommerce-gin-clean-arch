@@ -117,7 +117,11 @@ func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.P
 
 func (c *productDatabase) ListAllProducts(ctx context.Context, viewProductsQueryParam common.QueryParams) ([]domain.Product, error) {
 
-	findQuery := "SELECT * FROM products"
+	//findQuery := "SELECT * FROM products"
+	findQuery := `	SELECT pd.id AS product_details_id, p.name, pb.brand_name, pd.model_no,pd.price, p.description,  p.product_image
+					FROM products p
+					LEFT JOIN product_details AS pd ON pd.product_id = p.id
+					LEFT JOIN product_brands AS pb ON p.brand_id = pb.id`
 	params := []interface{}{}
 
 	if viewProductsQueryParam.Query != "" && viewProductsQueryParam.Filter != "" {

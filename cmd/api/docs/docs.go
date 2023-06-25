@@ -831,13 +831,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Start Date",
+                        "description": "Start Date - Format - 2023-Jun-01",
                         "name": "start_date",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "End Date",
+                        "description": "End Date - Format - 2023-Jun-01",
                         "name": "end_date",
                         "in": "query"
                     },

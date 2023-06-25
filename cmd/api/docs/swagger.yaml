@@ -774,11 +774,11 @@ paths:
       description: Admin can download sales report in .csv format
       operationId: sales-report
       parameters:
-      - description: Start Date
+      - description: Start Date - Format - 2023-Jun-01
         in: query
         name: start_date
         type: string
-      - description: End Date
+      - description: End Date - Format - 2023-Jun-01
         in: query
         name: end_date
         type: string

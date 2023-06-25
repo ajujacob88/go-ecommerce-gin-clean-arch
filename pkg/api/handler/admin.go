@@ -286,8 +286,8 @@ func (cr *AdminHandler) AdminDashboard(c *gin.Context) {
 // @Tags Admin
 // @Accept json
 // @Produce json
-// @Param start_date query string false "Start Date"
-// @Param end_date query string false "End Date"
+// @Param start_date query string false "Start Date - Format - 2023-Mar-01"
+// @Param end_date query string false "End Date - Format - 2023-Jun-01"
 // @Param page_number query int false "Page Number"
 // @Param count query int false "Count Of Order"
 // @Success 200 {object} response.Response
