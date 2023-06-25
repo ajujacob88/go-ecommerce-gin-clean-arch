@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/csv"
 	"errors"
 	"fmt"
 	"net/http"
@@ -257,6 +258,7 @@ func (cr *AdminHandler) UnblockUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "successfully unblocked the user", unBlockedUser))
 }
 
+// ---------------ADMIN DASHBOARD--------
 // AdminDashboard
 // @Summary Admin Dashboard
 // @ID admin-dashboard
@@ -277,6 +279,22 @@ func (cr *AdminHandler) AdminDashboard(c *gin.Context) {
 
 }
 
+// ------------FULL SALES REPORT-----------
+// FullSalesReport
+// @Summary Admin can download the full sales report
+// @ID sales-report
+// @Description Admin can download sales report in .csv format
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param start_date query string false "Start Date"
+// @Param end_date query string false "End Date"
+// @Param page_number query int false "Page Number"
+// @Param count query int false "Count Of Order"
+// @Success 200 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Router /admin/sales-report/ [get]
 func (cr *AdminHandler) FullSalesReport(c *gin.Context) {
 	// time range to fetch details
 	startDate, err1 := utils.StringToTime(c.Query("start_date"))
@@ -311,4 +329,49 @@ func (cr *AdminHandler) FullSalesReport(c *gin.Context) {
 		c.JSON(http.StatusOK, response.SuccessResponse(200, "there is no sales report this period", nil))
 		return
 	}
+
+	//set headers for downloading in browser
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Disposition", "attachment;filename=salesreport.csv")
+	csvWriter := csv.NewWriter(c.Writer)
+	headers := []string{
+		"UserID", "FirstName", "Email",
+		"OrderID", "OrderTotalPrice", "AppliedCouponCode",
+		"AppliedCouponDiscount", "OrderStatus", "DeliveryStatus",
+		"PaymentType", "OrderDate",
+	}
+
+	if err := csvWriter.Write(headers); err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to generate sales report", err.Error(), nil))
+		return
+	}
+
+	if err := csvWriter.Error(); err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to generate sales report", err.Error(), nil))
+		return
+	}
+
+	for _, sales := range salesReport {
+		row := []string{
+			fmt.Sprintf("%v", sales.UserID),
+			sales.FirstName,
+			sales.Email,
+			fmt.Sprintf("%v", sales.OrderID),
+			fmt.Sprintf("%v", sales.OrderTotalPrice),
+			sales.AppliedCouponCode,
+			fmt.Sprintf("%v", sales.AppliedCouponDiscount),
+			sales.OrderStatus,
+			sales.DeliveryStatus,
+			sales.PaymentType,
+			sales.OrderDate.Format("2006-01-02 15:04:05"),
+		}
+
+		if err := csvWriter.Write(row); err != nil {
+			c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to create sales report", err.Error(), nil))
+			return
+		}
+	}
+	// Flush the writer's buffer to ensure all data is written to the client
+	csvWriter.Flush()
+
 }

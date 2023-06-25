@@ -21,6 +21,7 @@ func AdminRoutes(
 	{
 		api.GET("/logout", adminHandler.AdminLogout)
 		api.GET("/dashboard", adminHandler.AdminDashboard)
+		api.GET("/sales-report", adminHandler.FullSalesReport)
 
 		//user management
 		userManagement := api.Group("/users")
