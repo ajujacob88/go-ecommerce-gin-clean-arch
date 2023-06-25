@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/csv"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -298,18 +297,33 @@ func (cr *AdminHandler) AdminDashboard(c *gin.Context) {
 func (cr *AdminHandler) FullSalesReport(c *gin.Context) {
 	// time range to fetch details
 	startDate, err1 := utils.StringToTime(c.Query("start_date"))
-	endDate, err2 := utils.StringToTime(c.Query("end_date"))
-
-	//pages
-	count, err3 := strconv.Atoi(c.Query("count"))
-	pageNo, err4 := strconv.Atoi(c.Query("page_no"))
-
-	//join all errors and check error
-	err := errors.Join(err1, err2, err3, err4)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "invalid inputs", err.Error(), nil))
+	if err1 != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "errorRR1", err1.Error(), nil))
 		return
 	}
+	endDate, err2 := utils.StringToTime(c.Query("end_date"))
+	if err2 != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "errorRR2", err2.Error(), nil))
+		return
+	}
+	//pages
+
+	count, err3 := strconv.Atoi(c.Query("count"))
+	if err3 != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "errorRR3", err3.Error(), nil))
+		return
+	}
+	pageNo, err4 := strconv.Atoi(c.Query("page_number"))
+	if err4 != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "error4", err4.Error(), nil))
+		return
+	}
+	//join all errors and check error
+	// err := errors.Join(err1, err2, err3, err4)
+	// if err != nil {
+	// 	c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "invalid inputs", err.Error(), nil))
+	// 	return
+	// }
 
 	reqReportRange := common.SalesReportDateRange{
 		StartDate: startDate,
