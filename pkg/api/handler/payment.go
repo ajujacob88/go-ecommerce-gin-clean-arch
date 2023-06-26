@@ -38,7 +38,7 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Orde
 
 	razorpayOrderID, err := cr.paymentUseCase.RazorPayCheckout(c.Request.Context(), orderInfo)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to complete the order", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to complete the order", err.Error(), nil))
 
 	}
 	fmt.Println("razorpayorderid is", razorpayOrderID, "and total order value is", orderInfo.OrderTotalPrice)
@@ -46,7 +46,7 @@ func (cr *PaymentHandler) RazorpayCheckout(c *gin.Context, orderInfo domain.Orde
 	// create the order as order pending, cart clearing and orderline only adter razor pay verification
 	createdOrder, err := cr.orderUseCase.SaveOrderAndPayment(c.Request.Context(), orderInfo)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to save the order", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to save the order", err.Error(), nil))
 		return
 	}
 
@@ -118,7 +118,7 @@ func (cr *PaymentHandler) RazorpayVerify(c *gin.Context) {
 
 	updatedOrder, err := cr.paymentUseCase.UpdateOrderAndPaymentDetails(c.Request.Context(), paymentVerifier)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "failed to update payment details", err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to update payment details", err.Error(), nil))
 
 	}
 

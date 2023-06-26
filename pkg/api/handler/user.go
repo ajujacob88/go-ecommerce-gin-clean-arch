@@ -173,7 +173,7 @@ func (cr *UserHandler) UserLoginByEmail(c *gin.Context) {
 	// generate token using jwt in map
 	tokenString, err := auth.GenerateJWT(user.ID)
 	if err != nil {
-		response := response.ErrorResponse(500, "faild to login", err.Error(), nil)
+		response := response.ErrorResponse(500, "faild to generate jwt", err.Error(), nil)
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}

@@ -42,6 +42,7 @@ func NewOrderHandler(orderusecase services.OrderUseCase, paymentusecase services
 // @Param place_order_details body request.PlaceOrder true "Place Order details"
 // @Success 200 {object} response.Response
 // @Failure 400 {object} response.Response
+// @Failure 401 {object} response.Response
 // @Failure 422 {object} response.Response
 // @Router /user/cart/placeorder/ [post]
 func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
@@ -54,7 +55,7 @@ func (cr *OrderHandler) PlaceOrderFromCart(c *gin.Context) {
 
 	userID, err := handlerutil.GetUserIdFromContext(c)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(400, "failed to fetch the user ID", err.Error(), nil))
+		c.AbortWithStatusJSON(http.StatusUnauthorized, response.ErrorResponse(401, "failed to fetch the user ID", err.Error(), nil))
 		return
 	}
 
