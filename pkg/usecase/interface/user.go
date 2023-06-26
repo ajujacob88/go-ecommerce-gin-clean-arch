@@ -24,15 +24,8 @@ type UserUseCase interface {
 	DeleteAddress(ctx context.Context, userID, addressID int) error
 
 	ListAddress(ctx context.Context, userID int) ([]response.ShowAddress, error)
+
+	FindByEmailOrPhoneNumber(ctx context.Context, userCredentials request.UserCredentials) (domain.Users, error)
+
+	ChangePassword(ctx context.Context, NewHashedPassword, MobileNum string) error
 }
-
-/* no need already in the code arch
-
-type UserUseCase interface {
-	FindAll(ctx context.Context) ([]domain.Users, error)
-	FindByID(ctx context.Context, id uint) (domain.Users, error)
-	Save(ctx context.Context, user domain.Users) (domain.Users, error)
-	Delete(ctx context.Context, user domain.Users) error
-}
-
-*/

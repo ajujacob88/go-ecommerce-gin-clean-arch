@@ -121,6 +121,26 @@ func (c *userDatabase) FindByEmail(ctx context.Context, email string) (domain.Us
 	return userData, err
 }
 
+func (c *userDatabase) FindByEmailOrPhoneNumber(ctx context.Context, userCredentials request.UserCredentials) (domain.Users, error) {
+	var userData domain.Users
+	findUserQuery := `	SELECT users.id, users.first_name, users.last_name, users.email, users.phone, users.password 
+						FROM users 
+						WHERE users.email = $1 AND users.phone = $2;`
+
+	err := c.DB.Raw(findUserQuery, userCredentials.Email, userCredentials.PhoneNum).Scan(&userData).Error
+	if err != nil {
+		return domain.Users{}, err
+	} else if userData.ID == 0 {
+		return domain.Users{}, errors.New("user with such email or phone number does not exist in database")
+	}
+	//check this condition also
+	// if userData.BlockStatus {
+	// 	return userData, errors.New("you are blocked")
+	// }
+
+	return userData, err
+}
+
 // used in userlogin handler
 func (c *userDatabase) BlockStatus(ctx context.Context, userId uint) (bool, error) {
 
@@ -236,4 +256,14 @@ func (c *userDatabase) FindAddress(ctx context.Context, userID int, addressID in
 		return domain.UserAddress{}, errors.New("invalid addressid / this address is not mapped into this user")
 	}
 	return userAddress, nil
+}
+
+func (c *userDatabase) ChangePassword(ctc context.Context, NewHashedPassword, MobileNum string) error {
+	changePassword := c.DB.Model(&domain.Users{}).Where("phone_no=?", MobileNum).UpdateColumn("password", NewHashedPassword)
+	if changePassword.RowsAffected == 0 {
+		return errors.New("no row updated")
+	} else if changePassword.Error != nil {
+		return changePassword.Error
+	}
+	return nil
 }

@@ -97,6 +97,15 @@ func (c *userUseCase) FindByEmail(ctx context.Context, email string) (domain.Use
 	return users, err
 }
 
+func (c *userUseCase) FindByEmailOrPhoneNumber(ctx context.Context, userCredentials request.UserCredentials) (domain.Users, error) {
+	users, err := c.userRepo.FindByEmailOrPhoneNumber(ctx, userCredentials)
+	if err != nil {
+		return domain.Users{}, err
+	}
+	return users, nil
+
+}
+
 //----user address
 
 func (c *userUseCase) AddAddress(ctx context.Context, userAddressInput request.UserAddressInput, userID int) (domain.UserAddress, error) {
@@ -119,4 +128,9 @@ func (c *userUseCase) DeleteAddress(ctx context.Context, userID, addressID int) 
 func (c *userUseCase) ListAddress(ctx context.Context, userID int) ([]response.ShowAddress, error) {
 	allAddress, err := c.userRepo.ListAddress(ctx, userID)
 	return allAddress, err
+}
+
+func (c *userUseCase) ChangePassword(ctx context.Context, NewHashedPassword, MobileNum string) error {
+	err := c.userRepo.ChangePassword(ctx, NewHashedPassword, MobileNum)
+	return err
 }

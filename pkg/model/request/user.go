@@ -31,3 +31,8 @@ type UserAddressInput struct {
 	Pincode     string `json:"pincode"`
 	Landmark    string `json:"landmark"`
 }
+
+type UserCredentials struct {
+	Email    string `json:"email"`
+	PhoneNum string `json:"phonenum"`
+}

@@ -29,6 +29,12 @@ func UserRoutes(
 		login.POST("/login/email", userHandler.UserLoginByEmail)
 	}
 
+	forgotPassword := api.Group("/user/forgot-password")
+	{
+		forgotPassword.POST("/", userHandler.ForgotPassword)
+		forgotPassword.PATCH("/otp-verify", userHandler.ForgotPasswordOtpVerify)
+	}
+
 	//User routes that require authentication
 
 	home := api.Group("/user")

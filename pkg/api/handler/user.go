@@ -11,6 +11,7 @@ import (
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
 	services "github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/usecase/interface"
+	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
 )
@@ -379,4 +380,86 @@ func (cr *UserHandler) ListAddress(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response.SuccessResponse(200, "Succesfully fetched all the addresses", allAddress))
 
+}
+
+// User Forgot Password
+// @Summary User Forgot Password
+// @ID user-forgot-password
+// @Description provide email and phone number. otp will be sent, after otp validation password will be updated
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param user_login_credentials body request.UserCredentials true "Enter the email and phoneNumber"
+// @Success 200 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure 401 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Router /user/forgot-password [post]
+func (cr *UserHandler) ForgotPassword(c *gin.Context) {
+	var body request.UserCredentials
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to fetch the body", err.Error(), nil))
+		return
+	}
+
+	user, err := cr.userUseCase.FindByEmailOrPhoneNumber(c.Request.Context(), body)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, response.ErrorResponse(401, "Incorrect email or password", err.Error(), nil))
+		return
+	}
+
+	//twilio otp send
+
+	responseID, err := cr.otpUseCase.TwilioSendOtp(c.Request.Context(), "+91"+user.Phone)
+	if err != nil {
+		response := response.ErrorResponse(500, "failed to generate otp", err.Error(), nil)
+
+		c.JSON(http.StatusInternalServerError, response)
+		return
+
+	}
+	response := response.SuccessResponse(200, "Success: Enter the otp and the response id", responseID)
+	c.JSON(http.StatusOK, response)
+
+}
+
+// User Forgot Password otp verify
+// @Summary User Forgot Password OTP Verify
+// @ID user-forgot-password-otp-verify
+// @Description after otp validation password will be updated
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param otp_details_and_new_password body request.OTPVerifyForgotPassword true "Enter the otp details and new password"
+// @Success 200 {object} response.Response
+// @Failure 500 {object} response.Response
+// @Failure 400 {object} response.Response
+// @Failure 422 {object} response.Response
+// @Router /user/forgot-password/otp-verify [patch]
+func (cr *UserHandler) ForgotPasswordOtpVerify(c *gin.Context) {
+	//var user domain.Users
+	var body request.OTPVerifyForgotPassword
+	if err := c.BindJSON(&body); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to read the request body", err.Error(), nil))
+		return
+	}
+	otpsession, err := cr.otpUseCase.TwilioVerifyOTP(c.Request.Context(), body.OTPVerify)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, response.ErrorResponse(400, "Invalid Otp", err.Error(), nil))
+		return
+	}
+
+	NewHashedPassword, err := utils.HashPassword(body.NewPassword)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "Failed to hash the new password", err.Error(), nil))
+		return
+	}
+
+	if err = cr.userUseCase.ChangePassword(c.Request.Context(), NewHashedPassword, otpsession.MobileNum); err != nil {
+		c.JSON(http.StatusInternalServerError, response.ErrorResponse(500, "Failed to update the new password", err.Error(), nil))
+		return
+	}
+
+	response := response.SuccessResponse(200, "Password Updated Successfully", nil)
+	c.JSON(200, response)
 }

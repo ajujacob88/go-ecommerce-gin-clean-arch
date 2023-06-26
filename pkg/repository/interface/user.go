@@ -17,6 +17,8 @@ type UserRepository interface {
 
 	FindByEmail(ctx context.Context, Email string) (domain.Users, error)
 
+	FindByEmailOrPhoneNumber(ctx context.Context, userCredentials request.UserCredentials) (domain.Users, error)
+
 	BlockStatus(ctx context.Context, userId uint) (bool, error)
 
 	FindAddressByID(ctx context.Context, userID int) (domain.UserAddress, error)
@@ -30,4 +32,6 @@ type UserRepository interface {
 	ListAddress(ctx context.Context, userID int) ([]response.ShowAddress, error)
 
 	FindAddress(ctx context.Context, userID, addressID int) (domain.UserAddress, error)
+
+	ChangePassword(ctc context.Context, NewHashedPassword, MobileNum string) error
 }

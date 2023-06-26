@@ -8,6 +8,7 @@ import (
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func CompareUsers(newUser request.NewUserInfo, checkUser domain.Users) (err error) {
@@ -61,4 +62,10 @@ func StringToTime(timeString string) (time.Time, error) {
 		return timeValue, fmt.Errorf("faild to parse given time %v to time variable \n invalid input", timeString)
 	}
 	return timeValue, err
+}
+
+// password hashing
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14) //GenerateFromPassword returns the bcrypt hash of the password
+	return string(bytes), err
 }
