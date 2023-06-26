@@ -1537,6 +1537,112 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/forgot-password": {
+            "post": {
+                "description": "provide email and phone number. otp will be sent, after otp validation password will be updated",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "User Forgot Password",
+                "operationId": "user-forgot-password",
+                "parameters": [
+                    {
+                        "description": "Enter the email and phoneNumber",
+                        "name": "user_login_credentials",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UserCredentials"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/forgot-password/otp-verify": {
+            "patch": {
+                "description": "after otp validation password will be updated",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "User Forgot Password OTP Verify",
+                "operationId": "user-forgot-password-otp-verify",
+                "parameters": [
+                    {
+                        "description": "Enter the otp details and new password",
+                        "name": "otp_details_and_new_password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.OTPVerifyForgotPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/home": {
             "get": {
                 "description": "user home",
@@ -2328,6 +2434,24 @@ const docTemplate = `{
                 }
             }
         },
+        "request.OTPVerifyForgotPassword": {
+            "type": "object",
+            "required": [
+                "otp",
+                "otpid"
+            ],
+            "properties": {
+                "newpassword": {
+                    "type": "string"
+                },
+                "otp": {
+                    "type": "string"
+                },
+                "otpid": {
+                    "type": "string"
+                }
+            }
+        },
         "request.PlaceOrder": {
             "type": "object",
             "required": [
@@ -2390,6 +2514,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "street": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UserCredentials": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "phonenum": {
                     "type": "string"
                 }
             }

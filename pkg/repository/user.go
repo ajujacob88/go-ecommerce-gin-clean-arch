@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
@@ -259,11 +260,21 @@ func (c *userDatabase) FindAddress(ctx context.Context, userID int, addressID in
 }
 
 func (c *userDatabase) ChangePassword(ctc context.Context, NewHashedPassword, MobileNum string) error {
-	changePassword := c.DB.Model(&domain.Users{}).Where("phone_no=?", MobileNum).UpdateColumn("password", NewHashedPassword)
-	if changePassword.RowsAffected == 0 {
-		return errors.New("no row updated")
-	} else if changePassword.Error != nil {
-		return changePassword.Error
+	fmt.Println("phone nos is", MobileNum, "new hashed pw is", NewHashedPassword)
+
+	// Remove the "+91" prefix from the phone number
+	phoneNumber := strings.TrimPrefix(MobileNum, "+91")
+
+	changePassword := c.DB.Model(&domain.Users{}).Where("phone=?", phoneNumber).UpdateColumn("password", NewHashedPassword)
+	if changePassword.Error != nil {
+		return fmt.Errorf("failed to update password: %v", changePassword.Error)
 	}
+
+	if changePassword.RowsAffected == 0 {
+		errMsg := fmt.Sprintf("no rows updated for phone number: %s", MobileNum)
+		fmt.Println(errMsg)
+		return errors.New(errMsg)
+	}
+
 	return nil
 }

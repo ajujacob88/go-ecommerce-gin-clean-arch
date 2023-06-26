@@ -169,6 +169,18 @@ definitions:
     - otp
     - otpid
     type: object
+  request.OTPVerifyForgotPassword:
+    properties:
+      newpassword:
+        type: string
+      otp:
+        type: string
+      otpid:
+        type: string
+    required:
+    - otp
+    - otpid
+    type: object
   request.PlaceOrder:
     properties:
       address_id:
@@ -210,6 +222,13 @@ definitions:
       state:
         type: string
       street:
+        type: string
+    type: object
+  request.UserCredentials:
+    properties:
+      email:
+        type: string
+      phonenum:
         type: string
     type: object
   request.UserLoginEmail:
@@ -1247,6 +1266,77 @@ paths:
       summary: View All Coupon Details
       tags:
       - Cart
+  /user/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: provide email and phone number. otp will be sent, after otp validation
+        password will be updated
+      operationId: user-forgot-password
+      parameters:
+      - description: Enter the email and phoneNumber
+        in: body
+        name: user_login_credentials
+        required: true
+        schema:
+          $ref: '#/definitions/request.UserCredentials'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Forgot Password
+      tags:
+      - user
+  /user/forgot-password/otp-verify:
+    patch:
+      consumes:
+      - application/json
+      description: after otp validation password will be updated
+      operationId: user-forgot-password-otp-verify
+      parameters:
+      - description: Enter the otp details and new password
+        in: body
+        name: otp_details_and_new_password
+        required: true
+        schema:
+          $ref: '#/definitions/request.OTPVerifyForgotPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: User Forgot Password OTP Verify
+      tags:
+      - user
   /user/home:
     get:
       consumes:
