@@ -24,6 +24,11 @@ func UserRoutes(
 		signup.POST("/signup/otp/verify", userHandler.SignupOtpVerify)
 	}
 
+	products := api.Group("/user")
+	{
+		products.GET("/products", productHandler.ListAllProducts)
+	}
+
 	login := api.Group("/user")
 	{
 		login.POST("/login/email", userHandler.UserLoginByEmail)
@@ -44,7 +49,7 @@ func UserRoutes(
 		{
 			home.GET("/home", userHandler.Homehandler)
 			home.GET("/logout", userHandler.LogoutHandler)
-			home.GET("/products", productHandler.ListAllProducts)
+			//home.GET("/products", productHandler.ListAllProducts)
 			home.GET("/products/:id", productHandler.FindProductByID)
 			home.POST("/cart/add/:product_details_id", cartHandler.AddToCart)
 			home.DELETE("/cart/remove/:product_details_id", cartHandler.RemoveFromCart)
