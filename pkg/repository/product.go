@@ -105,7 +105,7 @@ func (c *productDatabase) CreateBrand(ctx context.Context, newBrandDetails domai
 	return createdBrand, err
 }
 
-//---------product management----------------------
+//---------product managementt----------------------
 
 func (c *productDatabase) CreateProduct(ctx context.Context, newProduct domain.Product) (domain.Product, error) {
 	var createdProduct domain.Product
