@@ -1,5 +1,7 @@
 .PHONY: wire swag
 
+GOCMD=go
+
 # format to write make file is 
 # target: prerequesttobeececuted 1 if any, prerequesttobeececuted 2 if any,..
 # 	actions...
@@ -11,7 +13,11 @@ swag:
 	swag init -g pkg/api/handler/user.go -o ./cmd/api/docs
 
 run:
-	go run cmd/api/main.go 
+	@echo "Smart_Store Server running...."  
+#	go run cmd/api/main.go
+#	go run ./cmd/api
+	$(GOCMD) run ./cmd/api
+	
 
 
 
