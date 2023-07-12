@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"reflect"
 	"regexp"
 	"testing"
@@ -33,7 +34,7 @@ func TestCreateAdmin(t *testing.T) {
 				Password: "password",
 			},
 			expectedOutput: domain.Admin{
-				//ID:           1,
+				//ID:       1,
 				UserName: "Rahul",
 				Email:    "rahul@gmail.com",
 				Phone:    "9496074716",
@@ -48,72 +49,62 @@ func TestCreateAdmin(t *testing.T) {
 				rows := sqlmock.NewRows([]string{"user_name", "email", "phone", "password"}).
 					AddRow("Rahul", "rahul@gmail.com", "9496074716", "password")
 
+				// mock.ExpectQuery(`INSERT INTO admins\(user_name, email, phone, password,is_super_admin, is_blocked, created_at, updated_at\)
+				//  VALUES\(\$1, \$2, \$3,\$4, false, false, NOW\(\), NOW\(\)\) RETURNING \*`).
+				//actually above is correct without using quotemeta, regexp.QuoteMeta returns a string that escapes all regular expression metacharacters inside the argument text; the returned string is a regular expression matching the literal text. so https://pkg.go.dev/regexp#QuoteMeta, in the ofcicial documentation we can check
+
 				mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO admins(user_name, email, phone, password,is_super_admin, is_blocked, created_at, updated_at)
-				 VALUES($1, $2, $3,$4, false, false, NOW(), NOW()) RETURNING *`)).
-					//mock.ExpectQuery("INSERT INTO admins(user_name, email, phone, password,is_super_admin, is_blocked, created_at, updated_at)
-					//VALUES(\\$1$, \\$2$, \\$3$,\\$4$, false, false, NOW(), NOW()) RETURNING *;").
+					 VALUES($1, $2, $3,$4, false, false, NOW(), NOW()) RETURNING *`)).
 					WithArgs("Rahul", "rahul@gmail.com", "9496074716", "password").
 					WillReturnRows(rows)
 			},
 
-			/*
-				buildStub: func(mock sqlmock.Sqlmock) {
-					columns := []string{"user_name", "email", "phone", "password"}
-					mock.ExpectQuery(`INSERT INTO admins\(user_name, email, phone, password\)
-											VALUES\(\$1, \$2, \$3, \$4\)`).
-						WithArgs("Rahul", "rahul@gmail.com", "9496074716", "password").
-						WillReturnRows(sqlmock.NewRows(columns).FromCSVString("Rahul,sujith@gmail.com,7902638845,sujith@123"))
-				},
-			*/
-			// buildStub: func(mock sqlmock.Sqlmock) {
-			// 	columns := []string{"user_name", "email", "phone", "password", "is_super_admin", "is_blocked", "created_at", "updated_at"}
-			// 	query := `INSERT INTO admins(user_name, email, phone, password, is_super_admin, is_blocked, created_at, updated_at) VALUES (?, ?, ?, ?, false, false, NOW(), NOW()) RETURNING *`
-			// 	mock.ExpectQuery(query).
-			// 		WithArgs("Rahul", "rahul@gmail.com", "9496074716", "password").
-			// 		WillReturnRows(sqlmock.NewRows(columns).AddRow("Rahul", "rahul@gmail.com", "9496074716", "password", false, false, nil, nil))
-			// },
-
-			// buildStub: func(mock sqlmock.Sqlmock) {
-			// 	columns := []string{"user_name", "email", "phone", "password", "is_super_admin", "is_blocked", "created_at", "updated_at"}
-			// 	query := `INSERT INTO admins(user_name, email, phone, password, is_super_admin, is_blocked, created_at, updated_at) VALUES (?, ?, ?, ?, false, false, NOW(), NOW()) RETURNING *`
-			// 	mock.ExpectQuery(query).
-			// 		WithArgs("Rahul", "rahul@gmail.com", "9496074716", "password").
-			// 		WillReturnRows(sqlmock.NewRows(columns).AddRow("Rahul", "rahul@gmail.com", "9496074716", "password", false, false, nil, nil))
-			// },
-
 			expectedError: nil,
 		},
 
-		/*
-			{ // test case for creating a new admin with duplictae phone
-				testName: "duplicate phone",
-				inputField: request.NewAdminInfo{
-					UserName: "Rahul2",
-					Email:    "rahul2@gmail.com",
-					Phone:    "9496074716",
-					Password: "password",
-				},
-				expectedOutput: domain.Admin{},
-				// buildStub: func(mock sqlmock.Sqlmock) {
-				// 	mock.ExpectQuery("^INSERT INTO admins\\(.+\\)$").
-				// 		WithArgs("Rahul2", "rahul2@gmail.com", "9496074716", "password").
-				// 		WillReturnError(errors.New("phone number already exists"))
-
-				// },
-
-
-					buildStub: func(mock sqlmock.Sqlmock) {
-						mock.ExpectQuery(`^INSERT INTO admins \(user_name, email, phone, password, is_super_admin, is_blocked, created_at, updated_at\) VALUES \(\\$1$, \\$2$, \\$3$, \\$4$, false, false, NOW\(\), NOW\(\)\) RETURNING \*$`).
-							WithArgs("Rahul2", "rahul2@gmail.com", "9496074716", "password").
-							WillReturnError(errors.New("phone number already exists"))
-					},
-
-
-				expectedError: errors.New("validation error: Field 'UserName' is required"),
-
-				//expectedError: errors.New("phone number already exists"),
+		{ // test case for creating a new admin with duplictae phone
+			testName: "duplicate phone",
+			inputField: request.NewAdminInfo{
+				UserName: "Rahul2",
+				Email:    "rahul2@gmail.com",
+				Phone:    "9496074716",
+				Password: "password",
 			},
-		*/
+			expectedOutput: domain.Admin{},
+
+			buildStub: func(mock sqlmock.Sqlmock) {
+
+				mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO admins(user_name, email, phone, password,is_super_admin, is_blocked, created_at, updated_at)
+					 VALUES($1, $2, $3,$4, false, false, NOW(), NOW()) RETURNING *`)).
+					WithArgs("Rahul2", "rahul2@gmail.com", "9496074716", "password").
+					WillReturnError(errors.New("phone number already exists"))
+
+			},
+
+			expectedError: errors.New("phone number already exists"),
+		},
+
+		{ // test case for creating a new admin with duplictae email
+			testName: "duplicate phone",
+			inputField: request.NewAdminInfo{
+				UserName: "Rahul2",
+				Email:    "rahul@gmail.com",
+				Phone:    "7736832773",
+				Password: "password",
+			},
+			expectedOutput: domain.Admin{},
+
+			buildStub: func(mock sqlmock.Sqlmock) {
+
+				mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO admins(user_name, email, phone, password,is_super_admin, is_blocked, created_at, updated_at)
+					 VALUES($1, $2, $3,$4, false, false, NOW(), NOW()) RETURNING *`)).
+					WithArgs("Rahul2", "rahul@gmail.com", "7736832773", "password").
+					WillReturnError(errors.New("email already exists- value violates unique constraint 'email'"))
+
+			},
+
+			expectedError: errors.New("email already exists- value violates unique constraint 'email'"),
+		},
 	}
 
 	for _, tt := range tests {
@@ -141,8 +132,9 @@ func TestCreateAdmin(t *testing.T) {
 
 			tt.buildStub(mock)
 
-			actualOutput, actualError := adminRepository.CreateAdmin(context.TODO(), tt.inputField)
+			actualOutput, actualError := adminRepository.CreateAdmin(context.Background(), tt.inputField)
 
+			/* This is by using assert from testify package
 			if tt.expectedError == nil {
 				assert.NoError(t, actualError)
 			} else {
@@ -152,6 +144,24 @@ func TestCreateAdmin(t *testing.T) {
 			if !reflect.DeepEqual(tt.expectedOutput, actualOutput) {
 				t.Errorf("got %v, but want %v", actualOutput, tt.expectedOutput)
 			}
+			*/
+
+			//without using testify assert package, using default testing package
+
+			if tt.expectedError == nil {
+				if actualError != nil {
+					t.Errorf("expected no error, but got: %v", actualError)
+				}
+			} else {
+				if tt.expectedError.Error() != actualError.Error() {
+					t.Errorf("expected error: %v, but got: %v", tt.expectedError, actualError)
+				}
+			}
+
+			if !reflect.DeepEqual(tt.expectedOutput, actualOutput) {
+				t.Errorf("got %+v, but want %+v", actualOutput, tt.expectedOutput)
+			}
+
 			// Check that all expectations were met
 			err = mock.ExpectationsWereMet()
 			if err != nil {
@@ -163,7 +173,6 @@ func TestCreateAdmin(t *testing.T) {
 
 }
 
-/* This is correct
 func TestIsSuperAdmin(t *testing.T) {
 	tests := []struct {
 		testName       string
@@ -183,6 +192,29 @@ func TestIsSuperAdmin(t *testing.T) {
 					WillReturnRows(sqlmock.NewRows([]string{"is_super_admin"}).AddRow(true))
 			},
 			expectedError: nil,
+		},
+		{
+			testName:       "admin is not a superadmin",
+			inputField:     6,
+			expectedOutput: false,
+			buildStub: func(mock sqlmock.Sqlmock) {
+				//columns := []string{"id"}
+				mock.ExpectQuery("SELECT is_super_admin	FROM admins	WHERE id = \\$1$").
+					WithArgs(6).
+					WillReturnRows(sqlmock.NewRows([]string{"is_super_admin"}).AddRow(false))
+			},
+			expectedError: nil,
+		},
+		{
+			testName:       "admin does not exist",
+			inputField:     7,
+			expectedOutput: false,
+			buildStub: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery("SELECT is_super_admin FROM admins WHERE id = \\$1$").
+					WithArgs(7).
+					WillReturnError(errors.New("admin not found"))
+			},
+			expectedError: errors.New("admin not found"),
 		},
 	}
 
@@ -233,73 +265,173 @@ func TestIsSuperAdmin(t *testing.T) {
 	}
 }
 
-/* NO NEED - delee this
-
-func TestCreateAdmin(t *testing.T) {
-
-	type fields struct {
-		db *gorm.DB
-	}
-
-	type args struct {
-		ctx          context.Context
-		newAdminInfo request.NewAdminInfo
-	}
+func TestFindAdmin(t *testing.T) {
 
 	tests := []struct {
-		name       string
-		args       args
-		beforeTest func(sqlmock.Sqlmock)
-		want       domain.Admin
-		wantErr    error
+		testName       string
+		inputField     string
+		expectedOutput domain.Admin
+		buildStub      func(mock sqlmock.Sqlmock)
+		expectedError  error
 	}{
-		{
-			name: "fail create admin",
-			args: args{
-				ctx:          context.TODO(),
-				newAdminInfo: request.NewAdminInfo{UserName: "Ganesh", Email: "ganesh@gmail.com", Phone: "1234567895", Password: "ajujacob"},
+		{ // test case for finding a admin
+			testName:   "Find admin by email succesfull",
+			inputField: "rahul@gmail.com",
+			expectedOutput: domain.Admin{
+				//ID:       1,
+				UserName: "Rahul",
+				Email:    "rahul@gmail.com",
+				Phone:    "9496074716",
+				//Password:     "password",
+				IsSuperAdmin: false,
+				IsBlocked:    false,
+				CreatedAt:    time.Time{},
+				UpdatedAt:    time.Time{},
 			},
-			beforeTest: func(mockSQL sqlmock.Sqlmock) {
-				mockSQL.ExpectExec(regexp.QuoteMeta(
-					`INSERT INTO admins(user_name, email, phone, password,is_super_admin, is_blocked, created_at, updated_at)
-						 	VALUES($1, $2, $3,$4, false, false, NOW(), NOW()) RETURNING *;`,
-				)).WithArgs("Ganesh", "ganesh@gmail.com", "1234567895", "ajujacob").WillReturnResult(sqlmock.NewResult(1, 1))
 
+			buildStub: func(mock sqlmock.Sqlmock) {
+				rows := sqlmock.NewRows([]string{"user_name", "email", "phone"}).
+					AddRow("Rahul", "rahul@gmail.com", "9496074716")
+
+				mock.ExpectQuery(regexp.QuoteMeta(`SELECT *	FROM admins	WHERE email = $1;`)).
+					WithArgs("rahul@gmail.com").
+					WillReturnRows(rows)
 			},
-			want:    domain.Admin{ID: 1, UserName: "Ganesh", Email: "ganesh@gmail.com", Phone: "1234567895", Password: "ajujacob", IsSuperAdmin: false, IsBlocked: false},
-			wantErr: nil,
+
+			expectedError: nil,
+		},
+
+		{ // test case for finding a admin - case insensitive
+			testName:   "Find admin by email succesfull - test case 2- case insensitive",
+			inputField: "RAHUL@gmaiL.com",
+			expectedOutput: domain.Admin{
+				//ID:       1,
+				UserName: "Rahul",
+				Email:    "rahul@gmail.com",
+				Phone:    "9496074716",
+				//Password:     "password",
+				IsSuperAdmin: false,
+				IsBlocked:    false,
+				CreatedAt:    time.Time{},
+				UpdatedAt:    time.Time{},
+			},
+
+			buildStub: func(mock sqlmock.Sqlmock) {
+				rows := sqlmock.NewRows([]string{"user_name", "email", "phone"}).
+					AddRow("Rahul", "rahul@gmail.com", "9496074716")
+
+				mock.ExpectQuery(regexp.QuoteMeta(`SELECT *	FROM admins	WHERE email = $1;`)).
+					WithArgs("RAHUL@gmaiL.com").
+					WillReturnRows(rows)
+			},
+
+			expectedError: nil,
+		},
+
+		{ // test case for finding a admin - special characters
+			testName:   "Find admin by email succesfull - test case 3- with special characters entered",
+			inputField: "RAHUL@gmaiL.com",
+			expectedOutput: domain.Admin{
+				//ID:       1,
+				UserName: "Rahul",
+				Email:    "rahul@gmail.com",
+				Phone:    "9496074716",
+				//Password:     "password",
+				IsSuperAdmin: false,
+				IsBlocked:    false,
+				CreatedAt:    time.Time{},
+				UpdatedAt:    time.Time{},
+			},
+
+			buildStub: func(mock sqlmock.Sqlmock) {
+				rows := sqlmock.NewRows([]string{"user_name", "email", "phone"}).
+					AddRow("Rahul", "rahul@gmail.com", "9496074716")
+
+				mock.ExpectQuery(regexp.QuoteMeta(`SELECT *	FROM admins	WHERE email = $1;`)).
+					WithArgs("RAHUL@gmaiL*com").
+					WillReturnRows(rows)
+			},
+
+			expectedError: nil,
+		},
+
+		{ // test case
+			testName:       "Find admin by email not succesfull - invalid email provided",
+			inputField:     "aju@gmail.com",
+			expectedOutput: domain.Admin{},
+
+			buildStub: func(mock sqlmock.Sqlmock) {
+
+				mock.ExpectQuery(regexp.QuoteMeta(`SELECT *	FROM admins	WHERE email = $1;`)).
+					WithArgs("aju@gmail.com").
+					WillReturnError(errors.New("Entered Email does not exist"))
+			},
+			expectedError: errors.New("Entered Email does not exist"),
 		},
 	}
 
-
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockDB, mockSQL, _ := sqlmock.New()
-			defer mockDB.Close()
 
-			//db, mock, err := sqlmock.New()
+		t.Run(tt.testName, func(t *testing.T) {
+			//New() method from sqlmock package create sqlmock database connection and a mock to manage expectations.
+			db, mock, err := sqlmock.New()
+			//db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
+			if err != nil {
+				t.Fatalf("Failed to create mock DB: %v", err)
+			}
+			//close the mock db connection after testing.
+			defer db.Close()
 
-			u := &adminDatabase{
-				DB: mockDB,
+			//initialize a mock db session
+			gormDB, err := gorm.Open(postgres.New(postgres.Config{
+				Conn: db,
+			}), &gorm.Config{})
+			if err != nil {
+				t.Fatalf("Failed to open GORM DB: %v", err)
 			}
 
-			if tt.beforeTest != nil {
-				tt.beforeTest(mockSQL)
+			//create NewUserRepository mock by passing a pointer to gorm.DB
+			adminRepository := NewAdminRepository(gormDB)
+
+			tt.buildStub(mock)
+
+			actualOutput, actualError := adminRepository.FindAdmin(context.Background(), tt.inputField)
+
+			/* This is by using assert from testify package
+			if tt.expectedError == nil {
+				assert.NoError(t, actualError)
+			} else {
+				assert.Equal(t, tt.expectedError, actualError)
 			}
 
-			got, err := u.CreateAdmin(tt.args.ctx, tt.args.newAdminInfo)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("userRepo.CreateAdmin() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			if !reflect.DeepEqual(tt.expectedOutput, actualOutput) {
+				t.Errorf("got %v, but want %v", actualOutput, tt.expectedOutput)
 			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("userRepo.CreateAdmin() = %v, want %v", got, tt.want)
+			*/
+
+			//without using testify assert package, using default testing package
+
+			if tt.expectedError == nil {
+				if actualError != nil {
+					t.Errorf("expected no error, but got: %v", actualError)
+				}
+			} else {
+				if tt.expectedError.Error() != actualError.Error() {
+					t.Errorf("expected error: %v, but got: %v", tt.expectedError, actualError)
+				}
 			}
+
+			if !reflect.DeepEqual(tt.expectedOutput, actualOutput) {
+				t.Errorf("got %+v, but want %+v", actualOutput, tt.expectedOutput)
+			}
+
+			// Check that all expectations were met
+			err = mock.ExpectationsWereMet()
+			if err != nil {
+				t.Errorf("Unfulfilled expectations: %s", err)
+			}
+
 		})
-
 	}
 
-
 }
-
-*/

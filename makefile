@@ -17,6 +17,13 @@ run:
 #	go run cmd/api/main.go
 #	go run ./cmd/api
 	$(GOCMD) run ./cmd/api
+
+
+test: ## Run tests
+# go test ./... -v -cover
+	$(GOCMD) test ./... -v -cover
+
+
 	
 
 
