@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"errors"
+	"fmt"
 	"reflect"
 	"regexp"
 	"testing"
@@ -330,11 +331,11 @@ func TestFindAdmin(t *testing.T) {
 
 		{ // test case for finding a admin - special characters
 			testName:   "Find admin by email succesfull - test case 3- with special characters entered",
-			inputField: "RAHUL@gmaiL.com",
+			inputField: "rahul+aju@gmaiL.com",
 			expectedOutput: domain.Admin{
 				//ID:       1,
 				UserName: "Rahul",
-				Email:    "rahul@gmail.com",
+				Email:    "rahul+aju@gmaiL.com",
 				Phone:    "9496074716",
 				//Password:     "password",
 				IsSuperAdmin: false,
@@ -345,10 +346,10 @@ func TestFindAdmin(t *testing.T) {
 
 			buildStub: func(mock sqlmock.Sqlmock) {
 				rows := sqlmock.NewRows([]string{"user_name", "email", "phone"}).
-					AddRow("Rahul", "rahul@gmail.com", "9496074716")
+					AddRow("Rahul", "rahul+aju@gmaiL.com", "9496074716")
 
 				mock.ExpectQuery(regexp.QuoteMeta(`SELECT *	FROM admins	WHERE email = $1;`)).
-					WithArgs("RAHUL@gmaiL*com").
+					WithArgs("rahul+aju@gmaiL.com").
 					WillReturnRows(rows)
 			},
 
@@ -367,6 +368,51 @@ func TestFindAdmin(t *testing.T) {
 					WillReturnError(errors.New("Entered Email does not exist"))
 			},
 			expectedError: errors.New("Entered Email does not exist"),
+		},
+
+		// Invalid input: Test case with invalid email format
+		{
+			testName:       "Find admin by email - invalid email format",
+			inputField:     "invalidemail",
+			expectedOutput: domain.Admin{},
+			buildStub: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM admins WHERE email = $1;`)).
+					WithArgs("invalidemail").
+					WillReturnError(errors.New("Invalid email format"))
+			},
+			expectedError: errors.New("Invalid email format"),
+		},
+
+		// Performance testing: Test case with a large number of admins
+
+		{
+			testName:   "Find admin by email - performance testing",
+			inputField: "admin5@example.com",
+			expectedOutput: domain.Admin{
+				UserName:     "Admin5",
+				Email:        "admin5@example.com",
+				Phone:        "1234567890",
+				IsSuperAdmin: false,
+				IsBlocked:    false,
+				CreatedAt:    time.Time{},
+				UpdatedAt:    time.Time{},
+			},
+			buildStub: func(mock sqlmock.Sqlmock) {
+				// Simulate a large number of admins
+				largeRows := sqlmock.NewRows([]string{"user_name", "email", "phone"})
+				for i := 1; i <= 10; i++ {
+					email := fmt.Sprintf("admin%d@example.com", i)
+					if email == "admin5@example.com" {
+						largeRows.AddRow(fmt.Sprintf("Admin%d", i), email, "1234567890")
+					}
+				}
+
+				mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM admins WHERE email = $1;`)).
+					WithArgs("admin5@example.com").
+					WillReturnRows(largeRows)
+			},
+
+			expectedError: nil,
 		},
 	}
 
@@ -395,7 +441,9 @@ func TestFindAdmin(t *testing.T) {
 
 			tt.buildStub(mock)
 
+			//The adminRepository.FindAdmin() method communicates with the underlying data store, which is typically a database. The specific database depends on the implementation of the AdminRepository interface.In your test code, you are using a mock database connection created using the sqlmock package. This mock database connection simulates the behavior of a real database and allows you to define expectations and responses for specific queries. It provides a way to test the behavior of your code that interacts with the database without relying on a live database.The sqlmock package intercepts the database queries made by your code and responds with predefined results based on the expectations you set in your test. It allows you to control the behavior of the database interactions and focus on testing specific scenarios.So, in the context of your tests, the code does not communicate with a real database. Instead, it interacts with the mock database created by the sqlmock package. The purpose is to isolate and test the behavior of your code that interacts with the database without the need for a live database connection.
 			actualOutput, actualError := adminRepository.FindAdmin(context.Background(), tt.inputField)
+			fmt.Println("actualoutput is", actualOutput, "actualerroris", actualError)
 
 			/* This is by using assert from testify package
 			if tt.expectedError == nil {
