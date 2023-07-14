@@ -24,8 +24,8 @@ test: ## Run tests
 	$(GOCMD) test ./... -v -cover
 
 
-	
-
+mockgen: ## Generate mock repository and usecase functions	
+	mockgen -source=pkg/repository/interface/admin.go -destination=pkg/mock/repositoryMock/adminMock.go -package=repositoryMock
 
 
 
