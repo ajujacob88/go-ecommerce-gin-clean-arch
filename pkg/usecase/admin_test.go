@@ -2,12 +2,14 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/mock/repositoryMock"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/request"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/model/response"
+	"github.com/go-playground/assert/v2"
 	"github.com/golang/mock/gomock"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -183,73 +185,9 @@ func TestCreateAdmin(t *testing.T) {
 
 */
 
-/*
 func TestAdminLogin(t *testing.T) {
 	ctrl := gomock.NewController(t)
-
-	adminMockRepo := repositoryMock.NewMockAdminRepository(ctrl)
-
-	ctx := context.Background()
-
-	testData := []struct {
-		testName       string
-		inputField     request.AdminLoginInfo
-		adminInfo      domain.Admin
-		buildStub      func(adminRepo *repositoryMock.MockAdminRepository)
-		expectedToken  string
-		expectedOutput response.AdminDataOutput
-		expectedError  error
-	}{
-		{
-			testName: "admin login successful",
-			inputField: request.AdminLoginInfo{
-				Email:    "admin@example.com",
-				Password: "password",
-			},
-			adminInfo: domain.Admin{
-				Email:    "admin@example.com",
-				Password: "$2a$10$1UjMdeCD4/u846kZb1538e8wB3XEKg27bXzygb9VkBxke6MMkOp0G",
-				// Include other relevant admin data here
-			},
-			buildStub: func(adminRepo *repositoryMock.MockAdminRepository) {
-				adminRepo.EXPECT().FindAdmin(ctx, "admin@example.com").Return(domain.Admin{
-					Email:    "admin@example.com",
-					Password: "$2a$10$1UjMdeCD4/u846kZb1538e8wB3XEKg27bXzygb9VkBxke6MMkOp0G",
-					// Include other relevant admin data here
-				}, nil)
-			},
-			expectedToken:  "jwt-token",
-			expectedOutput: response.AdminDataOutput{
-				// Set the expected output values based on the admin data
-			},
-			expectedError: nil,
-		},
-		// Include additional test cases for different scenarios
-
-	}
-
-	for _, data := range testData {
-		t.Run(data.testName, func(t *testing.T) {
-			data.buildStub(adminMockRepo)
-
-			adminUseCase := adminUseCase{
-				adminRepo: adminMockRepo,
-			}
-
-			token, output, err := adminUseCase.AdminLogin(ctx, data.inputField)
-
-			assert.Equal(t, data.expectedError, err)
-			assert.Equal(t, data.expectedToken, token)
-			assert.Equal(t, data.expectedOutput, output)
-		})
-	}
-
-	ctrl.Finish()
-}
-*/
-
-func TestAdminLogin(t *testing.T) {
-	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
 	adminMockRepo := repositoryMock.NewMockAdminRepository(ctrl)
 
@@ -302,8 +240,90 @@ func TestAdminLogin(t *testing.T) {
 			},
 			expectedError: nil,
 		},
-		// Include additional test cases for different scenarios
 
+		{
+			testName: "admin not found",
+			inputField: request.AdminLoginInfo{
+				Email:    "john@example.com",
+				Password: "password",
+			},
+			buildStub: func(adminRepo *repositoryMock.MockAdminRepository) {
+				adminRepo.EXPECT().FindAdmin(ctx, "john@example.com").Return(domain.Admin{}, nil)
+			},
+			expectedToken:  "",
+			expectedOutput: response.AdminDataOutput{},
+			expectedError:  fmt.Errorf("No such admin was found"),
+		},
+
+		{
+			testName: "admin found function error",
+			inputField: request.AdminLoginInfo{
+				Email:    "john@example.com",
+				Password: "password",
+			},
+			buildStub: func(adminRepo *repositoryMock.MockAdminRepository) {
+				adminRepo.EXPECT().FindAdmin(ctx, "john@example.com").Return(domain.Admin{}, fmt.Errorf("any err passed by findadmin function"))
+			},
+			expectedToken:  "",
+			expectedOutput: response.AdminDataOutput{},
+			expectedError:  fmt.Errorf("Error finding the admin"),
+		},
+
+		{
+			testName: "incorrect password",
+			inputField: request.AdminLoginInfo{
+				Email:    "admin@example.com",
+				Password: "wrongpassword",
+			},
+			adminInfo: domain.Admin{
+				UserName:     "admin",
+				Email:        "admin@example.com",
+				Phone:        "1234567890",
+				Password:     "$2a$10$h6YX9s3V1/FHnDLqwTeh7O..dw/.7La/W5k/udpgRVgibhiyQXvIi", // Update this with the expected hashed password
+				IsSuperAdmin: false,
+				IsBlocked:    false,
+			},
+			buildStub: func(adminRepo *repositoryMock.MockAdminRepository) {
+				hashedPassword := []byte("$2a$10$h6YX9s3V1/FHnDLqwTeh7O..dw/.7La/W5k/udpgRVgibhiyQXvIi") // Update this with the expected hashed password
+				adminRepo.EXPECT().FindAdmin(ctx, "admin@example.com").Return(domain.Admin{
+					UserName:     "admin",
+					Email:        "admin@example.com",
+					Phone:        "1234567890",
+					Password:     string(hashedPassword),
+					IsSuperAdmin: false,
+					IsBlocked:    false,
+				}, nil)
+			},
+			expectedError: fmt.Errorf("crypto/bcrypt: hashedPassword is not the hash of the given password"), //this error message is found out from the bcrypt.CompareHashAndPassword function
+		},
+
+		{
+			testName: "admin account blocked",
+			inputField: request.AdminLoginInfo{
+				Email:    "admin@example.com",
+				Password: "1", // hash of this "1" is given below $2a$10$6WkXITT.FjD8vIpBtswYgeARoxi8Enc8KSjqxpmHczQXMktC/jeLO
+			},
+			adminInfo: domain.Admin{
+				UserName:     "admin",
+				Email:        "admin@example.com",
+				Phone:        "1234567890",
+				Password:     "$2a$10$6WkXITT.FjD8vIpBtswYgeARoxi8Enc8KSjqxpmHczQXMktC/jeLO", // Update this with the expected hashed password
+				IsSuperAdmin: false,
+				IsBlocked:    true,
+			},
+			buildStub: func(adminRepo *repositoryMock.MockAdminRepository) {
+
+				adminRepo.EXPECT().FindAdmin(ctx, "admin@example.com").Return(domain.Admin{
+					UserName:     "admin",
+					Email:        "admin@example.com",
+					Phone:        "1234567890",
+					Password:     "$2a$10$6WkXITT.FjD8vIpBtswYgeARoxi8Enc8KSjqxpmHczQXMktC/jeLO", // Update this with the expected hashed password
+					IsSuperAdmin: false,
+					IsBlocked:    true,
+				}, nil)
+			},
+			expectedError: fmt.Errorf("admin account is blocked"),
+		},
 	}
 
 	for _, data := range testData {
@@ -314,26 +334,39 @@ func TestAdminLogin(t *testing.T) {
 				adminRepo: adminMockRepo,
 			}
 
-			token, actualOutput, actualError := adminUseCase.AdminLogin(ctx, data.inputField)
+			_, actualOutput, actualError := adminUseCase.AdminLogin(ctx, data.inputField)
 
-			//assert.Equal(t, data.expectedError, actualError)
-			// //assert.Equal(t, data.expectedToken, token)
-			//assert.Equal(t, data.expectedOutput, actualOutput)
+			//token, actualOutput, actualError := adminUseCase.AdminLogin(ctx, data.inputField)
+			// fmt.Println("token is", token, "act op", actualOutput, "act error", actualError, "exp token", data.expectedToken, "exp op", data.expectedOutput, "exp err", data.expectedError)
+			// fmt.Println("actual err is", actualError)
+
+			assert.Equal(t, data.expectedError, actualError)
+			//assert.Equal(t, data.expectedToken, token)
+			assert.Equal(t, data.expectedOutput, actualOutput)
 
 			//using direct if condition instead of assert
-			if actualError != nil {
-				t.Errorf("Expected no error, but got: %v", actualError)
-			}
 
-			if token == "" {
-				t.Error("Expected token, but got an empty string")
-			}
+			// if data.expectedError != nil {
+			// 	if actualError == nil {
+			// 		t.Errorf("Expected error: %v, but got: %v", data.expectedError, actualError)
+			// 	} else if actualError.Error() != data.expectedError.Error() {
+			// 		t.Errorf("Expected error: %v, but got: %v", data.expectedError, actualError)
+			// 	}
+			// } else {
+			// 	if actualError != nil {
+			// 		t.Errorf("Expected no error, but got: %v", actualError)
+			// 	}
+			// }
 
-			if actualOutput != data.expectedOutput {
-				t.Errorf("Expected output: %v, but got: %v", data.expectedOutput, actualOutput)
-			}
+			// if token == "" {
+			// 	t.Error("Expected token, but got an empty string")
+			// }
+
+			// if actualOutput != data.expectedOutput {
+			// 	t.Errorf("Expected output: %v, but got: %v", data.expectedOutput, actualOutput)
+			// }
 		})
 	}
 
-	ctrl.Finish()
+	//ctrl.Finish()
 }
