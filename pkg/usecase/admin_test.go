@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/domain"
 	"github.com/ajujacob88/go-ecommerce-gin-clean-arch/pkg/mock/repositoryMock"
@@ -14,7 +15,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-/*
 func TestCreateAdmin(t *testing.T) {
 	ctrl := gomock.NewController(t)
 
@@ -66,54 +66,6 @@ func TestCreateAdmin(t *testing.T) {
 			},
 			expectedError: nil,
 		},
-
-		/*
-			{
-				testName: "create admin successful2",
-				inputField: request.NewAdminInfo{
-					UserName: "Rahul",
-					Email:    "rahul@gmail.com",
-					Phone:    "9496074716",
-					Password: hashedpwdstring,
-				},
-				adminID: 1,
-				expectedOutput: domain.Admin{
-					UserName:     "Rahul",
-					Email:        "rahul@gmail.com",
-					Phone:        "9496074716",
-					Password:     hashedpwdstring, // Update this with the expected hashed password
-					IsSuperAdmin: false,
-					IsBlocked:    false,
-					CreatedAt:    time.Time{},
-					UpdatedAt:    time.Time{},
-				},
-				buildStub: func(adminRepo *repositoryMock.MockAdminRepository) {
-					adminRepo.EXPECT().IsSuperAdmin(ctx, 1).Return(true, nil)
-					// Hash the password in the CreateAdmin method and compare with the expected hashed password
-					//hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password"), 10)
-					//fmt.Println("string of hashed pw is", string(hashedPassword))
-
-					//	fmt.Println("hashed pwd 2", hashedpwdstring)
-					fmt.Println("newadminpwd is")
-					adminRepo.EXPECT().CreateAdmin(ctx, gomock.Any()).Do(func(ctx context.Context, newAdmin request.NewAdminInfo) {
-						fmt.Println("nea admin is", newAdmin)
-						// Hash the password in the CreateAdmin method and compare with the expected hashed password
-						//hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("password"), 10)
-						//fmt.Println("hashed pwd 3", hashedpwdstring, "and", newAdmin.Password)
-						//assert.Equal(t, hashedpwdstring, newAdmin.Password)
-					}).Return(domain.Admin{
-						UserName:     "Rahul",
-						Email:        "rahul@gmail.com",
-						Phone:        "9496074716",
-						Password:     hashedpwdstring, // Update this with the expected hashed password
-						IsSuperAdmin: false,
-						IsBlocked:    false,
-						CreatedAt:    time.Time{},
-						UpdatedAt:    time.Time{},
-					}, nil)
-				},
-				expectedError: nil,
-			},
 
 		{
 			testName: "non-existent superadmin",
@@ -182,8 +134,6 @@ func TestCreateAdmin(t *testing.T) {
 
 	ctrl.Finish()
 }
-
-*/
 
 func TestAdminLogin(t *testing.T) {
 	ctrl := gomock.NewController(t)
