@@ -12,7 +12,7 @@ on:
 jobs:
 
   build:
-    name: Build and Test
+    name: Build and Test, and Deploy
     runs-on: ubuntu-latest
     steps:
     - name: Setup action
@@ -34,3 +34,27 @@ jobs:
 
     - name: Unit Tests
       run: go test -v ./... -cover
+
+    - name: Deploy to AWS EC2
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{secrets.EC2_PUBLIC_IP}}
+        username: ubuntu
+        key: ${{secrets.EC2_SSH_KEY}}
+        script: |
+          echo "Connected to smartstore AWS EC2 instance"
+          cd cd go/src/esmartstore.shop/go-ecommerce-gin-clean-arch
+          git pull
+          go build cmd/api/main.go
+          sudo systemctl restart goweb.service
+        
+       
+        
+        
+        #commented script is to create build file locally and then pushed and run that build file only, which is a good approach, but since i previously followed pulling the complete code to the ec2 instance from git, i am following the second approach, which is given in the previous script
+        # script: |
+        #   echo "Connected to AWS EC2 instance"
+        #   scp -r build/bin ubuntu@${{secrets.EC2_PUBLIC_IP}}:/path/to/destination
+        #   ssh ubuntu@${{secrets.EC2_PUBLIC_IP}} "sudo systemctl restart myapp.service"
+
+        
