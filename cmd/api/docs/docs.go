@@ -1083,7 +1083,7 @@ const docTemplate = `{
         },
         "/user/addresses": {
             "get": {
-                "description": "list all addresses",
+                "description": "list all the addresses",
                 "consumes": [
                     "application/json"
                 ],
@@ -1093,7 +1093,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "User can list all the user addresses saved",
+                "summary": "User can list all the user addresses",
                 "operationId": "list-address",
                 "responses": {
                     "200": {

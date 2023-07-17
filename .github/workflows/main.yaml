@@ -45,7 +45,7 @@ jobs:
           echo "Connected to smartstore AWS EC2 instance"
           cd go/src/esmartstore.shop/go-ecommerce-gin-clean-arch
           git pull          
-          go build -o noneedcheck ./cmd/api
+          go build -o ./ ./cmd/api
           sudo systemctl restart goweb.service
         
        
