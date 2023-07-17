@@ -1,0 +1,36 @@
+# This workflow will build and test the golang project
+
+name: SmartStore-ecommerce-test
+
+on:
+  push:
+    branches:  
+    - "main" 
+  pull_request:
+    
+
+jobs:
+
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+    - name: Setup action
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+
+    - name: Install dependencies
+      run: |
+        go mod download
+        go mod tidy
+        go mod verify    
+
+    - name: Build
+      run: go build -v ./...
+
+    - name: Unit Tests
+      run: go test -v ./... -cover
