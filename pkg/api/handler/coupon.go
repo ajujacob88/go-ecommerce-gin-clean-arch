@@ -67,7 +67,7 @@ func (cr CouponHandler) AddCoupon(c *gin.Context) {
 // @Router /user/cart/applycoupon/ [patch]
 func (cr *CouponHandler) ApplyCouponToCart(c *gin.Context) {
 
-	//The PATCH method is used to partially update the resource at the given URL. HTTP method should be PUT or PATCH to indicate that you are updating an existing resource (the cart) with the provided coupon ID. If you write POST instead of PUT for the HTTP method in the code, it would indicate that you are creating a new resource with the provided coupon ID, rather than updating an existing resource.
+	//The PATCH method is used to partially update the resource at the given URL.. HTTP method should be PUT or PATCH to indicate that you are updating an existing resource (the cart) with the provided coupon ID. If you write POST instead of PUT for the HTTP method in the code, it would indicate that you are creating a new resource with the provided coupon ID, rather than updating an existing resource.
 	var body request.ApplyCoupon
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse(422, "unable to bind coupon code", err.Error(), nil))
