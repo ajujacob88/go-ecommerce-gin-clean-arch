@@ -21,128 +21,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-//THIS IS CORRECT
-/*
-func TestCreateAdmin(t *testing.T) {
-
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	adminMockUseCase := usecaseMock.NewMockAdminUseCase(ctrl)
-
-	ctx := context.Background()
-
-	testData := []struct {
-		testName       string
-		inputField     request.NewAdminInfo
-		adminID        int
-		expectedOutput domain.Admin
-		buildStub      func(adminUseCase *usecaseMock.MockAdminUseCase)
-		expectedError  error
-	}{
-		{
-			testName: "create admin successful",
-			inputField: request.NewAdminInfo{
-				UserName: "Rahul",
-				Email:    "rahul@gmail.com",
-				Phone:    "9496074716",
-				Password: "password",
-			},
-			adminID: 1,
-			expectedOutput: domain.Admin{
-				UserName:     "Rahul",
-				Email:        "rahul@gmail.com",
-				Phone:        "9496074716",
-				IsSuperAdmin: false,
-				IsBlocked:    false,
-				CreatedAt:    time.Time{},
-				UpdatedAt:    time.Time{},
-			},
-			buildStub: func(adminUseCase *usecaseMock.MockAdminUseCase) {
-				adminUseCase.EXPECT().CreateAdmin(ctx, gomock.Any(), 1).Return(domain.Admin{
-					UserName:     "Rahul",
-					Email:        "rahul@gmail.com",
-					Phone:        "9496074716",
-					IsSuperAdmin: false,
-					IsBlocked:    false,
-					CreatedAt:    time.Time{},
-					UpdatedAt:    time.Time{},
-				}, nil)
-			},
-
-			expectedError: nil,
-		},
-			// {
-			// 	testName: "duplicate admin",
-			// 	inputField: request.NewAdminInfo{
-			// 		UserName: "Rahul",
-			// 		Email:    "rahul@gmail.com",
-			// 		Phone:    "9496074716",
-			// 		Password: "password",
-			// 	},
-			// 	adminID: 1,
-			// 	expectedOutput: domain.Admin{
-			// 		UserName:     "Rahul",
-			// 		Email:        "rahul@gmail.com",
-			// 		Phone:        "9496074716",
-			// 		IsSuperAdmin: false,
-			// 		IsBlocked:    false,
-			// 		CreatedAt:    time.Time{},
-			// 		UpdatedAt:    time.Time{},
-			// 	},
-			// 	buildStub: func(adminUseCase *usecaseMock.MockAdminUseCase) {
-			// 		adminUseCase.EXPECT().CreateAdmin(ctx, gomock.Any(), 1).Return(domain.Admin{}, errors.New("failed to create the admin"))
-			// 	},
-
-			// 	expectedError: errors.New("failed to create the admin"),
-			// },
-	}
-
-	for _, data := range testData {
-		t.Run(data.testName, func(t *testing.T) {
-			data.buildStub(adminMockUseCase)
-
-			adminHandler := AdminHandler{
-				adminUseCase: adminMockUseCase,
-			}
-
-			// Since the CreateAdmin function has a Gin context parameter,
-			// we need to create a dummy Gin context for testing purposes.
-			w := httptest.NewRecorder()
-			c, _ := gin.CreateTestContext(w)
-
-			c.Request = httptest.NewRequest(http.MethodPost, "/admin", nil)
-			c.Set("adminID", strconv.Itoa(data.adminID))
-
-			// Marshal the inputField (test data) to JSON and set it as the request body
-			jsonData, err := json.Marshal(data.inputField)
-			assert.NoError(t, err)
-			c.Request.Body = ioutil.NopCloser(bytes.NewReader(jsonData))
-			c.Request.ContentLength = int64(len(jsonData))
-			c.Request.Header.Set("Content-Type", "application/json")
-
-			// Call the CreateAdmin handler function
-			adminHandler.CreateAdmin(c)
-
-			// Assert the response
-			assert.Equal(t, http.StatusCreated, w.Code) // Ensure that the status code is 201
-			//assert.JSONEq(t, `{"message": "admin created successfully", "data": {"id":0, "user_name":"Rahul","email":"rahul@gmail.com","phone_no":"9496074716","password":"","is_super_admin":false,"IsBlocked":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"}}`, w.Body.String())
-			//check if data is of type map[string]interface{}
-
-			expectedResponse := `{"status_code":201,"message":"admin created successfully","data":[{"id":0,"user_name":"Rahul","email":"rahul@gmail.com","phone_no":"9496074716","password":"","is_super_admin":false,"IsBlocked":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"}]}`
-			assert.JSONEq(t, expectedResponse, w.Body.String())
-
-			// without using assert
-			// actualResponse := w.Body.String()
-			// if expectedResponse != actualResponse {
-			// 	t.Errorf("expected response does not match actual response:\nExpected: %s\nActual: %s", expectedResponse, actualResponse)
-			// }
-		})
-	}
-}
-
-*/
-
 func TestCreateAdmin(t *testing.T) {
 
 	ctrl := gomock.NewController(t)
@@ -294,3 +172,125 @@ func TestCreateAdmin(t *testing.T) {
 		})
 	}
 }
+
+//no need.. not correct, only partial
+/*
+
+func TestCreateAdmin(t *testing.T) {
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	adminMockUseCase := usecaseMock.NewMockAdminUseCase(ctrl)
+
+	ctx := context.Background()
+
+	testData := []struct {
+		testName       string
+		inputField     request.NewAdminInfo
+		adminID        int
+		expectedOutput domain.Admin
+		buildStub      func(adminUseCase *usecaseMock.MockAdminUseCase)
+		expectedError  error
+	}{
+		{
+			testName: "create admin successful",
+			inputField: request.NewAdminInfo{
+				UserName: "Rahul",
+				Email:    "rahul@gmail.com",
+				Phone:    "9496074716",
+				Password: "password",
+			},
+			adminID: 1,
+			expectedOutput: domain.Admin{
+				UserName:     "Rahul",
+				Email:        "rahul@gmail.com",
+				Phone:        "9496074716",
+				IsSuperAdmin: false,
+				IsBlocked:    false,
+				CreatedAt:    time.Time{},
+				UpdatedAt:    time.Time{},
+			},
+			buildStub: func(adminUseCase *usecaseMock.MockAdminUseCase) {
+				adminUseCase.EXPECT().CreateAdmin(ctx, gomock.Any(), 1).Return(domain.Admin{
+					UserName:     "Rahul",
+					Email:        "rahul@gmail.com",
+					Phone:        "9496074716",
+					IsSuperAdmin: false,
+					IsBlocked:    false,
+					CreatedAt:    time.Time{},
+					UpdatedAt:    time.Time{},
+				}, nil)
+			},
+
+			expectedError: nil,
+		},
+		// {
+		// 	testName: "duplicate admin",
+		// 	inputField: request.NewAdminInfo{
+		// 		UserName: "Rahul",
+		// 		Email:    "rahul@gmail.com",
+		// 		Phone:    "9496074716",
+		// 		Password: "password",
+		// 	},
+		// 	adminID: 1,
+		// 	expectedOutput: domain.Admin{
+		// 		UserName:     "Rahul",
+		// 		Email:        "rahul@gmail.com",
+		// 		Phone:        "9496074716",
+		// 		IsSuperAdmin: false,
+		// 		IsBlocked:    false,
+		// 		CreatedAt:    time.Time{},
+		// 		UpdatedAt:    time.Time{},
+		// 	},
+		// 	buildStub: func(adminUseCase *usecaseMock.MockAdminUseCase) {
+		// 		adminUseCase.EXPECT().CreateAdmin(ctx, gomock.Any(), 1).Return(domain.Admin{}, errors.New("failed to create the admin"))
+		// 	},
+
+		// 	expectedError: errors.New("failed to create the admin"),
+		// },
+	}
+
+	for _, data := range testData {
+		t.Run(data.testName, func(t *testing.T) {
+			data.buildStub(adminMockUseCase)
+
+			adminHandler := AdminHandler{
+				adminUseCase: adminMockUseCase,
+			}
+
+			// Since the CreateAdmin function has a Gin context parameter,
+			// we need to create a dummy Gin context for testing purposes.
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+
+			c.Request = httptest.NewRequest(http.MethodPost, "/admin", nil)
+			c.Set("adminID", strconv.Itoa(data.adminID))
+
+			// Marshal the inputField (test data) to JSON and set it as the request body
+			jsonData, err := json.Marshal(data.inputField)
+			assert.NoError(t, err)
+			c.Request.Body = ioutil.NopCloser(bytes.NewReader(jsonData))
+			c.Request.ContentLength = int64(len(jsonData))
+			c.Request.Header.Set("Content-Type", "application/json")
+
+			// Call the CreateAdmin handler function
+			adminHandler.CreateAdmin(c)
+
+			// Assert the response
+			assert.Equal(t, http.StatusCreated, w.Code) // Ensure that the status code is 201
+			//assert.JSONEq(t, `{"message": "admin created successfully", "data": {"id":0, "user_name":"Rahul","email":"rahul@gmail.com","phone_no":"9496074716","password":"","is_super_admin":false,"IsBlocked":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"}}`, w.Body.String())
+			//check if data is of type map[string]interface{}
+
+			expectedResponse := `{"status_code":201,"message":"admin created successfully","data":[{"id":0,"user_name":"Rahul","email":"rahul@gmail.com","phone_no":"9496074716","password":"","is_super_admin":false,"IsBlocked":false,"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z"}]}`
+			assert.JSONEq(t, expectedResponse, w.Body.String())
+
+			// without using assert
+			// actualResponse := w.Body.String()
+			// if expectedResponse != actualResponse {
+			// 	t.Errorf("expected response does not match actual response:\nExpected: %s\nActual: %s", expectedResponse, actualResponse)
+			// }
+		})
+	}
+}
+*/
