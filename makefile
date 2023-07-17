@@ -26,6 +26,7 @@ test: ## Run tests
 
 mockgen: ## Generate mock repository and usecase functions	
 	mockgen -source=pkg/repository/interface/admin.go -destination=pkg/mock/repositoryMock/adminMock.go -package=repositoryMock
+	mockgen -source=pkg/usecase/interface/admin.go -destination=pkg/mock/usecaseMock/adminMock.go -package=usecaseMock
 
 
 
