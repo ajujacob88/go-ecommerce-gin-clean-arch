@@ -43,7 +43,7 @@ jobs:
         key: ${{secrets.EC2_SSH_KEY}}
         script: |
           echo "Connected to smartstore AWS EC2 instance"
-          cd cd go/src/esmartstore.shop/go-ecommerce-gin-clean-arch
+          cd go/src/esmartstore.shop/go-ecommerce-gin-clean-arch
           git pull
           go build cmd/api/main.go
           sudo systemctl restart goweb.service
