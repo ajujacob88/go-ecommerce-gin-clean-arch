@@ -967,7 +967,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: list all address
+      description: list all addresses
       operationId: list-address
       produces:
       - application/json
@@ -984,7 +984,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
-      summary: User can list all the user address
+      summary: User can list all the user addresses saved
       tags:
       - user
   /user/addresses/:
