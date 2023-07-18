@@ -44,11 +44,12 @@ jobs:
         script: |
           echo "Connected to smartstore AWS EC2 instance"
           cd go/src/esmartstore.shop/go-ecommerce-gin-clean-arch
-          git pull          
-          go build -o ./build/bin ./cmd/api 
+          git pull        
+          /usr/local/go/bin/go build -o ./build/bin ./cmd/api
           sudo systemctl restart goweb.service
         
        
+        # go build -o ./build/bin ./cmd/api 
         #  go build cmd/api/main.go   #./: The ./ is a shorthand notation for the current working directory, which means it refers to the root directory of your project.
         
         #commented script is to create build file locally and then pushed and run that build file only, which is a good approach, but since i previously followed pulling the complete code to the ec2 instance from git, i am following the second approach, which is given in the previous script
