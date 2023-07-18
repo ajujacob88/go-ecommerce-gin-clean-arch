@@ -279,7 +279,7 @@ func (cr *UserHandler) AddAddress(c *gin.Context) {
 // UpdateAddress
 // @Summary User can edit the user address
 // @ID update-address
-// @Description Update address
+// @Description User can Update the address
 // @Tags user
 // @Accept json
 // @Produce json

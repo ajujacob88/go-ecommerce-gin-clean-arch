@@ -45,9 +45,11 @@ jobs:
           echo "Connected to smartstore AWS EC2 instance"
           cd go/src/esmartstore.shop/go-ecommerce-gin-clean-arch
           git pull        
-          /usr/local/go/bin/go build -o ./main ./cmd/api
+          /usr/local/go/bin/go build -o ./main ./cmd/api    
           sudo systemctl restart goweb.service
         
+        
+        # /usr/local/go/bin/go build -o ./main ./cmd/api  - THIS IS set like this, because the gopath in ec2 is not set correctly, good approach is first set go path, then go build -o ./main ./cmd/api ...,,, also ./cmd/api means looking all the files in the folder,,  ./means root which is the project directory  ,,, ./main means the build file is created with the name "main" in the projects folder which is "go-ecommerce-gin-clean-arch"
         # /usr/local/go/bin/go build ./cmd/api
         # /usr/local/go/bin/go build -o ./build/bin ./cmd/api
         # go build -o ./build/bin ./cmd/api 
