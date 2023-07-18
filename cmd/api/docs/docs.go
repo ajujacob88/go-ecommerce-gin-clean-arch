@@ -1083,7 +1083,7 @@ const docTemplate = `{
         },
         "/user/addresses": {
             "get": {
-                "description": "list all the addresses",
+                "description": "list all the addresses of user",
                 "consumes": [
                     "application/json"
                 ],
