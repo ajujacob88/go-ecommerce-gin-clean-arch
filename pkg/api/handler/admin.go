@@ -68,9 +68,9 @@ func (cr *AdminHandler) CreateAdmin(c *gin.Context) {
 }
 
 // AdminLogin
-// @Summary Admin Login
+// @Summary Admin Login for the admin
 // @ID admin-login
-// @Description Admin Login
+// @Description Admin Login forthe admin review
 // @Tags Admin
 // @Accept json
 // @Produce json

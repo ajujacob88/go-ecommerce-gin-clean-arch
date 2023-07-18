@@ -399,7 +399,7 @@ const docTemplate = `{
         },
         "/admin/login": {
             "post": {
-                "description": "Admin Login",
+                "description": "Admin Login forthe admin review",
                 "consumes": [
                     "application/json"
                 ],
@@ -409,7 +409,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin"
                 ],
-                "summary": "Admin Login",
+                "summary": "Admin Login for the admin",
                 "operationId": "admin-login",
                 "parameters": [
                     {

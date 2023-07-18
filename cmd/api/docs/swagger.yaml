@@ -514,7 +514,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Admin Login
+      description: Admin Login forthe admin review
       operationId: admin-login
       parameters:
       - description: Admin Login Credentials
@@ -538,7 +538,7 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Admin Login
+      summary: Admin Login for the admin
       tags:
       - Admin
   /admin/logout:
