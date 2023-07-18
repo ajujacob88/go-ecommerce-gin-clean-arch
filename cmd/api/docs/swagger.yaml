@@ -967,7 +967,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: list all the addresses of user
+      description: list all the addresses of the user
       operationId: list-address
       produces:
       - application/json

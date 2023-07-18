@@ -45,10 +45,11 @@ jobs:
           echo "Connected to smartstore AWS EC2 instance"
           cd go/src/esmartstore.shop/go-ecommerce-gin-clean-arch
           git pull        
-          /usr/local/go/bin/go build -o ./build/bin ./cmd/api
+          /usr/local/go/bin/go build ./cmd/api
           sudo systemctl restart goweb.service
         
        
+        # /usr/local/go/bin/go build -o ./build/bin ./cmd/api
         # go build -o ./build/bin ./cmd/api 
         #  go build cmd/api/main.go   #./: The ./ is a shorthand notation for the current working directory, which means it refers to the root directory of your project.
         
