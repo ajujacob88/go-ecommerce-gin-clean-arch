@@ -1052,7 +1052,7 @@ paths:
     patch:
       consumes:
       - application/json
-      description: Update address
+      description: User can Update the address
       operationId: update-address
       parameters:
       - description: User address

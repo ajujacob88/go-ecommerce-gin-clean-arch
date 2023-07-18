@@ -1166,7 +1166,7 @@ const docTemplate = `{
         },
         "/user/addresses/edit/{address_id}": {
             "patch": {
-                "description": "Update address",
+                "description": "User can Update the address",
                 "consumes": [
                     "application/json"
                 ],
