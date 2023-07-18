@@ -356,7 +356,7 @@ func (cr *UserHandler) DeleteAddress(c *gin.Context) {
 }
 
 // ListAllAddress
-// @Summary User can list all the user addresses
+// @Summary User can list all the user address
 // @ID list-address
 // @Description list all the addresses
 // @Tags user
