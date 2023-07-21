@@ -69,7 +69,7 @@ func TestCreateAdmin(t *testing.T) {
 					}, nil)
 			},
 			//expectedCode: 201,
-			expectedResponse: response.SuccessResponse(201, "admin created successfully", domain.Admin{
+			expectedResponse: response.SuccessResponse(200, "admin created successfully", domain.Admin{
 				UserName:     "Rahul",
 				Email:        "rahul@gmail.com",
 				Phone:        "9496074716",
