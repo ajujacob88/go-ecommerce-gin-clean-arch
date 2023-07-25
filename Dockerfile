@@ -20,6 +20,8 @@ LABEL maintainer="Aju Jacob <ajujacob88@gmail.com>"
 
 COPY --from=build-stage /home/build/api /api
 COPY --from=build-stage /home/app/views /views
-COPY .env /.env
+COPY .env /
+
+EXPOSE 3000
 
 CMD ["/api"]

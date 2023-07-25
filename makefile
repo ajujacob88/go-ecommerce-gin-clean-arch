@@ -29,5 +29,13 @@ mockgen: ## Generate mock repository and usecase functions
 	mockgen -source=pkg/usecase/interface/admin.go -destination=pkg/mock/usecaseMock/adminMock.go -package=usecaseMock
 
 
+docker-build: ## To build new docker image
+	docker build -t ajujacob/smarstore-ecommerce-api:0.0.1.RELEASE .    
+# . means the docker file is in the current directory	
 
+docker-up: ## To up the docker compose file
+	docker-compose up 
+
+docker-down: ## To down the docker compose file
+	docker-compose down
 

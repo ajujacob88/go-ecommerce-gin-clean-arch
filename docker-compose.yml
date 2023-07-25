@@ -1,0 +1,28 @@
+version : '3'
+services:
+#database container
+  db:
+    image: postgres
+    ports: 
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=ajujacob
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - smarstore-data:/var/lib/postgresql/data
+      # - mymongo-data-two:/data/db       #/data/db is thedefault path for mongodb, for postgres it will be differennt, for mysql also it will be different
+  web-ecommerce-app:
+    image: ajujacob/smarstore-ecommerce-api:0.0.1.RELEASE
+    restart : always            #mongo express is relied on mongodb, so restart this until it establish a connection
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+volumes:
+  smarstore-data:
+    driver: local
+  # mymongo-data-two:
+  #   driver: local
