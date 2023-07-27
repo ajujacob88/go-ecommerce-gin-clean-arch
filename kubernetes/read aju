@@ -1,0 +1,3 @@
+This are the kubernetes files inorder to run the smartstore api via minikube..
+
+These files are just pasted here inorder to push to git with kubernetes branch, actually kubernetes works with docker images or any images, so need of these files here, just create a folder anywhere in the system and run it.....

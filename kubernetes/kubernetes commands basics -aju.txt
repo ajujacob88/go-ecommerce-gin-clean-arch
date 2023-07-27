@@ -1,0 +1,56 @@
+//apply the yaml file
+kubectl apply -f web-app.yaml
+
+//to get the pods
+kubectl get pod
+
+//to get the details of pods
+kubectl get pod -o wide
+
+//to show pods'
+kubectl get pod
+
+//to log into pods
+kubectl logs webapp-deployment-78df99f5f4-pk5vk
+
+//to get the services
+kubectl get service
+or 
+kubectl get svc
+
+//to start
+minikube start
+
+//to start a service
+minikube service webapp-service
+
+
+kubectl exec -it postgres-deployment-864bd756d4-4pqpp -- /bin/bash
+psql -h postgres-service -U ganesh -d maanushiearth
+
+
+
+brew install kubectl
+brew install minikube
+++++++++++++++++++++++++++++++++++++++
+
+minikube start
+kubectl get pod
+kubectl apply -f mongo-config.yaml
+kubectl apply -f secret.yaml
+kubectl apply -f mongo-app.yaml
+kubectl apply -f web-app.yaml
+kubectl get pod
+kubectl get configmap
+kubectl get secret
+kubectl get svc
+minikube ip
+kubectl get node -o wide
+minikube service webapp-service
+++++++++++++++++++++++++++++++++++++++
+
+kubectl delete deployment --all
+kubectl delete secret --all
+
+
+

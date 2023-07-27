@@ -1,0 +1,94 @@
+//login
+docker login
+
+//run
+docker-run hello world
+
+//to check which all containers are running
+docker ps
+
+//to check the history previously run containers
+docker ps -a
+
+//to check the existing images
+docker images
+
+//to get the images
+docker pull images-name
+eg: docker pull redis
+
+//to run in detached mode
+docker run -d image-name
+eg: docker run -d redis
+
+//to stop a container
+docker stop container-id
+
+//to start a container
+docker start container-id
+
+//to pull a another version of same image
+docker pull image-name:version
+
+//to run a another version of same image
+docker run image-name:version
+
+//to map a host port with and run a image
+docker run -d -p<host-port-name>:<image-port-name> image-name
+eg:docker run -d -p5001:6379 redis:5.0
+
+//to get the log of docker container which is running
+docker log <container-id>
+
+//to run the image with specific name
+docker run -d -p<host-port-name>:<image-port-name> --name <name> image-name
+
+//to log into container and make changes
+docker exec -it container-name/container-id /bin/bash
+
+//to load without env
+eg:docker run -d --name my-postgresSQL -e POSTGRES_USER=ganesh -e POSTGRES_PASSWORD=Lib*** -e POSTGRES_DB=useradmin -p 5433:5433 postgres:latest
+
+//to remove the traces(so that the naming conflict wont be there)
+docker container prune
+
+//run a docker-compose file
+docker compose up -d -y<path....if it is stored in another directory>
+
+//to stop the compose file
+docker-compose down
+
+//1. Host volume
+//for data persistence, we can select a physical file system and connect that path with the virtual file system inside the container
+docker run -v /<physical file system path>:/<virtual file system path>
+
+//2. Anonymous volume
+//we only give the virtual file system path, so that docker will automatically set a path in the physical file system
+docker run -v /<virtual file system path>
+
+//3. Named volume
+//we can give a name to the physical file system so that we can later access, but docker will be the one who sets a location to the physical file system
+docker run -v name:/<virtual file system path>
+
+//to list volumes
+docker volume ls
+
+//to check the mountpoint and location of volume in localmachine and all
+docker volume inspect <volume-name>
+
+//to log inside the the container which is running
+docker logs <container_name>
+docker logs  maanushi_earth_e-commerce_web_1
+
+
+
+
+//miscellaneous
+ 
+
+//to check what is running in port
+sudo lsof -i :5432
+
+//to stop the service that is running in the port
+systemctl stop postgresql
+
