@@ -29,7 +29,7 @@ mockgen: ## Generate mock repository and usecase functions
 	mockgen -source=pkg/usecase/interface/admin.go -destination=pkg/mock/usecaseMock/adminMock.go -package=usecaseMock
 
 
-docker-build: ## To build new docker image
+docker-build: ## To build new docker image #this is only required to build a docker image, remember while at the time of buiding docker image(running this command), dont forget to change the .env file's DB-HOST to db instead of local host...DB_HOST=db instead of DB_HOST=localhost.. at the time of running this command, otherwise the docker image wont work
 	docker build -t ajujacob/smarstore-ecommerce-api:0.0.1.RELEASE .    
 # . means the docker file is in the current directory	
 
