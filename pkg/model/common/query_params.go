@@ -10,7 +10,7 @@ type QueryParams struct {
 	Query    string `json:"query"`
 	Filter   string `json:"filter"`
 	SortBy   string `json:"sort_by"`
-	SortDesc bool   `json:"sort_desc"`
+	SortDesc bool   `json:"sort_by"`
 }
 
 type SalesReportDateRange struct {
